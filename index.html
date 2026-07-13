@@ -116,6 +116,75 @@
                 clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
             }
         }
+
+        /* ==== Spotlight menyuluh atas gambar latar hero (bertukar warna) ==== */
+        .hero-spotlight {
+            position: absolute;
+            top: -35%;
+            left: -20%;
+            width: 66%;
+            height: 170%;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            filter: blur(34px);
+            background: radial-gradient(ellipse 46% 40% at 50% 50%,
+                rgba(16, 185, 129, .26) 0%,
+                rgba(16, 185, 129, .09) 45%,
+                transparent 72%);
+            opacity: .7;
+            animation: heroSweep 16s cubic-bezier(.45, .05, .35, 1) infinite,
+                       heroHue 13s linear infinite;
+            will-change: transform, filter;
+        }
+        /* Teras cahaya lembut di tengah pancaran (tidak menyilau) */
+        .hero-spotlight::after {
+            content: "";
+            position: absolute;
+            inset: 30% 34%;
+            border-radius: 9999px;
+            background: radial-gradient(circle at 50% 50%, rgba(180, 230, 205, .14), transparent 65%);
+            mix-blend-mode: screen;
+            filter: blur(16px);
+            animation: heroCore 6s ease-in-out infinite alternate;
+        }
+        /* Pancaran kedua (warna berbeza) supaya kesan lebih hidup */
+        .hero-spotlight.beam-2 {
+            top: -25%;
+            left: 22%;
+            width: 54%;
+            height: 150%;
+            opacity: .6;
+            background: radial-gradient(ellipse 44% 42% at 50% 50%,
+                rgba(59, 130, 246, .20) 0%,
+                rgba(99, 102, 241, .07) 48%,
+                transparent 74%);
+            animation: heroSweep2 21s cubic-bezier(.45, .05, .35, 1) infinite,
+                       heroHue 17s linear infinite reverse;
+        }
+        @keyframes heroSweep {
+            0%   { transform: translate(0, 0) scale(1); }
+            25%  { transform: translate(52%, 8%) scale(1.15); }
+            50%  { transform: translate(118%, -5%) scale(1.05); }
+            75%  { transform: translate(60%, 12%) scale(1.22); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes heroSweep2 {
+            0%   { transform: translate(0, 0) scale(1.05); }
+            30%  { transform: translate(-40%, 10%) scale(1.2); }
+            60%  { transform: translate(30%, -6%) scale(1); }
+            100% { transform: translate(0, 0) scale(1.05); }
+        }
+        @keyframes heroHue {
+            to { filter: blur(34px) hue-rotate(360deg); }
+        }
+        @keyframes heroCore {
+            0%   { opacity: .25; transform: scale(.9); }
+            100% { opacity: .5;  transform: scale(1.1); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-spotlight { animation: none; }
+            .hero-spotlight::after { animation: none; }
+        }
     </style>
 </head>
 <body 
@@ -283,6 +352,9 @@
     <section class="hero-background relative pt-32 pb-24 overflow-hidden lg:pt-40 lg:pb-36 text-white">
         <!-- Background Glowing Ambient Orbs -->
         <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            <!-- Spotlight menyuluh atas gambar latar (menyapu & bertukar warna) -->
+            <div class="hero-spotlight"></div>
+            <div class="hero-spotlight beam-2"></div>
             <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-pulse-slow"
                  :class="{
                      'bg-emerald-500/40': accentColor === 'emerald',
@@ -315,12 +387,31 @@
                     <!-- Main Headline -->
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
                         Pengurusan Lebih <br class="hidden sm:inline">
-                        <span class="text-transparent bg-clip-text"
-                              :class="{
-                                  'bg-gradient-to-r from-emerald-400 to-teal-500': accentColor === 'emerald',
-                                  'bg-gradient-to-r from-blue-400 to-indigo-500': accentColor === 'blue',
-                                  'bg-gradient-to-r from-indigo-400 to-purple-500': accentColor === 'indigo'
-                              }">Pintar, Pantas & Teratur</span>
+                        <span
+                            x-data="{
+                                phrases: [
+                                    { t: 'Pintar, Pantas & Teratur', c: 'from-emerald-400 to-teal-500' },
+                                    { t: 'Selamat & Dipercayai',      c: 'from-blue-400 to-indigo-500' },
+                                    { t: 'Automatik & Bersepadu',     c: 'from-amber-400 to-emerald-500' },
+                                    { t: 'Responsif Masa Nyata',      c: 'from-indigo-400 to-purple-500' },
+                                    { t: 'Cekap & Berdaya Tahan',     c: 'from-teal-400 to-cyan-500' }
+                                ],
+                                i: 0,
+                                show: true,
+                                init() {
+                                    setInterval(() => {
+                                        this.show = false;
+                                        setTimeout(() => {
+                                            this.i = (this.i + 1) % this.phrases.length;
+                                            this.show = true;
+                                        }, 450);
+                                    }, 3200);
+                                }
+                            }"
+                            class="text-transparent bg-clip-text bg-gradient-to-r inline-block transition-all duration-500 ease-out"
+                            :class="phrases[i].c + (show ? ' opacity-100 translate-y-0' : ' opacity-0 translate-y-2')"
+                            x-text="phrases[i].t"
+                        >Pintar, Pantas &amp; Teratur</span>
                     </h1>
 
                     <!-- Subheadline -->
