@@ -74,6 +74,57 @@
     .portal-slide[data-position="1"] { z-index:2; opacity:.48; filter:brightness(.5) saturate(.75); transform:translateX(12%) scale(.88); }
     .portal-slide[data-position="hidden"] { z-index:1; opacity:0; pointer-events:none; transform:translateX(-50%) scale(.72); }
     .portal-dot.active { width:1.75rem; background:#F4B740; }
+    /* ==== Lapisan teknologi hero: spotlight + rangkaian pod ==== */
+    .tech-layer { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+    .map-silhouette {
+      position:absolute; inset:5% 2% 4% -6%; width:82%; height:88%;
+      opacity:0; filter:blur(2.4px); mix-blend-mode:screen;
+      animation:mapAppear 28s ease-in-out infinite;
+    }
+    .map-silhouette path { fill:rgba(32,157,91,.07); stroke:rgba(121,212,158,.55); stroke-width:1.4; stroke-dasharray:5 10; animation:mapTrace 24s linear infinite; }
+    .map-silhouette path:last-of-type { fill:none; stroke-width:1.1; }
+    .map-silhouette circle { fill:#f4b740; filter:drop-shadow(0 0 7px #79d49e); transform-box:fill-box; transform-origin:center; animation:mapPodPulse 7s ease-in-out infinite; }
+    .map-silhouette circle:nth-of-type(2n){fill:#79d49e;animation-delay:2.3s}
+    .map-silhouette circle:nth-of-type(3n){fill:#ff8a2d;animation-delay:4.6s}
+    @keyframes mapAppear { 0%,100%{opacity:0;transform:scale(.96) translateY(10px)} 18%,68%{opacity:.34;transform:scale(1) translateY(0)} 84%{opacity:.06} }
+    @keyframes mapTrace { to{stroke-dashoffset:-180} }
+    @keyframes mapPodPulse { 0%,100%{opacity:.25;transform:scale(.65)} 50%{opacity:1;transform:scale(1.45)} }
+    .hero-phrase {
+      display:inline-block; min-height:1.15em;
+      transition:opacity .7s ease, transform .7s ease;
+      background-size:200% auto; animation:phraseShimmer 7s linear infinite;
+    }
+    .hero-phrase.is-changing { opacity:0; transform:translateY(.2em); }
+    .phrase-green { background-image:linear-gradient(90deg,#79d49e,#f4b740,#3fba75); }
+    .phrase-orange { background-image:linear-gradient(90deg,#ffb067,#ff7a21,#79d49e); }
+    .phrase-mint { background-image:linear-gradient(90deg,#d8f3e1,#3fba75,#f4b740); }
+    .phrase-gold { background-image:linear-gradient(90deg,#f4b740,#fff0b8,#79d49e); }
+    @keyframes phraseShimmer { to{background-position:200% center} }
+    .spotlight {
+      position:absolute; top:-35%; left:-15%; width:58%; height:130%;
+      background:radial-gradient(ellipse 42% 46% at 50% 50%,
+        rgba(63,186,117,.30) 0%, rgba(121,212,158,.14) 42%, transparent 70%);
+      filter:blur(8px); mix-blend-mode:screen;
+      animation:spotSweep 34s cubic-bezier(.45,.05,.35,1) infinite;
+    }
+    .spotlight::after {
+      content:""; position:absolute; inset:22% 30%;
+      background:radial-gradient(circle at 50% 50%, rgba(244,183,64,.35), transparent 65%);
+      mix-blend-mode:screen; filter:blur(6px);
+      animation:beamHue 20s ease-in-out infinite alternate;
+    }
+    @keyframes spotSweep {
+      0%   { transform:translate(0,0) scale(1);        opacity:.75; }
+      22%  { transform:translate(34%,12%) scale(1.14); opacity:.95; }
+      48%  { transform:translate(74%,-4%) scale(1);    opacity:.6;  }
+      70%  { transform:translate(40%,16%) scale(1.2);  opacity:.9;  }
+      100% { transform:translate(0,0) scale(1);        opacity:.75; }
+    }
+    @keyframes beamHue {
+      0%   { filter:blur(6px) hue-rotate(0deg);   opacity:.55; }
+      100% { filter:blur(6px) hue-rotate(70deg);  opacity:.9;  }
+    }
+    #podNet { position:absolute; inset:0; width:100%; height:100%; }
     @media(max-width:1023px){ .hero-rela-bg{background-position:62% center} }
     @media(max-width:639px){
       .portal-track{height:610px}
@@ -135,6 +186,19 @@
       <div class="absolute -left-24 top-20 h-80 w-80 rounded-full bg-rela-300/30 blur-3xl animate-glow"></div>
       <div class="absolute -right-24 top-10 h-96 w-96 rounded-full bg-amber-200/35 blur-3xl animate-glow"></div>
 
+      <!-- Lapisan teknologi digital: spotlight menyuluh + rangkaian pod merentasi Malaysia -->
+      <div class="tech-layer" aria-hidden="true">
+        <div class="spotlight"></div>
+        <svg class="map-silhouette" viewBox="0 0 820 520">
+          <path d="M205 35 238 61 251 99 243 137 266 180 253 220 272 263 254 307 232 348 223 395 194 457 168 425 174 379 154 337 168 294 151 250 167 208 153 166 177 122 169 82Z"/>
+          <path d="M414 214 457 181 516 174 573 191 632 179 692 202 730 239 702 277 651 291 611 326 554 316 505 337 458 316 421 282 384 265Z"/>
+          <path d="M205 83Q235 160 213 238T220 358M213 238Q348 163 443 243T611 253M220 358Q371 418 505 300T692 231"/>
+          <circle cx="205" cy="83" r="5"/><circle cx="213" cy="238" r="5"/><circle cx="220" cy="358" r="5"/><circle cx="194" cy="427" r="5"/>
+          <circle cx="443" cy="243" r="5"/><circle cx="505" cy="300" r="5"/><circle cx="611" cy="253" r="5"/><circle cx="692" cy="231" r="5"/>
+        </svg>
+        <canvas id="podNet"></canvas>
+      </div>
+
       <div class="relative mx-auto grid max-w-7xl items-center gap-14 px-5 pb-24 lg:grid-cols-[1.02fr_.98fr] lg:px-8 lg:pb-32">
         <div class="reveal">
           <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-rela-200 bg-white/80 px-4 py-2 text-xs font-extrabold uppercase tracking-[.16em] text-rela-800 shadow-sm glass">
@@ -142,7 +206,7 @@
             Platform Digital Rasmi RELA
           </div>
           <h1 class="max-w-3xl text-4xl font-extrabold leading-[1.12] tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Urusan RELA lebih <span class="bg-gradient-to-r from-rela-700 to-rela-500 bg-clip-text text-transparent">mudah, pantas dan teratur.</span>
+            Urusan RELA lebih <span id="heroPhrase" class="hero-phrase phrase-green bg-clip-text text-transparent">mudah, pantas dan teratur.</span>
           </h1>
           <p class="mt-6 max-w-2xl text-base leading-8 text-white/75 sm:text-lg">
             MyRELA menyatukan permohonan, semakan status, pengurusan anggota, latihan dan perkhidmatan kawalan dalam satu platform yang selamat dan mesra pengguna.
@@ -366,6 +430,30 @@
     const portalSlides = [...document.querySelectorAll('.portal-slide')];
     const portalDots = [...document.querySelectorAll('.portal-dot')];
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* Frasa hero bertukar perlahan bersama tema warna */
+    const heroPhrase = document.getElementById('heroPhrase');
+    const heroMessages = [
+      { text:'mudah, pantas dan teratur.', tone:'phrase-green' },
+      { text:'cekap, selamat dan bersepadu.', tone:'phrase-orange' },
+      { text:'pintar, responsif dan dipercayai.', tone:'phrase-mint' },
+      { text:'tersusun, telus dan bersedia.', tone:'phrase-gold' }
+    ];
+    let heroMessageIndex = 0;
+    if(heroPhrase && !reduceMotion){
+      setInterval(() => {
+        heroPhrase.classList.add('is-changing');
+        setTimeout(() => {
+          heroMessageIndex = (heroMessageIndex + 1) % heroMessages.length;
+          const message = heroMessages[heroMessageIndex];
+          heroPhrase.classList.remove('phrase-green','phrase-orange','phrase-mint','phrase-gold');
+          heroPhrase.classList.add(message.tone);
+          heroPhrase.textContent = message.text;
+          heroPhrase.classList.remove('is-changing');
+        }, 700);
+      }, 4400);
+    }
+
     let portalIndex = 0;
     let portalTimer;
     const showPortalSlide = index => {
@@ -390,6 +478,132 @@
     portalSlider.addEventListener('focusin', stopPortalSlider);
     portalSlider.addEventListener('focusout', startPortalSlider);
     startPortalSlider();
+
+    /* ==== Rangkaian pod digital merentasi Malaysia ==== */
+    (() => {
+      const canvas = document.getElementById('podNet');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const hero = canvas.closest('section');
+
+      // Pod (nod) dalam koordinat ternormal 0..1 — bentuk stilisasi Semenanjung + Borneo.
+      const pods = [
+        // Semenanjung (kiri)
+        [.10,.26],[.13,.34],[.15,.44],[.14,.30],[.24,.30],[.26,.40],
+        [.18,.54],[.20,.62],[.23,.52],[.25,.70],[.28,.62],[.30,.48],
+        // Borneo (kanan) — Sarawak & Sabah
+        [.58,.52],[.63,.58],[.69,.52],[.74,.47],[.80,.43],[.86,.40],
+        [.88,.49],[.82,.55],[.72,.62],[.66,.66]
+      ];
+
+      const palette = ['#3fba75', '#F4B740', '#79d49e', '#209d5b', '#d8f3e1'];
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      let W = 0, H = 0, dpr = 1, nodes = [], edges = [], pulses = [];
+
+      function build() {
+        const r = hero.getBoundingClientRect();
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = r.width; H = r.height;
+        canvas.width = W * dpr; canvas.height = H * dpr;
+        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        nodes = pods.map(([x, y], i) => ({ x: x * W, y: y * H, phase: Math.random() * Math.PI * 2, i }));
+
+        // Sambung nod berdekatan (jarak neighbour) + beberapa pautan merentas laut.
+        edges = [];
+        const seen = new Set();
+        const link = (a, b) => {
+          const k = a < b ? `${a}-${b}` : `${b}-${a}`;
+          if (seen.has(k) || a === b) return;
+          seen.add(k); edges.push([a, b]);
+        };
+        const maxD = Math.min(W, H) * 0.30;
+        for (let a = 0; a < nodes.length; a++) {
+          const dists = [];
+          for (let b = 0; b < nodes.length; b++) {
+            if (a === b) continue;
+            const d = Math.hypot(nodes[a].x - nodes[b].x, nodes[a].y - nodes[b].y);
+            dists.push([d, b]);
+          }
+          dists.sort((p, q) => p[0] - q[0]);
+          dists.slice(0, 2).forEach(([d, b]) => { if (d < maxD * 1.6) link(a, b); });
+        }
+        // Jambatan Semenanjung <-> Borneo supaya "seluruh Malaysia" tersambung.
+        link(11, 12); link(9, 21); link(6, 12);
+
+        // Denyutan nadi bergerak dari pod ke pod.
+        const count = reduce ? 0 : Math.min(10, edges.length);
+        pulses = Array.from({ length: count }, () => spawnPulse());
+      }
+
+      function spawnPulse() {
+        const e = edges[(Math.random() * edges.length) | 0] || [0, 1];
+        const dir = Math.random() < .5;
+        return {
+          a: dir ? e[0] : e[1],
+          b: dir ? e[1] : e[0],
+          t: 0,
+          speed: 0.00065 + Math.random() * 0.00105,
+          color: palette[(Math.random() * palette.length) | 0]
+        };
+      }
+
+      function draw(now) {
+        ctx.clearRect(0, 0, W, H);
+
+        // Garisan sambungan (halus).
+        ctx.lineWidth = 1;
+        edges.forEach(([a, b]) => {
+          ctx.strokeStyle = 'rgba(121,212,158,.16)';
+          ctx.beginPath();
+          ctx.moveTo(nodes[a].x, nodes[a].y);
+          ctx.lineTo(nodes[b].x, nodes[b].y);
+          ctx.stroke();
+        });
+
+        // Pod berdenyut.
+        nodes.forEach(n => {
+          const p = reduce ? .6 : (Math.sin(now * 0.00085 + n.phase) * .5 + .5);
+          const rad = 2.2 + p * 2.6;
+          const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, rad * 4);
+          g.addColorStop(0, `rgba(121,212,158,${.35 + p * .35})`);
+          g.addColorStop(1, 'rgba(121,212,158,0)');
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(n.x, n.y, rad * 4, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = `rgba(215,243,225,${.55 + p * .4})`;
+          ctx.beginPath(); ctx.arc(n.x, n.y, rad, 0, Math.PI * 2); ctx.fill();
+        });
+
+        // Nadi mengalir + berubah warna dari lokasi ke lokasi.
+        pulses.forEach(pl => {
+          pl.t += pl.speed * (reduce ? 0 : 1);
+          if (pl.t >= 1) { Object.assign(pl, spawnPulse()); return; }
+          const A = nodes[pl.a], B = nodes[pl.b];
+          if (!A || !B) { Object.assign(pl, spawnPulse()); return; }
+          const x = A.x + (B.x - A.x) * pl.t;
+          const y = A.y + (B.y - A.y) * pl.t;
+          const glow = ctx.createRadialGradient(x, y, 0, x, y, 9);
+          glow.addColorStop(0, pl.color);
+          glow.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.fillStyle = glow;
+          ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath(); ctx.arc(x, y, 1.6, 0, Math.PI * 2); ctx.fill();
+          ctx.globalCompositeOperation = 'source-over';
+        });
+
+        if (!reduce) requestAnimationFrame(draw);
+      }
+
+      let ro;
+      const init = () => { build(); requestAnimationFrame(draw); };
+      init();
+      if ('ResizeObserver' in window) { ro = new ResizeObserver(build); ro.observe(hero); }
+      else window.addEventListener('resize', build);
+    })();
 
     const cookieBar = document.getElementById('cookieBar');
     if (localStorage.getItem('myrela_cookie_ok')) cookieBar.remove();
