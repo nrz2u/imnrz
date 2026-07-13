@@ -1,328 +1,1310 @@
 <!DOCTYPE html>
 <html lang="ms" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REKSA - Platform Pengurusan Komuniti & Respons Pintar Negara</title>
+    
+    <!-- SEO & Open Graph Metadata -->
+    <meta name="description" content="Sistem pengurusan keselamatan, mobilisasi sukarelawan, dan respons kecemasan pintar generasi baharu untuk agensi, organisasi, dan komuniti yang berdaya tahan.">
+    <meta name="keywords" content="REKSA, Gov-Tech, Keselamatan Komuniti, Sukarelawan Malaysia, Respons Pintar, Dashboard Pengurusan">
+    <meta name="author" content="REKSA Technologies">
+    <meta property="og:title" content="REKSA - Ekosistem Pengurusan Komuniti Pintar">
+    <meta property="og:description" content="Sistem automasi respons dan penyelarasan sukarelawan bersepadu dengan analitik masa nyata.">
+    <meta property="og:type" content="website">
+    
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS & Configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            emerald: {
+                                50: '#ecfdf5',
+                                500: '#10b981',
+                                600: '#059669',
+                                900: '#064e3b'
+                            },
+                            blue: {
+                                50: '#eff6ff',
+                                500: '#3b82f6',
+                                600: '#2563eb',
+                                900: '#1e3a8a'
+                            },
+                            indigo: {
+                                50: '#f5f3ff',
+                                500: '#6366f1',
+                                600: '#4f46e5',
+                                900: '#312e81'
+                            }
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        glow: {
+                            '0%': { opacity: 0.3, filter: 'blur(40px)' },
+                            '100%': { opacity: 0.6, filter: 'blur(60px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Chart.js for real-time interactive simulation -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Alpine.js for interactive states, drawers, tabs, accordion & customization -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<!-- ============ SEO METADATA ============ -->
-<title>MyRELA — Sistem Pengurusan Maklumat RELA | Jabatan Sukarelawan Malaysia</title>
-<meta name="description" content="Platform digital rasmi Jabatan Sukarelawan Malaysia (RELA) untuk pengurusan keanggotaan, latihan, penugasan dan logistik. Mohon keanggotaan, semak status dan urus perkhidmatan kawalan dalam satu platform selamat.">
-<meta name="keywords" content="MyRELA, RELA, Jabatan Sukarelawan Malaysia, keanggotaan RELA, mohon kawalan, daftar agensi">
-<link rel="canonical" href="https://myrela.rela.gov.my/">
-
-<!-- ============ OPEN GRAPH ============ -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="MyRELA">
-<meta property="og:title" content="MyRELA — Sistem Pengurusan Maklumat RELA">
-<meta property="og:description" content="Kesiapsiagaan bermula dengan pengurusan yang teratur. Satu platform untuk keanggotaan, latihan, penugasan dan logistik RELA seluruh Malaysia.">
-<meta property="og:url" content="https://myrela.rela.gov.my/">
-<meta property="og:image" content="https://myrela.rela.gov.my/my-assets/img/logo-my-rela-min.png">
-<meta name="twitter:card" content="summary_large_image">
-
-<!-- ============ FAVICON / APP ICON (inline SVG shield) ============ -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4 56 12v18c0 15-10 26-24 30C18 56 8 45 8 30V12Z' fill='%230B1F3F'/%3E%3Cpath d='M20 30l8 8 16-16' stroke='%23F5B93F' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<meta name="theme-color" content="#0B1F3F">
-
-<!-- ============ FONTS: Plus Jakarta Sans (display) + Inter (body) ============ -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-<!-- ============ TAILWIND ============ -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  theme: {
-    extend: {
-      fontFamily: {
-        display: ['"Plus Jakarta Sans"', 'sans-serif'],
-        body: ['Inter', 'sans-serif'],
-      },
-      colors: {
-        navy: {
-          950: '#060D1D',
-          900: '#0B1F3F',
-          800: '#122B54',
-          700: '#1B3A6B',
-        },
-        royal: {
-          500: '#2563EB',
-          400: '#3B82F6',
-          300: '#7CB1FF',
-        },
-        gold: {
-          500: '#D9A62E',
-          400: '#F5B93F',
-          300: '#FFD57A',
-        },
-        mist: '#F5F7FC',
-        ink: '#101828',
-        slate2: '#51607A',
-      },
-      boxShadow: {
-        soft: '0 1px 2px rgba(16,24,40,.05), 0 8px 24px -8px rgba(16,24,40,.10)',
-        lift: '0 2px 4px rgba(16,24,40,.06), 0 20px 40px -12px rgba(11,31,63,.22)',
-        glow: '0 0 0 1px rgba(255,255,255,.06), 0 24px 60px -16px rgba(37,99,235,.45)',
-      },
-      borderRadius: { '2xl': '1.25rem', '3xl': '1.75rem' },
-    }
-  }
-}
-</script>
-
-<style>
-/* ================= BASE ================= */
-body { font-family: Inter, sans-serif; }
-h1,h2,h3,.font-display { font-family: "Plus Jakarta Sans", sans-serif; }
-
-/* Chevron rank motif — signature RELA pattern (subtle, dark sections only) */
-.chevron-field {
-  background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.028) 0 2px, transparent 2px 26px),
-                    repeating-linear-gradient(45deg,  rgba(255,255,255,.028) 0 2px, transparent 2px 26px);
-}
-
-/* Ambient glows */
-.glow-royal { background: radial-gradient(closest-side, rgba(59,130,246,.35), transparent 70%); }
-.glow-gold  { background: radial-gradient(closest-side, rgba(245,185,63,.22), transparent 70%); }
-
-/* Frosted nav on scroll */
-#nav { transition: background-color .35s, box-shadow .35s, border-color .35s; border-bottom: 1px solid transparent; }
-#nav.scrolled { background: rgba(6,13,29,.78); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-color: rgba(255,255,255,.08); box-shadow: 0 8px 30px -12px rgba(0,0,0,.45); }
-
-/* Active nav underline */
-.nav-link { position: relative; }
-.nav-link::after { content:""; position:absolute; left:0; bottom:-6px; height:2px; width:0; background:#F5B93F; border-radius:2px; transition:width .3s; }
-.nav-link:hover::after, .nav-link[aria-current="true"]::after { width:100%; }
-
-/* Buttons */
-.btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; font-weight:600; border-radius:.9rem; min-height:48px; padding:.75rem 1.5rem; transition:transform .2s, box-shadow .2s, background-color .2s, color .2s; }
-.btn:active { transform: translateY(1px) scale(.99); }
-.btn:focus-visible { outline: 3px solid #F5B93F; outline-offset: 2px; }
-.btn-primary { position:relative; overflow:hidden; color:#fff; background:linear-gradient(180deg,#3B82F6,#2563EB); box-shadow:0 8px 20px -8px rgba(37,99,235,.6), inset 0 1px 0 rgba(255,255,255,.25); }
-.btn-primary:hover { transform:translateY(-2px); box-shadow:0 14px 28px -10px rgba(37,99,235,.7), inset 0 1px 0 rgba(255,255,255,.25); }
-.btn-primary::after { content:""; position:absolute; top:0; left:-120%; width:60%; height:100%; background:linear-gradient(105deg,transparent,rgba(255,255,255,.35),transparent); transform:skewX(-20deg); transition:left .6s; }
-.btn-primary:hover::after { left:160%; }
-.btn-ghost { color:#E7EDF9; border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.04); }
-.btn-ghost:hover { background:rgba(255,255,255,.10); transform:translateY(-2px); }
-.btn-light { color:#0B1F3F; background:#fff; box-shadow:0 8px 20px -10px rgba(6,13,29,.5); }
-.btn-light:hover { transform:translateY(-2px); }
-.btn-outline-dark { color:#0B1F3F; border:1.5px solid #C9D4E8; background:#fff; }
-.btn-outline-dark:hover { border-color:#2563EB; color:#2563EB; transform:translateY(-2px); }
-
-/* Cards */
-.card { background:#fff; border:1px solid #E6EBF4; border-radius:1.25rem; box-shadow:0 1px 2px rgba(16,24,40,.05), 0 8px 24px -8px rgba(16,24,40,.08); transition:transform .3s, box-shadow .3s, border-color .3s; }
-.card:hover { transform:translateY(-6px); box-shadow:0 2px 4px rgba(16,24,40,.06), 0 24px 48px -14px rgba(11,31,63,.20); border-color:#D6E0F0; }
-
-/* Glass card (dark) */
-.glass { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-radius:1.25rem; }
-
-/* Reveal on scroll */
-.reveal { opacity:0; transform:translateY(26px); transition:opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1); }
-.reveal.in { opacity:1; transform:none; }
-.stagger > * { opacity:0; transform:translateY(22px); transition:opacity .6s ease, transform .6s ease; }
-.stagger.in > * { opacity:1; transform:none; }
-.stagger.in > *:nth-child(1){transition-delay:.05s}.stagger.in > *:nth-child(2){transition-delay:.12s}
-.stagger.in > *:nth-child(3){transition-delay:.19s}.stagger.in > *:nth-child(4){transition-delay:.26s}
-.stagger.in > *:nth-child(5){transition-delay:.33s}.stagger.in > *:nth-child(6){transition-delay:.40s}
-.stagger.in > *:nth-child(7){transition-delay:.47s}.stagger.in > *:nth-child(8){transition-delay:.54s}
-.stagger.in > *:nth-child(9){transition-delay:.61s}.stagger.in > *:nth-child(10){transition-delay:.68s}
-.stagger.in > *:nth-child(11){transition-delay:.75s}.stagger.in > *:nth-child(12){transition-delay:.82s}
-.stagger.in > *:nth-child(13){transition-delay:.89s}
-
-/* Floating hero cards */
-@keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-.floaty  { animation: floaty 6s ease-in-out infinite; }
-.floaty-2{ animation: floaty 7.5s ease-in-out infinite reverse; }
-
-/* Accordion */
-.acc-panel { display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s ease; }
-.acc-item[data-open="true"] .acc-panel { grid-template-rows:1fr; }
-.acc-panel > div { overflow:hidden; }
-.acc-icon { transition:transform .3s; }
-.acc-item[data-open="true"] .acc-icon { transform:rotate(45deg); }
-.acc-item[data-open="true"] { border-color:#BBD0F5; background:linear-gradient(180deg,#F7FAFF,#fff); }
-
-/* Testimonial slider */
-#slider-track { transition:transform .6s cubic-bezier(.22,.61,.36,1); }
-
-/* Scroll progress */
-#progress { transform-origin:left; transform:scaleX(0); }
-
-/* Skip link */
-.skip-link { position:absolute; left:1rem; top:-4rem; z-index:100; transition:top .2s; }
-.skip-link:focus { top:1rem; }
-
-/* Tabs */
-.tab-btn[aria-selected="true"] { background:#0B1F3F; color:#fff; box-shadow:0 8px 18px -8px rgba(11,31,63,.5); }
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
-  .reveal, .stagger > * { opacity:1 !important; transform:none !important; }
-}
-</style>
+    <style>
+        /* Custom Premium CSS Transitions & Effects */
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .light .glassmorphism {
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+        .hero-background {
+            background-image:
+                linear-gradient(90deg, rgba(3, 10, 18, 0.96) 0%, rgba(3, 10, 18, 0.86) 43%, rgba(3, 10, 18, 0.46) 72%, rgba(3, 10, 18, 0.62) 100%),
+                url('assets/images/rela-hero.jpg');
+            background-position: center 32%;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        .slider-image-panel {
+            clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+        }
+        @media (max-width: 767px) {
+            .hero-background {
+                background-position: 62% center;
+            }
+            .slider-image-panel {
+                clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
+            }
+        }
+    </style>
 </head>
-
-<body class="bg-white text-ink antialiased">
-
-<a href="#utama" class="skip-link btn btn-light">Langkau ke kandungan utama</a>
-
-<!-- Scroll progress -->
-<div id="progress" class="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-royal-500 via-royal-300 to-gold-400 z-[60]"></div>
-
-<!-- ============ ANNOUNCEMENT BAR ============ -->
-<div id="announce" class="relative z-[55] bg-navy-950 text-white/85 text-sm">
-  <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-3">
-    <span class="inline-flex h-2 w-2 rounded-full bg-gold-400 animate-pulse shrink-0" aria-hidden="true"></span>
-    <p class="truncate"><strong class="text-white">Notis penyelenggaraan:</strong> Sistem akan diselenggara pada 18 Julai, 11:00 PM – 3:00 AM. Perkhidmatan mungkin terganggu seketika.</p>
-    <button id="announce-close" class="ml-auto shrink-0 rounded-lg p-1.5 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-400" aria-label="Tutup notis">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-  </div>
-</div>
-
-<!-- ============ NAVIGATION ============ -->
-<header id="nav" class="fixed top-0 inset-x-0 z-50">
-  <nav class="max-w-7xl mx-auto px-4 lg:px-6 h-[72px] flex items-center gap-6" aria-label="Navigasi utama">
-    <!-- Logo -->
-    <a href="#utama" class="flex items-center gap-2.5 shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-400 rounded-lg">
-      <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true">
-        <path d="M32 4 56 12v18c0 15-10 26-24 30C18 56 8 45 8 30V12Z" fill="#fff" fill-opacity=".1" stroke="#F5B93F" stroke-width="2.5"/>
-        <path d="M20 30l8 8 16-16" stroke="#F5B93F" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="font-display font-800 text-white text-xl font-extrabold tracking-tight">My<span class="text-gold-400">RELA</span></span>
-    </a>
-
-    <!-- Desktop links -->
-    <ul class="hidden lg:flex items-center gap-8 mx-auto text-[15px] font-medium text-white/80">
-      <li><a class="nav-link hover:text-white" aria-current="true" href="#utama">Utama</a></li>
-      <li><a class="nav-link hover:text-white" href="#perkhidmatan">Perkhidmatan</a></li>
-      <li><a class="nav-link hover:text-white" href="#modul">Modul</a></li>
-      <li><a class="nav-link hover:text-white" href="#cara">Cara Memohon</a></li>
-      <li><a class="nav-link hover:text-white" href="#faq">Soalan Lazim</a></li>
-    </ul>
-
-    <!-- Desktop CTA -->
-    <div class="hidden lg:flex items-center gap-3 shrink-0">
-      <a href="#" class="btn btn-ghost !min-h-[44px] !py-2.5 !px-5 text-[15px]">Log Masuk</a>
-      <a href="#cta" class="btn btn-primary !min-h-[44px] !py-2.5 !px-5 text-[15px]">Daftar Sekarang</a>
+<body 
+    x-data="{ 
+        darkMode: true, 
+        accentColor: 'emerald', 
+        mobileMenu: false, 
+        scrolled: false,
+        activePersona: 'pegawai',
+        toastActive: false,
+        toastMessage: '',
+        toastType: 'success',
+        demoModal: false,
+        triggerToast(msg, type = 'success') {
+            this.toastMessage = msg;
+            this.toastType = type;
+            this.toastActive = true;
+            setTimeout(() => { this.toastActive = false; }, 4000);
+        }
+    }" 
+    :class="{ 'dark bg-[#070A13] text-slate-100': darkMode, 'bg-slate-50 text-slate-800 light': !darkMode }" 
+    @scroll.window="scrolled = (window.pageYOffset > 50) ? true : false"
+    class="transition-colors duration-300 font-sans selection:bg-emerald-500 selection:text-white"
+>
+    <!-- Toast Notification Banner -->
+    <div 
+        x-cloak 
+        x-show="toastActive" 
+        x-transition:enter="transition ease-out duration-300 transform" 
+        x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2" 
+        x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0" 
+        x-transition:leave="transition ease-in duration-200" 
+        x-transition:leave-start="opacity-100" 
+        x-transition:leave-end="opacity-0" 
+        class="fixed bottom-6 right-6 z-50 max-w-sm w-full bg-white dark:bg-[#111827] shadow-2xl rounded-2xl border border-emerald-500/20 p-4 flex items-center space-x-4"
+    >
+        <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+             :class="toastType === 'success' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-500' : 'bg-rose-100 dark:bg-rose-900/30 text-rose-500'">
+            <i class="fa-solid" :class="toastType === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
+        </div>
+        <div class="flex-1">
+            <p class="text-sm font-semibold text-slate-900 dark:text-white" x-text="toastType === 'success' ? 'Berjaya' : 'Ralat'"></p>
+            <p class="text-xs text-slate-500 dark:text-slate-400" x-text="toastMessage"></p>
+        </div>
+        <button @click="toastActive = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
 
-    <!-- Mobile burger -->
-    <button id="burger" class="lg:hidden ml-auto text-white p-2.5 rounded-xl hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-400" aria-label="Buka menu" aria-expanded="false" aria-controls="drawer">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-    </button>
-  </nav>
-</header>
-
-<!-- Mobile drawer -->
-<div id="drawer" class="fixed inset-0 z-[70] hidden" role="dialog" aria-modal="true" aria-label="Menu mudah alih">
-  <div id="drawer-backdrop" class="absolute inset-0 bg-navy-950/70 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
-  <div id="drawer-panel" class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-navy-950 chevron-field p-6 flex flex-col translate-x-full transition-transform duration-300">
-    <div class="flex items-center justify-between mb-10">
-      <span class="font-display font-extrabold text-white text-xl">My<span class="text-gold-400">RELA</span></span>
-      <button id="drawer-close" class="text-white p-2.5 rounded-xl hover:bg-white/10" aria-label="Tutup menu">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <ul class="space-y-1 text-lg font-medium text-white/85">
-      <li><a class="block py-3.5 px-4 rounded-xl hover:bg-white/8 hover:text-white drawer-link" href="#utama">Utama</a></li>
-      <li><a class="block py-3.5 px-4 rounded-xl hover:bg-white/8 hover:text-white drawer-link" href="#perkhidmatan">Perkhidmatan</a></li>
-      <li><a class="block py-3.5 px-4 rounded-xl hover:bg-white/8 hover:text-white drawer-link" href="#modul">Modul</a></li>
-      <li><a class="block py-3.5 px-4 rounded-xl hover:bg-white/8 hover:text-white drawer-link" href="#cara">Cara Memohon</a></li>
-      <li><a class="block py-3.5 px-4 rounded-xl hover:bg-white/8 hover:text-white drawer-link" href="#faq">Soalan Lazim</a></li>
-    </ul>
-    <div class="mt-auto space-y-3 pt-8">
-      <a href="#" class="btn btn-ghost w-full">Log Masuk</a>
-      <a href="#cta" class="btn btn-primary w-full drawer-link">Daftar Sekarang</a>
-    </div>
-  </div>
-</div>
-
-<main id="utama">
-
-<!-- ============ HERO ============ -->
-<section class="relative bg-navy-950 chevron-field overflow-hidden">
-  <!-- Background Image with Overlay for better text readability -->
-  <div class="absolute inset-0 z-[-1]" style="background-image: linear-gradient(to top, rgba(6,13,29,0.85) 0%, rgba(6,13,29,0.6) 100%), url('SAMBUTAN_HARI_ULANG_TAHUN_RELA_KE_46_1574577004.jpg'); background-size: cover; background-position: center; opacity: 1;"></div>
-
-  <!-- Ambient glows (layered above the image, below content) -->
-  <div class="absolute -top-40 -left-40 w-[560px] h-[560px] glow-royal rounded-full pointer-events-none" aria-hidden="true"></div>
-  <div class="absolute top-1/3 -right-48 w-[640px] h-[640px] glow-gold rounded-full pointer-events-none" aria-hidden="true"></div>
-
-  <div class="relative z-10 max-w-7xl mx-auto px-4 lg:px-6 pt-40 pb-20 lg:pt-48 lg:pb-28 grid lg:grid-cols-12 gap-14 items-center">
-    <!-- Copy -->
-    <div class="lg:col-span-6">
-      <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[13px] font-medium text-gold-300 mb-6">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 3 6v6c0 5.5 3.8 9.7 9 10 5.2-.3 9-4.5 9-10V6Z"/></svg>
-        Sistem Pengurusan Maklumat RELA · Versi 2
-      </span>
-
-      <h1 class="font-display font-extrabold text-white text-4xl sm:text-5xl xl:text-[3.6rem] leading-[1.08] tracking-tight">
-        Kesiapsiagaan bermula dengan pengurusan yang <span class="text-transparent bg-clip-text bg-gradient-to-r from-royal-300 to-gold-300">teratur</span>.
-      </h1>
-
-      <p class="mt-6 text-lg text-white/70 leading-relaxed max-w-xl">
-        Satu platform selamat untuk keanggotaan, latihan, penugasan dan logistik RELA seluruh Malaysia — daripada permohonan pertama sehingga ke lapangan tugas.
-      </p>
-
-      <div class="mt-9 flex flex-col sm:flex-row gap-4">
-        <a href="#cta" class="btn btn-primary text-base px-8" id="magnetic-cta">
-          Mohon Keanggotaan
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-        <a href="#perkhidmatan" class="btn btn-ghost text-base px-8">Semak Status Keahlian</a>
-      </div>
-
-      <!-- Trust indicators -->
-      <dl class="mt-12 grid grid-cols-3 gap-6 max-w-md">
-        <div>
-          <dt class="sr-only">Anggota berdaftar</dt>
-          <dd class="font-display font-extrabold text-2xl sm:text-3xl text-white"><span class="counter" data-target="3.1" data-decimals="1">0</span>J+</dd>
-          <dd class="text-[13px] text-white/55 mt-1">Anggota berdaftar</dd>
-        </div>
-        <div>
-          <dt class="sr-only">Daerah</dt>
-          <dd class="font-display font-extrabold text-2xl sm:text-3xl text-white"><span class="counter" data-target="160">0</span>+</dd>
-          <dd class="text-[13px] text-white/55 mt-1">Pejabat daerah</dd>
-        </div>
-        <div>
-          <dt class="sr-only">Akses</dt>
-          <dd class="font-display font-extrabold text-2xl sm:text-3xl text-white">24/7</dd>
-          <dd class="text-[13px] text-white/55 mt-1">Akses dalam talian</dd>
-        </div>
-      </dl>
+    <!-- Floating Theme and Accent Switcher (Premium UI Control) -->
+    <div class="fixed bottom-6 left-6 z-50 flex items-center space-x-2 glassmorphism border border-slate-200/20 dark:border-white/10 p-2 rounded-full shadow-lg">
+        <!-- Dark/Light Toggle -->
+        <button 
+            @click="darkMode = !darkMode; triggerToast(darkMode ? 'Mod gelap diaktifkan' : 'Mod terang diaktifkan', 'success')" 
+            class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 bg-slate-200 dark:bg-white/10 hover:scale-105"
+            title="Tukar Tema"
+        >
+            <i class="fa-solid" :class="darkMode ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-900'"></i>
+        </button>
+        <div class="h-6 w-px bg-slate-300 dark:bg-white/10"></div>
+        <!-- Color Accents -->
+        <button @click="accentColor = 'emerald'; triggerToast('Tema Emerald diaktifkan', 'success')" class="w-6 h-6 rounded-full bg-emerald-500 hover:scale-110 transition-transform" :class="accentColor === 'emerald' ? 'ring-2 ring-offset-2 ring-emerald-500' : ''"></button>
+        <button @click="accentColor = 'blue'; triggerToast('Tema Blue Corporate diaktifkan', 'success')" class="w-6 h-6 rounded-full bg-blue-500 hover:scale-110 transition-transform" :class="accentColor === 'blue' ? 'ring-2 ring-offset-2 ring-blue-500' : ''"></button>
+        <button @click="accentColor = 'indigo'; triggerToast('Tema Royal Indigo diaktifkan', 'success')" class="w-6 h-6 rounded-full bg-indigo-500 hover:scale-110 transition-transform" :class="accentColor === 'indigo' ? 'ring-2 ring-offset-2 ring-indigo-500' : ''"></button>
     </div>
 
-    <!-- Visual: dashboard mockup -->
-    <div class="lg:col-span-6 relative" aria-hidden="true">
-      <div class="absolute inset-0 -m-8 glow-royal rounded-full blur-2xl opacity-70"></div>
+    <!-- Navigation Bar -->
+    <header 
+        :class="{ 'bg-white/80 dark:bg-[#070A13]/80 backdrop-blur-md shadow-lg border-b border-slate-200/10 py-3': scrolled, 'bg-transparent py-5': !scrolled }" 
+        class="fixed top-0 left-0 w-full z-40 transition-all duration-300"
+    >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="#" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300"
+                         :class="{
+                             'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)]': accentColor === 'emerald',
+                             'bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)]': accentColor === 'blue',
+                             'bg-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)]': accentColor === 'indigo'
+                         }">
+                        <i class="fa-solid fa-shield-halved text-white text-lg animate-pulse-slow"></i>
+                    </div>
+                    <div>
+                        <span class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white transition-all group-hover:opacity-80">
+                            REKSA<span :class="{ 'text-emerald-500': accentColor === 'emerald', 'text-blue-500': accentColor === 'blue', 'text-indigo-500': accentColor === 'indigo' }">.</span>
+                        </span>
+                        <p class="text-[9px] uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">Respons & Keselamatan</p>
+                    </div>
+                </a>
 
-      <!-- Browser frame -->
-      <div class="relative rounded-2xl border border-white/12 bg-navy-900/80 backdrop-blur shadow-glow overflow-hidden">
-        <div class="flex items-center gap-1.5 px-4 py-3 border-b border-white/10">
-          <span class="h-2.5 w-2.5 rounded-full bg-white/20"></span>
-          <span class="h-2.5 w-2.5 rounded-full bg-white/20"></span>
-          <span class="h-2.5 w-2.5 rounded-full bg-white/20"></span>
-          <span class="ml-3 text-[11px] text-white/40 font-medium tracking-wide">myrela.rela.gov.my/dashboard</span>
-        </div>
-        <div class="p-5 grid grid-cols-3 gap-4">
-          <div class="col-span-3 flex items-center justify-between">
-            <div>
-              <p class="text-[11px] uppercase tracking-widest text-white/40 font-semibold">Bilik Gerakan</p>
-              <p class="text-white font-display font-bold text-lg mt-0.5">Ringkasan Operasi Harian</p>
+                <!-- Desktop Navigation Menu -->
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#masalah" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Masalah & Solusi</a>
+                    <a href="#bento" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Ciri Utama</a>
+                    <a href="#showcase" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Showcase</a>
+                    <a href="#steps" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Proses</a>
+                    <a href="#faq" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Soalan Lazim</a>
+                </nav>
+
+                <!-- Navigation Action Buttons -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <button @click="triggerToast('Fungsi Log Masuk Portal akan dilancarkan tidak lama lagi.', 'info')" class="text-sm font-semibold hover:opacity-80 transition-opacity">Log Masuk</button>
+                    <button 
+                        @click="demoModal = true"
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-lg transform active:scale-95 transition-all"
+                        :class="{
+                            'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20': accentColor === 'emerald',
+                            'bg-blue-500 hover:bg-blue-600 shadow-blue-500/20': accentColor === 'blue',
+                            'bg-indigo-500 hover:bg-indigo-600 shadow-indigo-500/20': accentColor === 'indigo'
+                        }"
+                    >
+                        Hubungi Kami <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <div class="md:hidden flex items-center space-x-3">
+                    <button 
+                        @click="mobileMenu = !mobileMenu" 
+                        class="p-2 rounded-lg text-slate-600 dark:text-slate-300 focus:outline-none"
+                    >
+                        <i class="fa-solid text-xl" :class="mobileMenu ? 'fa-xmark' : 'fa-bars'"></i>
+                    </button>
+                </div>
             </div>
-            <span class="text-[11px] font-semibold text-emerald-300 bg-emerald-400/10 border border-emerald-300/20 rounded-full px-3 py-1">● Sistem Aktif</span>
-          </div>
-          <div class="rounded-xl bg-white/5 border border-white/10 p-4">
-            <p class="text-[11px] text-white/45">Penugasan aktif</p>
-            <p class="font-display font-extrabold text-2xl text-white mt-1">248</p>
-            <div class="mt-3 h-1.5 rounded-full bg-white/10"><div class="h-full w-[72%] rounded-full bg-gradient-to-r from-royal-400 to-royal-300"></div></div>
-          </div>
-          <div class="rounded-xl bg-white/5 border border-white/10 p-4">
-            <p class="text-[11px] text-white/45">Permohonan baharu</p>
-            <p class="font-display font-extrabold text-2xl text-white mt-1">1,032</p>
-            <div class="mt-3 h-1.5 rounded-full bg-white/10"><div class="h-full w-[58%] rounded-full bg-gradient-to-r from-gold-400 to-gold-300"></div></div>
-          </div>
-          <div class="rounded-xl bg-white/5 border border-white/10 p-4">
-            <p class="text-[11px] text-white/45">Kehadiran latihan</p><img src="SAMBUTAN_HARI_ULANG_TAHUN_RELA_KE_46_1574577004.jpg" class="SAMBUTAN_HARI_ULANG_TAHUN_RELA_KE_46_1574577004.jpg" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; opacity: 1.0; z-index: -1;">
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div 
+            x-show="mobileMenu" 
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-4"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-4"
+            class="md:hidden bg-white dark:bg-[#0C1222] border-b border-slate-200 dark:border-white/5 shadow-2xl px-4 py-6 space-y-4"
+        >
+            <nav class="flex flex-col space-y-4">
+                <a href="#masalah" @click="mobileMenu = false" class="text-base font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-500">Masalah & Solusi</a>
+                <a href="#bento" @click="mobileMenu = false" class="text-base font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-500">Ciri Utama</a>
+                <a href="#showcase" @click="mobileMenu = false" class="text-base font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-500">Showcase</a>
+                <a href="#steps" @click="mobileMenu = false" class="text-base font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-500">Proses</a>
+                <a href="#faq" @click="mobileMenu = false" class="text-base font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-500">Soalan Lazim</a>
+            </nav>
+            <div class="border-t border-slate-200 dark:border-white/10 pt-4 flex flex-col space-y-3">
+                <button @click="triggerToast('Akses log masuk mudah alih sedang dikemas kini.', 'info')" class="w-full text-center py-2.5 font-medium border border-slate-200 dark:border-white/10 rounded-xl">Log Masuk</button>
+                <button 
+                    @click="demoModal = true; mobileMenu = false"
+                    class="w-full text-center py-2.5 rounded-xl font-semibold text-white"
+                    :class="{
+                        'bg-emerald-500': accentColor === 'emerald',
+                        'bg-blue-500': accentColor === 'blue',
+                        'bg-indigo-500': accentColor === 'indigo'
+                    }"
+                >
+                    Hubungi Kami
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-background relative pt-32 pb-24 overflow-hidden lg:pt-40 lg:pb-36 text-white">
+        <!-- Background Glowing Ambient Orbs -->
+        <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-pulse-slow"
+                 :class="{
+                     'bg-emerald-500/40': accentColor === 'emerald',
+                     'bg-blue-500/40': accentColor === 'blue',
+                     'bg-indigo-500/40': accentColor === 'indigo'
+                 }"></div>
+            <div class="absolute top-1/2 -right-40 w-96 h-96 rounded-full mix-blend-screen filter blur-[100px] opacity-25 animate-pulse-slow delay-1000"
+                 :class="{
+                     'bg-cyan-500/30': accentColor === 'emerald' || accentColor === 'blue',
+                     'bg-purple-500/30': accentColor === 'indigo'
+                 }"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Content Area -->
+                <div class="lg:col-span-6 space-y-8 text-center lg:text-left">
+                    <!-- Eyebrow Badge -->
+                    <div class="inline-flex items-center space-x-2 bg-emerald-500/10 dark:bg-emerald-500/5 px-4 py-2 rounded-full border border-emerald-500/20">
+                        <span class="flex h-2 w-2 relative">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span class="text-xs font-bold uppercase tracking-wider" :class="{ 'text-emerald-500': accentColor === 'emerald', 'text-blue-500': accentColor === 'blue', 'text-indigo-500': accentColor === 'indigo' }">
+                            Platform Digital Generasi Baharu
+                        </span>
+                    </div>
+
+                    <!-- Main Headline -->
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+                        Pengurusan Lebih <br class="hidden sm:inline">
+                        <span class="text-transparent bg-clip-text"
+                              :class="{
+                                  'bg-gradient-to-r from-emerald-400 to-teal-500': accentColor === 'emerald',
+                                  'bg-gradient-to-r from-blue-400 to-indigo-500': accentColor === 'blue',
+                                  'bg-gradient-to-r from-indigo-400 to-purple-500': accentColor === 'indigo'
+                              }">Pintar, Pantas & Teratur</span>
+                    </h1>
+
+                    <!-- Subheadline -->
+                    <p class="text-base sm:text-lg text-slate-200 max-w-xl mx-auto lg:mx-0 leading-relaxed drop-shadow-md">
+                        Permudahkan tadbir urus keselamatan, mempercepat mobilisasi sukarelawan secara automatik, serta pantau laporan insiden zon kritikal melalui satu platform awan pintar bersepadu.
+                    </p>
+
+                    <!-- CTAs -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button 
+                            @click="demoModal = true"
+                            class="w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold text-white shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+                            :class="{
+                                'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/35': accentColor === 'emerald',
+                                'bg-blue-500 hover:bg-blue-600 shadow-blue-500/35': accentColor === 'blue',
+                                'bg-indigo-500 hover:bg-indigo-600 shadow-indigo-500/35': accentColor === 'indigo'
+                            }"
+                        >
+                            Mulakan Sekarang
+                        </button>
+                        <a 
+                            href="#showcase"
+                            class="w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold text-white border border-white/40 bg-black/15 hover:bg-white/10 transition-all duration-300 flex items-center justify-center backdrop-blur-sm"
+                        >
+                            <i class="fa-solid fa-play mr-2 text-xs"></i> Lihat Demo
+                        </a>
+                    </div>
+
+                    <!-- Trust Indicators (Live Realtime Counter) -->
+                    <div class="pt-6 border-t border-white/20 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold" :class="{ 'text-emerald-500': accentColor === 'emerald', 'text-blue-500': accentColor === 'blue', 'text-indigo-500': accentColor === 'indigo' }">45K+</p>
+                            <p class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Ahli Aktif</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-white">12 Saat</p>
+                            <p class="text-[11px] text-slate-300 uppercase tracking-wider font-semibold">Masa Respons</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-white">99.9%</p>
+                            <p class="text-[11px] text-slate-300 uppercase tracking-wider font-semibold">Uptime Sistem</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Visual Area: Interactive Mockup Panel -->
+                <div class="lg:col-span-6 relative animate-float">
+                    <!-- Glassy Frame Wrapper -->
+                    <div class="relative bg-slate-950/80 dark:bg-slate-950/90 rounded-2xl border border-white/10 p-4 sm:p-6 shadow-2xl overflow-hidden">
+                        <!-- Header Bar of Mockup -->
+                        <div class="flex items-center justify-between pb-4 border-b border-white/5 mb-4">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                                <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                <span class="text-xs text-slate-400 font-mono ml-2">reksa_admin_panel.exe</span>
+                            </div>
+                            <span class="text-xs font-semibold px-2 py-1 rounded bg-rose-500/20 text-rose-400 flex items-center gap-1.5 animate-pulse">
+                                <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span> KECEMASAN AKTIF
+                            </span>
+                        </div>
+
+                        <!-- Mockup Internal Content Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Left: Status Stats -->
+                            <div class="space-y-4">
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5">
+                                    <p class="text-xs text-slate-400">Anggota Di Lapangan</p>
+                                    <p class="text-2xl font-bold text-white tracking-tight mt-1">1,482 <span class="text-xs text-emerald-400 font-normal">(+12%)</span></p>
+                                </div>
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5">
+                                    <p class="text-xs text-slate-400">Aduan Belum Selesai</p>
+                                    <p class="text-2xl font-bold text-white tracking-tight mt-1">18 <span class="text-xs text-rose-400 font-normal">Mendesak</span></p>
+                                </div>
+                                <div class="bg-white/5 rounded-xl p-4 border border-white/5">
+                                    <h4 class="text-xs text-slate-400 mb-2">Saluran Respons Pantas</h4>
+                                    <div class="space-y-1.5">
+                                        <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                            <div class="h-full bg-emerald-500 w-[85%]"></div>
+                                        </div>
+                                        <div class="flex justify-between text-[10px] text-slate-400">
+                                            <span>Kadar Kecekapan</span>
+                                            <span>85%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Map/Operational Simulation -->
+                            <div class="bg-white/5 rounded-xl p-4 border border-white/5 flex flex-col justify-between h-52 relative overflow-hidden">
+                                <!-- Grid lines simulation in background -->
+                                <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+                                
+                                <div class="relative z-10 flex items-center justify-between">
+                                    <span class="text-xs font-semibold text-slate-300">Zon Kuala Lumpur</span>
+                                    <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-mono">GPS AKTIF</span>
+                                </div>
+
+                                <!-- Floating Dot representing GPS markers -->
+                                <div class="relative z-10 my-auto flex justify-center items-center">
+                                    <div class="relative flex h-16 w-16 items-center justify-center">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
+                                        <span class="animate-ping absolute inline-flex h-3/4 w-3/4 rounded-full bg-emerald-400 opacity-35"></span>
+                                        <div class="relative h-6 w-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center shadow-lg">
+                                            <i class="fa-solid fa-person-circle-check text-[10px] text-white"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="relative z-10 text-[10px] text-slate-400 border-t border-white/5 pt-2">
+                                    <p class="truncate"><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> Zon Sentul: Mobilisasi Ambulans</p>
+                                    <p class="text-emerald-400 text-[9px] mt-0.5">Selesai dalam 4 minit</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Simulator Sandbox triggers inside Hero Section -->
+                        <div class="mt-4 bg-white/5 rounded-xl p-3 border border-white/10 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span class="text-xs text-slate-300">Simulasikan Kecemasan Zon:</span>
+                            </div>
+                            <div class="flex space-x-1.5">
+                                <button @click="triggerToast('Amaran Kecemasan diaktifkan untuk Zon Cheras!', 'error')" class="px-2.5 py-1 text-[10px] font-semibold bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white rounded transition-colors">Zon Cheras</button>
+                                <button @click="triggerToast('Amaran Kecemasan diaktifkan untuk Zon Gombak!', 'error')" class="px-2.5 py-1 text-[10px] font-semibold bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-white rounded transition-colors">Zon Gombak</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategic Partners & Social Proof -->
+    <section class="py-12 border-t border-b border-slate-200/10 dark:border-white/5 bg-slate-100/50 dark:bg-white/2">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-xs font-semibold uppercase tracking-widest text-slate-400 mb-8">Rakan Strategik Integriti & Kolaborasi Keselamatan</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center opacity-60 dark:opacity-40">
+                <!-- Strategic Partner 1 -->
+                <div class="flex items-center space-x-2 grayscale hover:grayscale-0 transition-all cursor-pointer">
+                    <i class="fa-solid fa-building-shield text-2xl text-slate-400 dark:text-slate-300"></i>
+                    <span class="font-bold text-sm tracking-wider">KEMENTERIAN DALAM NEGERI</span>
+                </div>
+                <!-- Strategic Partner 2 -->
+                <div class="flex items-center space-x-2 grayscale hover:grayscale-0 transition-all cursor-pointer">
+                    <i class="fa-solid fa-handshake-angle text-2xl text-slate-400 dark:text-slate-300"></i>
+                    <span class="font-bold text-sm tracking-wider">SUKARELAWAN NEGARA</span>
+                </div>
+                <!-- Strategic Partner 3 -->
+                <div class="flex items-center space-x-2 grayscale hover:grayscale-0 transition-all cursor-pointer">
+                    <i class="fa-solid fa-hospital-user text-2xl text-slate-400 dark:text-slate-300"></i>
+                    <span class="font-bold text-sm tracking-wider">RESPONS KECEMASAN 999</span>
+                </div>
+                <!-- Strategic Partner 4 -->
+                <div class="flex items-center space-x-2 grayscale hover:grayscale-0 transition-all cursor-pointer">
+                    <i class="fa-solid fa-network-wired text-2xl text-slate-400 dark:text-slate-300"></i>
+                    <span class="font-bold text-sm tracking-wider">CIVIC TECH ALLIANCE</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Masalah & Solusi (Problem & Solution Section) -->
+    <section id="masalah" class="py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header Section -->
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Merungkai Kemelut Pengurusan Manual</h2>
+                <p class="text-base sm:text-lg text-slate-500 dark:text-slate-400">Sistem komunikasi yang lapuk melambatkan proses bantuan. REKSA direka khas untuk merapatkan jurang kecekapan operasi keselamatan komuniti.</p>
+            </div>
+
+            <!-- Problem vs Solution Matrix -->
+            <div class="grid lg:grid-cols-2 gap-8 items-stretch">
+                <!-- Column 1: Cabaran Lama -->
+                <div class="bg-rose-500/5 dark:bg-rose-950/10 border border-rose-500/20 rounded-3xl p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-500 flex items-center justify-center mb-6">
+                            <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-rose-600 dark:text-rose-400 mb-2">Cabaran Operasi Tradisional</h3>
+                        <p class="text-sm text-slate-400">Kekangan kaedah manual yang kerap melambatkan tindak balas agensi dan kompromi terhadap keselamatan komuniti.</p>
+                    </div>
+
+                    <div class="space-y-4 pt-6 border-t border-rose-500/10">
+                        <div class="flex items-start space-x-3">
+                            <div class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Mobilisasi Anggota yang Lambat</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Panggilan telefon secara berperingkat memakan masa berjam-jam untuk mengumpulkan sukarelawan.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Ketiadaan Lokasi Sebenar (GPS Tracking)</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Penyelaras sukar mengesan kedudukan tepat anggota di lapangan, meningkatkan ralat geografi.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Laporan Berasingan & Bertindih</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Rekod aduan bertulis bercampur aduk, menyukarkan analitik data kecemasan makro.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 2: Solusi Pintar REKSA -->
+                <div class="bg-emerald-500/5 dark:bg-emerald-950/10 border border-emerald-500/20 rounded-3xl p-6 sm:p-8 space-y-6 flex flex-col justify-between"
+                     :class="{
+                         'border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-950/10': accentColor === 'emerald',
+                         'border-blue-500/20 bg-blue-500/5 dark:bg-blue-950/10': accentColor === 'blue',
+                         'border-indigo-500/20 bg-indigo-500/5 dark:bg-indigo-950/10': accentColor === 'indigo'
+                     }">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl text-white flex items-center justify-center mb-6 shadow-md"
+                             :class="{
+                                 'bg-emerald-500': accentColor === 'emerald',
+                                 'bg-blue-500': accentColor === 'blue',
+                                 'bg-indigo-500': accentColor === 'indigo'
+                             }">
+                            <i class="fa-solid fa-bolt text-xl"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold mb-2"
+                            :class="{
+                                'text-emerald-500': accentColor === 'emerald',
+                                'text-blue-500': accentColor === 'blue',
+                                'text-indigo-500': accentColor === 'indigo'
+                            }">Solusi Pintar REKSA</h3>
+                        <p class="text-sm text-slate-400">Ekosistem digital moden membawakan kepantasan mutlak, integrasi awan bersepadu, dan pelaporan pintar.</p>
+                    </div>
+
+                    <div class="space-y-4 pt-6 border-t border-emerald-500/10">
+                        <div class="flex items-start space-x-3">
+                            <div class="mt-1 flex-shrink-0 w-5 h-5 rounded-full text-white flex items-center justify-center text-[10px]"
+                                 :class="{
+                                     'bg-emerald-500': accentColor === 'emerald',
+                                     'bg-blue-500': accentColor === 'blue',
+                                     'bg-indigo-500': accentColor === 'indigo'
+                                 }">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Mobilisasi Pintar Satu-Klik</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Teknologi geofencing menyalurkan amaran terus ke telefon bimbit sukarelawan berdekatan.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="mt-1 flex-shrink-0 w-5 h-5 rounded-full text-white flex items-center justify-center text-[10px]"
+                                 :class="{
+                                     'bg-emerald-500': accentColor === 'emerald',
+                                     'bg-blue-500': accentColor === 'blue',
+                                     'bg-indigo-500': accentColor === 'indigo'
+                                 }">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Pemantauan Lokasi Real-Time</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Peta interaktif membolehkan penyelarasan posisi anggota secara tepat serta-merta.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="mt-1 flex-shrink-0 w-5 h-5 rounded-full text-white flex items-center justify-center text-[10px]"
+                                 :class="{
+                                     'bg-emerald-500': accentColor === 'emerald',
+                                     'bg-blue-500': accentColor === 'blue',
+                                     'bg-indigo-500': accentColor === 'indigo'
+                                 }">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Automasi Laporan & AI Insight</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Mengumpul laporan secara struktur demi mengesan trend jenayah atau kawasan banjir berisiko.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Grid Features Section -->
+    <section id="bento" class="py-24 bg-slate-100/50 dark:bg-white/2 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Ciri Generasi Masa Hadapan</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Segalanya Terkawal dalam Satu Platform</h2>
+                <p class="text-base sm:text-lg text-slate-400">Dikuasakan oleh seni bina cloud moden bagi kelajuan, integriti data, dan kebolehgunaan tinggi.</p>
+            </div>
+
+            <!-- Bento Grid Structure -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Box 1: Real-time Dispatch Panel (Medium Grid) -->
+                <div class="md:col-span-2 bg-white dark:bg-slate-900/40 rounded-3xl p-6 sm:p-8 border border-slate-200/50 dark:border-white/5 flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
+                    <div class="space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+                            <i class="fa-solid fa-tower-broadcast text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Penyelarasan & Mobilisasi Geofencing</h3>
+                        <p class="text-sm text-slate-400">Sistem pintar secara automatik mengenal pasti radius anggota terdekat dalam lingkungan kawasan kejadian dan menghantar notifikasi kecemasan dalam milisaat.</p>
+                    </div>
+                    <!-- Small Graphic Simulation inside Grid Box -->
+                    <div class="mt-8 bg-slate-100 dark:bg-[#070A13] border border-slate-200/50 dark:border-white/5 rounded-2xl p-4 flex justify-between items-center space-x-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="flex h-3.5 w-3.5 relative">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-rose-500"></span>
+                            </span>
+                            <div>
+                                <p class="text-xs font-bold">Aduan Kebakaran Hutan</p>
+                                <p class="text-[10px] text-slate-400">Zon Cheras - GPS: 3.124, 101.745</p>
+                            </div>
+                        </div>
+                        <span class="text-[11px] bg-indigo-500/20 text-indigo-400 px-2.5 py-1 rounded-full font-bold">4 Sukarelawan Dipanggil</span>
+                    </div>
+                </div>
+
+                <!-- Box 2: Security & Encryption (Small Grid) -->
+                <div class="bg-white dark:bg-slate-900/40 rounded-3xl p-6 sm:p-8 border border-slate-200/50 dark:border-white/5 flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
+                    <div class="space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                            <i class="fa-solid fa-user-shield text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Sistem Gred Ketenteraan</h3>
+                        <p class="text-sm text-slate-400">Integriti maklumat disokong dengan penyulitan hujung-ke-hujung (E2EE) bertaraf sekuriti persekutuan.</p>
+                    </div>
+                    <div class="mt-6 flex space-x-1.5 overflow-hidden">
+                        <span class="px-2.5 py-1 text-[10px] bg-slate-100 dark:bg-white/5 rounded-full border border-slate-200/50 dark:border-white/5 text-slate-400"><i class="fa-solid fa-shield mr-1"></i> AES-256</span>
+                        <span class="px-2.5 py-1 text-[10px] bg-slate-100 dark:bg-white/5 rounded-full border border-slate-200/50 dark:border-white/5 text-slate-400"><i class="fa-solid fa-key mr-1"></i> TLS 1.3</span>
+                    </div>
+                </div>
+
+                <!-- Box 3: Analytics (Small Grid) -->
+                <div class="bg-white dark:bg-slate-900/40 rounded-3xl p-6 sm:p-8 border border-slate-200/50 dark:border-white/5 flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
+                    <div class="space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                            <i class="fa-solid fa-chart-line text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Analitik Tingkah Laku</h3>
+                        <p class="text-sm text-slate-400">Kenal pasti isu keselamatan berulang mengikut geografi untuk tindakan pencegahan.</p>
+                    </div>
+                    <!-- Small Sparkline emulation -->
+                    <div class="mt-8 flex items-end space-x-1 h-12">
+                        <div class="w-full bg-slate-200 dark:bg-white/10 h-[30%] rounded-sm"></div>
+                        <div class="w-full bg-slate-200 dark:bg-white/10 h-[55%] rounded-sm"></div>
+                        <div class="w-full bg-slate-200 dark:bg-white/10 h-[45%] rounded-sm"></div>
+                        <div class="w-full bg-slate-200 dark:bg-white/10 h-[80%] rounded-sm"></div>
+                        <div class="w-full bg-emerald-500 h-[95%] rounded-sm animate-pulse"></div>
+                    </div>
+                </div>
+
+                <!-- Box 4: Multi-device (Medium Grid) -->
+                <div class="md:col-span-2 bg-white dark:bg-slate-900/40 rounded-3xl p-6 sm:p-8 border border-slate-200/50 dark:border-white/5 flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
+                    <div class="space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center">
+                            <i class="fa-solid fa-laptop-medical text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Aplikasi Integrasi Hibrid</h3>
+                        <p class="text-sm text-slate-400">Akses tanpa halangan merentasi peranti Web Admin, Aplikasi Mudah Alih iOS/Android bagi memastikan kesinambungan maklumat tidak kira lokasi anda.</p>
+                    </div>
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 bg-slate-100 dark:bg-white/5 rounded-xl text-xs font-semibold"><i class="fa-brands fa-apple mr-1"></i> iOS App Store</span>
+                        <span class="px-3 py-1.5 bg-slate-100 dark:bg-white/5 rounded-xl text-xs font-semibold"><i class="fa-brands fa-google-play mr-1"></i> Google Play</span>
+                        <span class="px-3 py-1.5 bg-slate-100 dark:bg-white/5 rounded-xl text-xs font-semibold"><i class="fa-solid fa-globe mr-1"></i> Web App</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Showcase with Interactive Live Sandbox Tabs -->
+    <section id="showcase" class="py-24 relative overflow-hidden" x-data="{ currentShowcase: 'dashboard' }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Saksikan Kemampuan Penuh</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Antaramuka yang Efisien & Ergonomik</h2>
+                <p class="text-base sm:text-lg text-slate-400">Cuba pelbagai paparan dashboard kami untuk merasai sendiri perbezaannya.</p>
+            </div>
+
+            <!-- Dashboard Selector Tabs -->
+            <div class="flex justify-center space-x-2 sm:space-x-4 mb-8">
+                <button 
+                    @click="currentShowcase = 'dashboard'; triggerToast('Menukar kepada Admin Dashboard View', 'success')" 
+                    :class="currentShowcase === 'dashboard' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white/5 hover:bg-white/10 text-slate-400'"
+                    class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center space-x-2"
+                >
+                    <i class="fa-solid fa-chart-line"></i> <span class="hidden sm:inline">Papan Pemuka Utama</span>
+                </button>
+                <button 
+                    @click="currentShowcase = 'mobile'; triggerToast('Menukar kepada Mobile App View', 'success')" 
+                    :class="currentShowcase === 'mobile' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white/5 hover:bg-white/10 text-slate-400'"
+                    class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center space-x-2"
+                >
+                    <i class="fa-solid fa-mobile-screen-button"></i> <span class="hidden sm:inline">Aplikasi Sukarelawan</span>
+                </button>
+                <button 
+                    @click="currentShowcase = 'analytics'; triggerToast('Menukar kepada Analytics Insights View', 'success')" 
+                    :class="currentShowcase === 'analytics' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white/5 hover:bg-white/10 text-slate-400'"
+                    class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center space-x-2"
+                >
+                    <i class="fa-solid fa-map-location-dot"></i> <span class="hidden sm:inline">Peta Analitik</span>
+                </button>
+            </div>
+
+            <!-- Interactive Area Container -->
+            <div class="relative bg-slate-950/80 rounded-3xl border border-white/10 p-6 sm:p-10 shadow-3xl">
+                
+                <!-- Display 1: Admin Dashboard Mock -->
+                <div x-show="currentShowcase === 'dashboard'" x-transition:enter="transition ease-out duration-300" class="space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white flex items-center gap-2">Pusat Kawalan Utama <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full">Sistem Utama</span></h3>
+                            <p class="text-sm text-slate-400">Pengurusan peranti IoT, penugasan anggota di lapangan, dan pengurusan kes dalam satu paparan dwi-skrin.</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button @click="triggerToast('Menjana Laporan PDF Baru...', 'success')" class="px-4 py-2 bg-white/10 hover:bg-white/25 rounded-xl text-xs font-semibold text-white transition-colors"><i class="fa-solid fa-file-pdf mr-1.5"></i> Ekspor PDF</button>
+                            <button @click="triggerToast('Data disegerakkan semula.', 'success')" class="p-2 bg-emerald-500 hover:bg-emerald-600 rounded-xl text-white transition-colors"><i class="fa-solid fa-rotate"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Simulated Live Dashboard Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-400">Jumlah Sukarelawan</p>
+                                <p class="text-2xl font-bold text-white mt-1">45,182 <span class="text-[10px] text-emerald-400 font-normal"><i class="fa-solid fa-arrow-up"></i> +4.2%</span></p>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center"><i class="fa-solid fa-users text-lg"></i></div>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-400">Kes Selesai (Bulan Ini)</p>
+                                <p class="text-2xl font-bold text-white mt-1">3,491 <span class="text-[10px] text-emerald-400 font-normal"><i class="fa-solid fa-arrow-up"></i> +8.1%</span></p>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center"><i class="fa-solid fa-clipboard-check text-lg"></i></div>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-400">Masa Purata Respons</p>
+                                <p class="text-2xl font-bold text-white mt-1">12.5 Min <span class="text-[10px] text-emerald-400 font-normal"><i class="fa-solid fa-arrow-down"></i> -18.2%</span></p>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center"><i class="fa-solid fa-bolt text-lg"></i></div>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-400">Zon Kecemasan Semasa</p>
+                                <p class="text-2xl font-bold text-white mt-1">12 <span class="text-[10px] text-rose-400 font-normal"><i class="fa-solid fa-bell"></i> 4 Kritikal</span></p>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation text-lg"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Data Chart Area -->
+                    <div class="bg-white/5 rounded-2xl border border-white/5 p-4 sm:p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-sm font-semibold text-white">Trend Tanggapan Respons Mingguan</h4>
+                            <span class="text-xs text-slate-400"><i class="fa-solid fa-circle text-emerald-500 mr-1.5 text-[8px]"></i> Kemas Kini Setiap Saat</span>
+                        </div>
+                        <!-- Beautiful Simulated Graphical Output -->
+                        <div class="h-64 flex items-end justify-between space-x-2 pt-6">
+                            <div class="w-full flex flex-col items-center justify-end h-full">
+                                <div class="bg-indigo-500/40 hover:bg-indigo-500/80 w-full rounded-t-lg transition-all" style="height: 45%;"></div>
+                                <span class="text-[10px] text-slate-400 mt-2">Isnin</span>
+                            </div>
+                            <div class="w-full flex flex-col items-center justify-end h-full">
+                                <div class="bg-indigo-500/40 hover:bg-indigo-500/80 w-full rounded-t-lg transition-all" style="height: 60%;"></div>
+                                <span class="text-[10px] text-slate-400 mt-2">Selasa</span>
+                            </div>
+                            <div class="w-full flex flex-col items-center justify-end h-full">
+                                <div class="bg-indigo-500/40 hover:bg-indigo-500/80 w-full rounded-t-lg transition-all" style="height: 80%;"></div>
+                                <span class="text-[10px] text-slate-400 mt-2">Rabu</span>
+                            </div>
+                            <div class="w-full flex flex-col items-center justify-end h-full">
+                                <div class="bg-indigo-500 hover:bg-indigo-600 w-full rounded-t-lg transition-all" style="height: 95%;"></div>
+                                <span class="text-[10px] text-slate-400 mt-2">Khamis</span>
+                            </div>
+                            <div class="w-full flex flex-col items-center justify-end h-full">
+                                <div class="bg-indigo-500/40 hover:bg-indigo-500/80 w-full rounded-t-lg transition-all" style="height: 50%;"></div>
+                                <span class="text-[10px] text-slate-400 mt-2">Jumaat</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Display 2: Mobile Interface Mock -->
+                <div x-show="currentShowcase === 'mobile'" x-transition:enter="transition ease-out duration-300" class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="flex-1 space-y-6">
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-mobile-screen text-emerald-500"></i> Apl Pengguna & Anggota Lapangan</h3>
+                        <p class="text-slate-400 text-sm">Dengan keupayaan luar talian (offline first), anggota boleh melaporkan insiden keselamatan dengan mudah dari kawasan yang sukar dijangkau isyarat selular.</p>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3 bg-white/5 p-3 rounded-xl border border-white/5">
+                                <i class="fa-solid fa-bell text-emerald-500 text-lg"></i>
+                                <span class="text-xs text-slate-300">Push notification automatik berasaskan zon tugasan.</span>
+                            </div>
+                            <div class="flex items-center space-x-3 bg-white/5 p-3 rounded-xl border border-white/5">
+                                <i class="fa-solid fa-camera text-emerald-500 text-lg"></i>
+                                <span class="text-xs text-slate-300">Ambil dan muat naik foto insiden secara langsung sebagai bukti.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- High Fidelity Simulated Phone mockup inside HTML -->
+                    <div class="w-64 bg-[#0A0F1D] border-8 border-slate-800 rounded-[35px] shadow-2xl p-4 flex flex-col justify-between h-[450px] relative overflow-hidden flex-shrink-0">
+                        <!-- Top notch -->
+                        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-4 bg-slate-800 rounded-b-xl z-20"></div>
+
+                        <!-- Interface Simulated -->
+                        <div class="flex justify-between items-center text-[10px] text-slate-400 pt-1">
+                            <span>09:41</span>
+                            <div class="space-x-1">
+                                <i class="fa-solid fa-wifi"></i>
+                                <i class="fa-solid fa-battery-three-quarters"></i>
+                            </div>
+                        </div>
+
+                        <!-- App Header inside Mobile Mockup -->
+                        <div class="mt-4 flex items-center space-x-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white text-xs"><i class="fa-solid fa-user-ninja"></i></div>
+                            <div>
+                                <p class="text-xs font-bold text-white">REKSA Mobile</p>
+                                <p class="text-[9px] text-slate-400">Pegawai ID #9021</p>
+                            </div>
+                        </div>
+
+                        <!-- Active Mission Alert Panel inside Mobile Mockup -->
+                        <div class="bg-rose-500/10 border border-rose-500/30 rounded-xl p-3 my-auto space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider animate-pulse">Zon Merah</span>
+                                <span class="text-[9px] text-slate-400">2 Minit Lalu</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-white">Kemalangan Lebuhraya</h4>
+                            <p class="text-[10px] text-slate-400">KM 25, Gombak. Pasukan pertolongan cemas diperlukan segera.</p>
+                            
+                            <button @click="triggerToast('Tugasan diterima! Menghubungi bilik gerakan...', 'success')" class="w-full py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg text-[10px] font-bold transition-colors">Terima Tugasan</button>
+                        </div>
+
+                        <div class="bg-white/5 border border-white/5 rounded-xl p-2.5 flex items-center justify-between text-[10px]">
+                            <span class="text-slate-400">Statistik Bulanan</span>
+                            <span class="font-bold text-emerald-400">24 Tugasan Selesai</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Display 3: Analytics Map Integration -->
+                <div x-show="currentShowcase === 'analytics'" x-transition:enter="transition ease-out duration-300" class="space-y-6">
+                    <div class="flex justify-between items-center border-b border-white/5 pb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-earth-asia text-emerald-500"></i> Penilaian Geospatial & Penandaan GPS</h3>
+                            <p class="text-sm text-slate-400">Teknologi spatial canggih membolehkan pencerapan haba (Heatmap) bagi mengenalpasti lokasi kecemasan berisiko tinggi secara sistematik.</p>
+                        </div>
+                    </div>
+
+                    <!-- Simulated Geographic Heatmap inside Showcase -->
+                    <div class="bg-slate-900 border border-white/10 rounded-2xl p-4 sm:p-8 relative h-80 flex items-center justify-center overflow-hidden">
+                        <!-- Abstract Glowing Orbs simulating Heat spots -->
+                        <div class="absolute top-1/4 left-1/3 w-32 h-32 rounded-full bg-rose-500 filter blur-3xl opacity-40"></div>
+                        <div class="absolute bottom-1/3 right-1/4 w-40 h-40 rounded-full bg-amber-500 filter blur-3xl opacity-30"></div>
+                        <div class="absolute top-1/3 right-1/3 w-24 h-24 rounded-full bg-emerald-500 filter blur-2xl opacity-20"></div>
+
+                        <!-- Simulated Grid Lines Overlaid -->
+                        <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:30px_30px]"></div>
+
+                        <!-- Mockup GPS Markers floating in map style -->
+                        <div class="absolute top-1/3 left-1/2 flex items-center space-x-2 bg-slate-950/90 border border-rose-500/30 p-2 rounded-xl shadow-lg z-10 cursor-pointer hover:scale-105 transition-transform" @click="triggerToast('Meneliti Laporan: Zon Panas Kuala Lumpur', 'info')">
+                            <div class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></div>
+                            <div>
+                                <p class="text-[10px] font-bold text-white">Pusat Banjir (Kuala Lumpur)</p>
+                                <p class="text-[9px] text-slate-400">Status: Sangat Kritikal</p>
+                            </div>
+                        </div>
+
+                        <div class="absolute bottom-1/4 left-1/4 flex items-center space-x-2 bg-slate-950/90 border border-emerald-500/30 p-2 rounded-xl shadow-lg z-10 cursor-pointer hover:scale-105 transition-transform" @click="triggerToast('Meneliti Laporan: Zon Selamat Selangor', 'info')">
+                            <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                            <div>
+                                <p class="text-[10px] font-bold text-white">Zon Siap Sedia Selangor</p>
+                                <p class="text-[9px] text-slate-400">Status: Sederhana Aman</p>
+                            </div>
+                        </div>
+
+                        <span class="absolute bottom-4 right-4 bg-slate-950/90 border border-white/5 rounded-lg px-3 py-1.5 text-[10px] text-slate-400">Paparan Satelit Masa Nyata v2.4</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works (Langkah Penggunaan) -->
+    <section id="steps" class="py-24 bg-slate-100/50 dark:bg-[#0C1221]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Langkah Integrasi Mudah</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Kefasihan Operasi Dalam 4 Langkah</h2>
+                <p class="text-base sm:text-lg text-slate-400">Bagaimana platform REKSA diintegrasikan dengan lancar dalam struktur organisasi atau agensi anda.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+                <!-- Line decoration (Hidden on mobile) -->
+                <div class="hidden md:block absolute top-12 left-1/8 right-1/8 h-0.5 bg-slate-200 dark:bg-white/10 z-0"></div>
+
+                <!-- Step 1 -->
+                <div class="relative z-10 text-center space-y-4 group">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 flex items-center justify-center font-extrabold text-lg shadow-lg group-hover:scale-110 transition-transform"
+                         :class="{ 'border-emerald-500': accentColor === 'emerald', 'border-blue-500': accentColor === 'blue', 'border-indigo-500': accentColor === 'indigo' }">
+                        01
+                    </div>
+                    <h3 class="text-lg font-bold">Pendaftaran Agensi</h3>
+                    <p class="text-xs text-slate-400 max-w-xs mx-auto">Daftar organisasi, pentadbir, dan takrifkan sempadan zon geofencing utama anda.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative z-10 text-center space-y-4 group">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 flex items-center justify-center font-extrabold text-lg shadow-lg group-hover:scale-110 transition-transform"
+                         :class="{ 'border-emerald-500': accentColor === 'emerald', 'border-blue-500': accentColor === 'blue', 'border-indigo-500': accentColor === 'indigo' }">
+                        02
+                    </div>
+                    <h3 class="text-lg font-bold">Kemasukan Ahli</h3>
+                    <p class="text-xs text-slate-400 max-w-xs mx-auto">Import pangkalan data ahli sedia ada atau jemput ahli baru menyertai melalui pautan jemputan khas.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative z-10 text-center space-y-4 group">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 flex items-center justify-center font-extrabold text-lg shadow-lg group-hover:scale-110 transition-transform"
+                         :class="{ 'border-emerald-500': accentColor === 'emerald', 'border-blue-500': accentColor === 'blue', 'border-indigo-500': accentColor === 'indigo' }">
+                        03
+                    </div>
+                    <h3 class="text-lg font-bold">Penugasan Kecemasan</h3>
+                    <p class="text-xs text-slate-400 max-w-xs mx-auto">Hantar arahan bertugas secara automatik berdasarkan kedekatan lokasi GPS.</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="relative z-10 text-center space-y-4 group">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 flex items-center justify-center font-extrabold text-lg shadow-lg group-hover:scale-110 transition-transform"
+                         :class="{ 'border-emerald-500': accentColor === 'emerald', 'border-blue-500': accentColor === 'blue', 'border-indigo-500': accentColor === 'indigo' }">
+                        04
+                    </div>
+                    <h3 class="text-lg font-bold">Laporan & Analitik</h3>
+                    <p class="text-xs text-slate-400 max-w-xs mx-auto">Pantau pencapaian, kualiti bantuan dan hasilkan fail analitik automatik untuk kegunaan persekutuan.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonial Slider Section -->
+    <section class="py-24 relative overflow-hidden bg-slate-100/70 dark:bg-[#090d18]"
+             x-data="{ activeSlide: 1, totalSlides: 2, next() { this.activeSlide = this.activeSlide === this.totalSlides ? 1 : this.activeSlide + 1 }, previous() { this.activeSlide = this.activeSlide === 1 ? this.totalSlides : this.activeSlide - 1 } }"
+             x-init="setInterval(() => next(), 6000)">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Pengakuan Sahih Pengguna</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Apa Kata Pengguna Kami</h2>
+                <p class="text-base sm:text-lg text-slate-400">Dari pentadbir persekutuan sehinggalah sukarelawan di pelosok kampung.</p>
+            </div>
+
+            <!-- Carousel Wrapper -->
+            <div class="relative max-w-6xl mx-auto px-4 sm:px-10">
+                
+                <!-- Slide 1 -->
+                <div x-cloak x-show="activeSlide === 1" x-transition.opacity.duration.500ms
+                     class="overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl shadow-2xl">
+                    <div class="grid md:grid-cols-12 min-h-[310px]">
+                        <div class="slider-image-panel md:col-span-5 h-56 md:h-auto overflow-hidden bg-emerald-900">
+                            <img src="assets/images/rela-hero.jpg" alt="Anggota RELA dalam perbarisan rasmi" class="w-full h-full object-cover object-center">
+                        </div>
+                        <div class="md:col-span-7 px-7 py-9 sm:px-12 flex flex-col justify-center space-y-5">
+                            <span class="text-xs font-extrabold uppercase tracking-[0.22em] text-emerald-500">Mobilisasi Lebih Pantas</span>
+                            <p class="text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+                                Sejak menggunakan platform REKSA, kadar respons mobilisasi ahli meningkat sehingga 80%. Sistem amaran zon pintar membantu penyelarasan pasukan dengan lebih pantas dan teratur.
+                            </p>
+                            <div>
+                                <p class="font-bold text-slate-900 dark:text-white">Tuan Ibrahim Zainal</p>
+                                <p class="text-xs text-slate-400 mt-1">Ketua Penyelaras Keselamatan Kawasan Zon Tengah</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div x-cloak x-show="activeSlide === 2" x-transition.opacity.duration.500ms
+                     class="overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl shadow-2xl">
+                    <div class="grid md:grid-cols-12 min-h-[310px]">
+                        <div class="slider-image-panel md:col-span-5 h-56 md:h-auto overflow-hidden bg-indigo-900">
+                            <img src="assets/images/rela-hero.jpg" alt="Kesiapsiagaan anggota RELA" class="w-full h-full object-cover object-[68%_center] scale-105">
+                        </div>
+                        <div class="md:col-span-7 px-7 py-9 sm:px-12 flex flex-col justify-center space-y-5">
+                            <span class="text-xs font-extrabold uppercase tracking-[0.22em] text-indigo-500">Maklumat Masa Nyata</span>
+                            <p class="text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+                                Sebagai sukarelawan, aplikasi REKSA memudahkan penerimaan amaran insiden tepat pada waktunya. Panduan GPS membantu anggota tiba di lokasi dengan selamat dan efisien.
+                            </p>
+                            <div>
+                                <p class="font-bold text-slate-900 dark:text-white">Siti Khadijah</p>
+                                <p class="text-xs text-slate-400 mt-1">Sukarelawan Medik Ambulans Kebangsaan</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Previous / Next Controls -->
+                <button type="button" @click="previous()" aria-label="Paparkan slaid sebelumnya"
+                        class="absolute left-0 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white dark:bg-slate-800 text-indigo-600 shadow-lg border border-slate-200 dark:border-white/10 flex items-center justify-center hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <button type="button" @click="next()" aria-label="Paparkan slaid seterusnya"
+                        class="absolute right-0 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white dark:bg-slate-800 text-indigo-600 shadow-lg border border-slate-200 dark:border-white/10 flex items-center justify-center hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+                <!-- Slide Control Dots -->
+                <div class="flex justify-center space-x-2 mt-8">
+                    <button aria-label="Paparkan slaid 1" @click="activeSlide = 1" :class="activeSlide === 1 ? 'w-8 bg-emerald-500' : 'w-2 bg-slate-300 dark:bg-white/10'" class="h-2 rounded-full transition-all duration-300"></button>
+                    <button aria-label="Paparkan slaid 2" @click="activeSlide = 2" :class="activeSlide === 2 ? 'w-8 bg-emerald-500' : 'w-2 bg-slate-300 dark:bg-white/10'" class="h-2 rounded-full transition-all duration-300"></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section (Accordion) -->
+    <section id="faq" class="py-24 bg-slate-100/50 dark:bg-[#070A13]">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Pertanyaan Lazim</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Soalan-soalan Lazim (FAQ)</h2>
+                <p class="text-base sm:text-lg text-slate-400">Semua perkara yang perlu anda ketahui berkenaan pelancaran sistem REKSA.</p>
+            </div>
+
+            <!-- Accordion List Wrapper -->
+            <div class="space-y-4" x-data="{ activeFaq: null }">
+                
+                <!-- FAQ Item 1 -->
+                <div class="border border-slate-200/50 dark:border-white/5 rounded-2xl overflow-hidden transition-all duration-200" :class="activeFaq === 1 ? 'bg-slate-100/80 dark:bg-white/5' : 'bg-white dark:bg-slate-900/10'">
+                    <button 
+                        @click="activeFaq = (activeFaq === 1) ? null : 1" 
+                        class="w-full text-left px-6 py-5 flex items-center justify-between font-semibold"
+                    >
+                        <span>Adakah REKSA mematuhi piawaian perlindungan data peribadi (PDPA)?</span>
+                        <i class="fa-solid" :class="activeFaq === 1 ? 'fa-minus' : 'fa-plus'"></i>
+                    </button>
+                    <div 
+                        x-show="activeFaq === 1" 
+                        x-transition:enter="transition duration-150 ease-out" 
+                        class="px-6 pb-5 text-sm text-slate-500 dark:text-slate-400 leading-relaxed"
+                    >
+                        Ya, sepenuhnya. Setiap transmisi maklumat disulitkan dengan algoritma AES-256 yang menepati pematuhan Akta Perlindungan Data Peribadi 2010 (PDPA) Malaysia dan standard korporat global.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="border border-slate-200/50 dark:border-white/5 rounded-2xl overflow-hidden transition-all duration-200" :class="activeFaq === 2 ? 'bg-slate-100/80 dark:bg-white/5' : 'bg-white dark:bg-slate-900/10'">
+                    <button 
+                        @click="activeFaq = (activeFaq === 2) ? null : 2" 
+                        class="w-full text-left px-6 py-5 flex items-center justify-between font-semibold"
+                    >
+                        <span>Bolehkah platform ini digabungkan bersama sistem warisan sedia ada?</span>
+                        <i class="fa-solid" :class="activeFaq === 2 ? 'fa-minus' : 'fa-plus'"></i>
+                    </button>
+                    <div 
+                        x-show="activeFaq === 2" 
+                        x-transition:enter="transition duration-150 ease-out" 
+                        class="px-6 pb-5 text-sm text-slate-500 dark:text-slate-400 leading-relaxed"
+                    >
+                        Tentu sekali. REKSA menyediakan penyepaduan API RESTful bertahap tinggi serta webhook yang lancar, membolehkan perpindahan data dan interaksi selari bersama pengurusan pangkalan data warisan anda secara terus.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="border border-slate-200/50 dark:border-white/5 rounded-2xl overflow-hidden transition-all duration-200" :class="activeFaq === 3 ? 'bg-slate-100/80 dark:bg-white/5' : 'bg-white dark:bg-slate-900/10'">
+                    <button 
+                        @click="activeFaq = (activeFaq === 3) ? null : 3" 
+                        class="w-full text-left px-6 py-5 flex items-center justify-between font-semibold"
+                    >
+                        <span>Bagaimanakah aplikasi mudah alih beroperasi dalam zon tanpa liputan internet?</span>
+                        <i class="fa-solid" :class="activeFaq === 3 ? 'fa-minus' : 'fa-plus'"></i>
+                    </button>
+                    <div 
+                        x-show="activeFaq === 3" 
+                        x-transition:enter="transition duration-150 ease-out" 
+                        class="px-6 pb-5 text-sm text-slate-500 dark:text-slate-400 leading-relaxed"
+                    >
+                        Apl mudah alih REKSA direka mengikut falsafah Offline-First. Semua laporan tugasan dan pengesanan posisi GPS tempatan akan disimpan di dalam storan peranti sementara dan disegerakkan ke pangkalan data awan sejurus sahaja isyarat dikesan.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Banner Section -->
+    <section class="py-24 relative overflow-hidden">
+        <!-- Inner glow decoration -->
+        <div class="absolute inset-0 z-0 pointer-events-none">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full filter blur-[120px] opacity-20"
+                 :class="{
+                     'bg-emerald-500/40': accentColor === 'emerald',
+                     'bg-blue-500/40': accentColor === 'blue',
+                     'bg-indigo-500/40': accentColor === 'indigo'
+                 }"></div>
+        </div>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
+            <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                Bersedia untuk Memulakan <br>
+                Transformasi Digital Komuniti?
+            </h2>
+            <p class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                Tingkatkan kadar keselamatan, optimumkan respons kecemasan dan satukan tadbir urus operasi persekutuan mahupun persendirian anda hari ini.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <button 
+                    @click="demoModal = true"
+                    class="w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold text-white shadow-2xl transition-transform hover:scale-105"
+                    :class="{
+                        'bg-emerald-500 shadow-emerald-500/30': accentColor === 'emerald',
+                        'bg-blue-500 shadow-blue-500/30': accentColor === 'blue',
+                        'bg-indigo-500 shadow-indigo-500/30': accentColor === 'indigo'
+                    }"
+                >
+                    Hubungi Wakil Jualan <i class="fa-solid fa-phone ml-2 text-xs"></i>
+                </button>
+                <button 
+                    @click="demoModal = true"
+                    class="w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold border border-slate-300 dark:border-white/10 hover:bg-white/5 transition-all"
+                >
+                    Minta Sesi Taklimat
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-slate-950 text-slate-400 pt-20 pb-10 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 pb-16 border-b border-white/5">
+                
+                <!-- Column 1: Brand Info -->
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white text-sm"><i class="fa-solid fa-shield-halved"></i></div>
+                        <span class="text-xl font-bold text-white tracking-tight">REKSA.</span>
+                    </div>
+                    <p class="text-xs leading-relaxed">
+                        Gerbang integrasi automasi respons insiden pintar serta kedaulatan kesejahteraan sosial bertaraf nasional.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-linkedin"></i></a>
+                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-white">Sistem Utama</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#masalah" class="hover:text-white transition-colors">Masalah & Solusi</a></li>
+                        <li><a href="#bento" class="hover:text-white transition-colors">Ciri Bento Grid</a></li>
+                        <li><a href="#showcase" class="hover:text-white transition-colors">Demostrasi Dashboard</a></li>
+                        <li><a href="#steps" class="hover:text-white transition-colors">Langkah Penggunaan</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Legal & Resources -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-white">Sokongan & Perundangan</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#" @click.prevent="triggerToast('Halaman Polisi Privasi dipaparkan', 'success')" class="hover:text-white transition-colors">Polisi Privasi</a></li>
+                        <li><a href="#" @click.prevent="triggerToast('Halaman Terma Penggunaan dipaparkan', 'success')" class="hover:text-white transition-colors">Terma & Syarat</a></li>
+                        <li><a href="#" @click.prevent="triggerToast('Sistem API sedang dikemas kini.', 'info')" class="hover:text-white transition-colors">Pangkalan Data & API</a></li>
+                        <li><a href="#faq" class="hover:text-white transition-colors">Soalan Lazim (FAQ)</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Newsletter -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-white">Langgan Buletin</h4>
+                    <p class="text-xs leading-relaxed">Terima berita terkini tentang kemas kini ekosistem keselamatan negara.</p>
+                    <div class="flex space-x-2">
+                        <input type="email" placeholder="Alamat e-mel" class="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 w-full">
+                        <button @click="triggerToast('Terima kasih kerana melanggan buletin kami!', 'success')" class="px-4 py-2 bg-emerald-500 text-white rounded-xl text-xs font-semibold hover:bg-emerald-600 transition-colors">Langgan</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Copyright and Back to top -->
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p class="text-[11px] text-slate-500">&copy; 2026 REKSA Technologies. Hak Cipta Terpelihara. Diinspirasikan oleh standard MyRELA.</p>
+                <a href="#" class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 text-xs text-slate-400 flex items-center gap-2 transition-all">
+                    Kembali ke Atas <i class="fa-solid fa-arrow-up"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Demo Modal -->
+    <div 
+        x-cloak 
+        x-show="demoModal" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+    >
+        <div 
+            @click.away="demoModal = false" 
+            class="bg-white dark:bg-[#0C1221] border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-10 max-w-lg w-full space-y-6 shadow-3xl text-left"
+            x-transition:enter="transition ease-out duration-300 transform scale-95"
+            x-transition:enter-start="opacity-0 translate-y-4"
+            x-transition:enter-end="opacity-100 translate-y-0"
+        >
+            <div class="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-white/5">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Hubungi Kami / Tempah Demo</h3>
+                <button @click="demoModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Form simulator inside Modal -->
+            <form @submit.prevent="demoModal = false; triggerToast('Sesi taklimat demo berjaya ditempah!', 'success')" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nama Penuh</label>
+                        <input type="text" required placeholder="Siti Aminah" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">E-mel Rasmi</label>
+                        <input type="email" required placeholder="aminah@gov.my" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nama Organisasi / Agensi</label>
+                    <input type="text" required placeholder="Agensi Pengurusan Bencana Kawasan" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Skala Organisasi</label>
+                    <select class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-emerald-500 text-slate-700 dark:text-slate-300">
+                        <option>Bawah 100 Anggota</option>
+                        <option>100 - 500 Anggota</option>
+                        <option>500 - 2,000 Anggota</option>
+                        <option>Lebih 2,000 Anggota</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Ulasan / Keperluan Khas</label>
+                    <textarea rows="3" placeholder="Sila nyatakan keperluan modul khas organisasi anda..." class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-emerald-500"></textarea>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <input type="checkbox" required class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                    <span class="text-[10px] text-slate-400">Saya bersetuju untuk dihubungi oleh wakil teknikal REKSA.</span>
+                </div>
+
+                <button 
+                    type="submit" 
+                    class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-colors"
+                    :class="{
+                        'bg-emerald-500 hover:bg-emerald-600': accentColor === 'emerald',
+                        'bg-blue-500 hover:bg-blue-600': accentColor === 'blue',
+                        'bg-indigo-500 hover:bg-indigo-600': accentColor === 'indigo'
+                    }"
+                >
+                    Hantar Permohonan Sesi Demo
+                </button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
