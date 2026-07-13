@@ -145,12 +145,12 @@ h1,h2,h3,.font-display { font-family: "Plus Jakarta Sans", sans-serif; }
 }
 .map-outline { fill:rgba(24,169,96,.035); stroke:rgba(105,217,155,.3); stroke-width:1.2; }
 .map-gridline { fill:none; stroke:rgba(105,217,155,.12); stroke-width:.7; stroke-dasharray:3 9; }
-.map-route { fill:none; stroke:#43dc8b; stroke-width:1.5; stroke-linecap:round; stroke-dasharray:5 11; animation:mapFlow 5s linear infinite; filter:url(#mapGlow); }
-.map-route.orange { stroke:#ff8a2d; animation-duration:7s; animation-direction:reverse; }
-.map-node-core { animation:nodeColor 6s ease-in-out infinite; filter:url(#nodeGlow); }
-.map-node-ring { fill:none; stroke:#69d99b; stroke-width:1.5; transform-box:fill-box; transform-origin:center; animation:nodePulse 2.7s ease-out infinite; }
-.map-node:nth-of-type(2n) .map-node-ring { animation-delay:.8s; stroke:#ff8a2d; }
-.map-node:nth-of-type(3n) .map-node-ring { animation-delay:1.6s; }
+.map-route { fill:none; stroke:#43dc8b; stroke-width:1.5; stroke-linecap:round; stroke-dasharray:5 11; animation:mapFlow 14s linear infinite; filter:url(#mapGlow); }
+.map-route.orange { stroke:#ff8a2d; animation-duration:18s; animation-direction:reverse; }
+.map-node-core { animation:nodeColor 16s ease-in-out infinite; filter:url(#nodeGlow); }
+.map-node-ring { fill:none; stroke:#69d99b; stroke-width:1.5; transform-box:fill-box; transform-origin:center; animation:nodePulse 6s ease-out infinite; }
+.map-node:nth-of-type(2n) .map-node-ring { animation-delay:2s; stroke:#ff8a2d; }
+.map-node:nth-of-type(3n) .map-node-ring { animation-delay:4s; }
 @keyframes mapFlow { to { stroke-dashoffset:-128; } }
 @keyframes nodePulse { 0%{transform:scale(.35);opacity:1} 78%,100%{transform:scale(2.5);opacity:0} }
 @keyframes nodeColor { 0%,100%{fill:#43dc8b} 45%{fill:#ffb067} 70%{fill:#ff6b1a} }
@@ -302,9 +302,9 @@ h1,h2,h3,.font-display { font-family: "Plus Jakarta Sans", sans-serif; }
     <g class="map-node" transform="translate(590 294)"><circle class="map-node-ring" r="10"/><circle class="map-node-core" r="4"/></g>
 
     <!-- Pulses travelling from location to location -->
-    <circle r="5" fill="#fff" filter="url(#nodeGlow)"><animateMotion dur="6s" repeatCount="indefinite"><mpath href="#routeA"/></animateMotion><animate attributeName="fill" values="#43dc8b;#fff;#ff7a21;#43dc8b" dur="6s" repeatCount="indefinite"/></circle>
-    <circle r="4" fill="#ff9b50" filter="url(#nodeGlow)"><animateMotion dur="7.5s" begin="-2s" repeatCount="indefinite"><mpath href="#routeB"/></animateMotion><animate attributeName="fill" values="#ff7a21;#69d99b;#fff;#ff7a21" dur="7.5s" repeatCount="indefinite"/></circle>
-    <circle r="4" fill="#69d99b" filter="url(#nodeGlow)"><animateMotion dur="8s" begin="-4s" repeatCount="indefinite"><mpath href="#routeC"/></animateMotion></circle>
+    <circle r="5" fill="#fff" filter="url(#nodeGlow)"><animateMotion dur="16s" repeatCount="indefinite"><mpath href="#routeA"/></animateMotion><animate attributeName="fill" values="#43dc8b;#fff;#ff7a21;#43dc8b" dur="16s" repeatCount="indefinite"/></circle>
+    <circle r="4" fill="#ff9b50" filter="url(#nodeGlow)"><animateMotion dur="20s" begin="-5s" repeatCount="indefinite"><mpath href="#routeB"/></animateMotion><animate attributeName="fill" values="#ff7a21;#69d99b;#fff;#ff7a21" dur="20s" repeatCount="indefinite"/></circle>
+    <circle r="4" fill="#69d99b" filter="url(#nodeGlow)"><animateMotion dur="22s" begin="-9s" repeatCount="indefinite"><mpath href="#routeC"/></animateMotion></circle>
   </svg>
 
   <!-- Ambient glows -->
