@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ms" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MyRELA - Sistem Pengurusan Maklumat Jabatan Sukarelawan Malaysia" />
+  <meta name="theme-color" content="#073B25" />
+  <title>MyRELA | Sistem Pengurusan Maklumat RELA</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Manrope', 'sans-serif'] },
+          colors: {
+            rela: {
+              50: '#effaf3',
+              100: '#d8f3e1',
+              200: '#afe7c3',
+              300: '#79d49e',
+              400: '#3fba75',
+              500: '#209d5b',
+              600: '#158049',
+              700: '#12663c',
+              800: '#105132',
+              900: '#0b4229',
+              950: '#052b1a'
+            },
+            gold: '#F4B740'
+          },
+          boxShadow: {
+            premium: '0 24px 70px rgba(5,43,26,.22)',
+            card: '0 14px 45px rgba(5,43,26,.10)'
+          },
+          animation: {
+            float: 'float 6s ease-in-out infinite',
+            glow: 'glow 5s ease-in-out infinite alternate'
+          },
+          keyframes: {
+            float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-12px)' } },
+            glow: { '0%': { opacity: '.45', transform: 'scale(.95)' }, '100%': { opacity: '.8', transform: 'scale(1.08)' } }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background:#f9fcfa; }
+    .grid-pattern {
+      background-image: linear-gradient(rgba(32,157,91,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(32,157,91,.08) 1px, transparent 1px);
+      background-size: 34px 34px;
+    }
+    .glass { backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+    .reveal { opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+    .reveal.show { opacity:1; transform:none; }
+    .hero-rela-bg {
+      background-image:linear-gradient(90deg,rgba(3,25,15,.96) 0%,rgba(3,25,15,.86) 45%,rgba(3,25,15,.48) 74%,rgba(3,25,15,.68) 100%),url('assets/images/rela-hero.jpg');
+      background-size:cover;
+      background-position:center 34%;
+    }
+    .portal-track { position:relative; height:430px; perspective:1200px; }
+    .portal-slide {
+      position:absolute; top:0; left:50%; width:82%; min-height:400px;
+      transition:transform .8s cubic-bezier(.22,.61,.36,1), opacity .8s ease, filter .8s ease;
+      box-shadow:0 28px 55px -28px rgba(1,20,11,.8);
+    }
+    .portal-slide[data-position="0"] { z-index:4; opacity:1; filter:none; transform:translateX(-50%) scale(1); }
+    .portal-slide[data-position="-1"] { z-index:2; opacity:.48; filter:brightness(.5) saturate(.75); transform:translateX(-112%) scale(.88); }
+    .portal-slide[data-position="1"] { z-index:2; opacity:.48; filter:brightness(.5) saturate(.75); transform:translateX(12%) scale(.88); }
+    .portal-slide[data-position="hidden"] { z-index:1; opacity:0; pointer-events:none; transform:translateX(-50%) scale(.72); }
+    .portal-dot.active { width:1.75rem; background:#F4B740; }
+    @media(max-width:1023px){ .hero-rela-bg{background-position:62% center} }
+    @media(max-width:639px){
+      .portal-track{height:610px}
+      .portal-slide{width:92%;min-height:580px}
+      .portal-slide[data-position="-1"]{opacity:.2;transform:translateX(-104%) scale(.9)}
+      .portal-slide[data-position="1"]{opacity:.2;transform:translateX(4%) scale(.9)}
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; transition-duration:.01ms!important; }
+    }
+  </style>
+</head>
+<body class="font-sans text-slate-800 antialiased selection:bg-rela-200 selection:text-rela-950">
+
+  <div id="progress" class="fixed left-0 top-0 z-[100] h-1 bg-gradient-to-r from-rela-500 to-gold" style="width:0"></div>
+
+  <header id="navbar" class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-rela-950/80 text-white glass transition-all duration-300">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8" aria-label="Navigasi utama">
+      <a href="#utama" class="flex items-center gap-3" aria-label="MyRELA halaman utama">
+        <img src="https://myrela.rela.gov.my/my-assets/img/logo-myrela.svg" alt="Logo MyRELA" class="h-11 w-auto" />
+      </a>
+
+      <div class="hidden items-center gap-8 lg:flex">
+        <a href="#perkhidmatan" class="text-sm font-semibold text-white/80 transition hover:text-gold">Perkhidmatan</a>
+        <a href="#modul" class="text-sm font-semibold text-white/80 transition hover:text-gold">Modul</a>
+        <a href="#cara" class="text-sm font-semibold text-white/80 transition hover:text-gold">Cara Penggunaan</a>
+        <a href="#faq" class="text-sm font-semibold text-white/80 transition hover:text-gold">Soalan Lazim</a>
+      </div>
+
+      <div class="hidden items-center gap-3 lg:flex">
+        <a href="#daftar" class="rounded-xl px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/10">Daftar Agensi</a>
+        <a href="#login" class="inline-flex items-center gap-2 rounded-xl bg-rela-900 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-rela-900/20 transition hover:-translate-y-0.5 hover:bg-rela-800">
+          <i data-lucide="log-in" class="h-4 w-4"></i> Log Masuk
+        </a>
+      </div>
+
+      <button id="menuBtn" class="grid h-11 w-11 place-items-center rounded-xl border border-white/15 bg-white/10 text-white lg:hidden" aria-label="Buka menu" aria-expanded="false">
+        <i data-lucide="menu" class="h-5 w-5"></i>
+      </button>
+    </nav>
+
+    <div id="mobileMenu" class="mx-4 hidden rounded-2xl border border-white/80 bg-white/95 p-4 shadow-premium glass lg:hidden">
+      <div class="grid gap-1">
+        <a href="#perkhidmatan" class="rounded-xl px-4 py-3 font-semibold hover:bg-rela-50">Perkhidmatan</a>
+        <a href="#modul" class="rounded-xl px-4 py-3 font-semibold hover:bg-rela-50">Modul</a>
+        <a href="#cara" class="rounded-xl px-4 py-3 font-semibold hover:bg-rela-50">Cara Penggunaan</a>
+        <a href="#faq" class="rounded-xl px-4 py-3 font-semibold hover:bg-rela-50">Soalan Lazim</a>
+        <div class="mt-2 grid grid-cols-2 gap-2">
+          <a href="#daftar" class="rounded-xl border border-rela-200 px-4 py-3 text-center font-bold text-rela-800">Daftar Agensi</a>
+          <a href="#login" class="rounded-xl bg-rela-900 px-4 py-3 text-center font-bold text-white">Log Masuk</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="utama" class="hero-rela-bg relative overflow-hidden pt-32 text-white lg:pt-40">
+      <div class="absolute inset-0 grid-pattern [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"></div>
+      <div class="absolute -left-24 top-20 h-80 w-80 rounded-full bg-rela-300/30 blur-3xl animate-glow"></div>
+      <div class="absolute -right-24 top-10 h-96 w-96 rounded-full bg-amber-200/35 blur-3xl animate-glow"></div>
+
+      <div class="relative mx-auto grid max-w-7xl items-center gap-14 px-5 pb-24 lg:grid-cols-[1.02fr_.98fr] lg:px-8 lg:pb-32">
+        <div class="reveal">
+          <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-rela-200 bg-white/80 px-4 py-2 text-xs font-extrabold uppercase tracking-[.16em] text-rela-800 shadow-sm glass">
+            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+            Platform Digital Rasmi RELA
+          </div>
+          <h1 class="max-w-3xl text-4xl font-extrabold leading-[1.12] tracking-tight text-white sm:text-5xl lg:text-6xl">
+            Urusan RELA lebih <span class="bg-gradient-to-r from-rela-700 to-rela-500 bg-clip-text text-transparent">mudah, pantas dan teratur.</span>
+          </h1>
+          <p class="mt-6 max-w-2xl text-base leading-8 text-white/75 sm:text-lg">
+            MyRELA menyatukan permohonan, semakan status, pengurusan anggota, latihan dan perkhidmatan kawalan dalam satu platform yang selamat dan mesra pengguna.
+          </p>
+
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a href="#login" class="group inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-rela-900 px-6 py-3.5 font-extrabold text-white shadow-xl shadow-rela-900/20 transition hover:-translate-y-1 hover:bg-rela-800">
+              Log Masuk MyRELA <i data-lucide="arrow-right" class="h-5 w-5 transition group-hover:translate-x-1"></i>
+            </a>
+            <a href="#perkhidmatan" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3.5 font-extrabold text-slate-800 shadow-sm transition hover:-translate-y-1 hover:border-rela-200 hover:text-rela-800">
+              Terokai Perkhidmatan <i data-lucide="layout-grid" class="h-5 w-5"></i>
+            </a>
+          </div>
+
+          <div class="mt-9 flex flex-wrap items-center gap-x-7 gap-y-3 text-sm font-semibold text-white/75">
+            <span class="flex items-center gap-2"><i data-lucide="shield-check" class="h-5 w-5 text-emerald-600"></i> Platform rasmi kerajaan</span>
+            <span class="flex items-center gap-2"><i data-lucide="smartphone" class="h-5 w-5 text-rela-600"></i> Mesra peranti mudah alih</span>
+            <span class="flex items-center gap-2"><i data-lucide="clock-3" class="h-5 w-5 text-amber-600"></i> Akses 24/7</span>
+          </div>
+        </div>
+
+        <div class="relative reveal">
+          <div class="absolute inset-8 rounded-full bg-gradient-to-tr from-rela-300/50 to-amber-200/50 blur-3xl"></div>
+          <div id="portalSlider" class="relative overflow-hidden rounded-[2rem] border border-white/70 bg-white/85 p-4 shadow-premium glass sm:p-6">
+            <div id="portalTrack" class="portal-track">
+              <article class="portal-slide rounded-[1.5rem] bg-gradient-to-br from-rela-950 via-rela-900 to-rela-700 p-6 text-white sm:p-8" data-position="0">
+                <div class="flex items-center justify-between"><div><p class="text-xs font-bold uppercase tracking-[.18em] text-rela-200">Portal Perkhidmatan</p><h2 class="mt-2 text-2xl font-extrabold">Selamat Datang ke MyRELA</h2></div><div class="grid h-12 w-12 place-items-center rounded-2xl bg-white/10 ring-1 ring-white/20"><i data-lucide="badge-check" class="h-6 w-6 text-gold"></i></div></div>
+                <div class="mt-8 grid gap-3 sm:grid-cols-2">
+                  <a href="#" class="group rounded-2xl bg-white p-5 text-slate-900 transition hover:-translate-y-1"><div class="flex items-start justify-between"><span class="grid h-11 w-11 place-items-center rounded-xl bg-rela-100 text-rela-700"><i data-lucide="user-plus" class="h-5 w-5"></i></span><i data-lucide="arrow-up-right" class="h-5 w-5 text-slate-400"></i></div><h3 class="mt-5 font-extrabold">Permohonan Anggota</h3><p class="mt-1 text-xs leading-5 text-slate-500">Daftar sebagai anggota RELA secara dalam talian.</p></a>
+                  <a href="#" class="group rounded-2xl bg-white/10 p-5 ring-1 ring-white/15 transition hover:-translate-y-1 hover:bg-white/15"><div class="flex items-start justify-between"><span class="grid h-11 w-11 place-items-center rounded-xl bg-white/10 text-gold"><i data-lucide="search-check" class="h-5 w-5"></i></span><i data-lucide="arrow-up-right" class="h-5 w-5 text-white/50"></i></div><h3 class="mt-5 font-extrabold">Semak Status</h3><p class="mt-1 text-xs leading-5 text-rela-100">Semak status permohonan dan keahlian.</p></a>
+                </div>
+                <div class="mt-4 flex items-center justify-between rounded-2xl bg-black/15 px-5 py-4 ring-1 ring-white/10"><div class="flex items-center gap-3"><span class="grid h-10 w-10 place-items-center rounded-xl bg-emerald-400/15 text-emerald-300"><i data-lucide="activity" class="h-5 w-5"></i></span><div><p class="text-xs text-rela-200">Status sistem</p><p class="font-bold">Perkhidmatan tersedia</p></div></div><span class="h-2.5 w-2.5 rounded-full bg-emerald-400 ring-4 ring-emerald-400/20"></span></div>
+              </article>
+
+              <article class="portal-slide rounded-[1.5rem] bg-gradient-to-br from-rela-950 via-rela-800 to-rela-600 p-6 text-white sm:p-8" data-position="1">
+                <div class="flex items-center justify-between"><div><p class="text-xs font-bold uppercase tracking-[.18em] text-rela-200">Pengurusan Anggota</p><h2 class="mt-2 text-2xl font-extrabold">Urus Rekod Dengan Mudah</h2></div><div class="grid h-12 w-12 place-items-center rounded-2xl bg-white/10 ring-1 ring-white/20"><i data-lucide="users-round" class="h-6 w-6 text-gold"></i></div></div>
+                <div class="mt-8 grid gap-3 sm:grid-cols-2">
+                  <a href="#" class="rounded-2xl bg-white p-5 text-slate-900 transition hover:-translate-y-1"><span class="grid h-11 w-11 place-items-center rounded-xl bg-rela-100 text-rela-700"><i data-lucide="id-card" class="h-5 w-5"></i></span><h3 class="mt-5 font-extrabold">Profil Anggota</h3><p class="mt-1 text-xs leading-5 text-slate-500">Kemas kini profil dan maklumat perkhidmatan.</p></a>
+                  <a href="#" class="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15 transition hover:-translate-y-1 hover:bg-white/15"><span class="grid h-11 w-11 place-items-center rounded-xl bg-white/10 text-gold"><i data-lucide="graduation-cap" class="h-5 w-5"></i></span><h3 class="mt-5 font-extrabold">Latihan</h3><p class="mt-1 text-xs leading-5 text-rela-100">Semak kursus, kehadiran dan sijil latihan.</p></a>
+                </div>
+                <div class="mt-4 rounded-2xl bg-black/15 px-5 py-4 ring-1 ring-white/10"><p class="text-xs text-rela-200">Rekod digital</p><p class="font-bold">Maklumat tersusun dan mudah dicapai</p></div>
+              </article>
+
+              <article class="portal-slide rounded-[1.5rem] bg-gradient-to-br from-rela-950 via-rela-900 to-emerald-700 p-6 text-white sm:p-8" data-position="-1">
+                <div class="flex items-center justify-between"><div><p class="text-xs font-bold uppercase tracking-[.18em] text-rela-200">Operasi & Penugasan</p><h2 class="mt-2 text-2xl font-extrabold">Bersedia Untuk Berkhidmat</h2></div><div class="grid h-12 w-12 place-items-center rounded-2xl bg-white/10 ring-1 ring-white/20"><i data-lucide="shield-check" class="h-6 w-6 text-gold"></i></div></div>
+                <div class="mt-8 grid gap-3 sm:grid-cols-2">
+                  <a href="#" class="rounded-2xl bg-white p-5 text-slate-900 transition hover:-translate-y-1"><span class="grid h-11 w-11 place-items-center rounded-xl bg-rela-100 text-rela-700"><i data-lucide="clipboard-check" class="h-5 w-5"></i></span><h3 class="mt-5 font-extrabold">Penugasan</h3><p class="mt-1 text-xs leading-5 text-slate-500">Terima dan pantau tugasan semasa.</p></a>
+                  <a href="#" class="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15 transition hover:-translate-y-1 hover:bg-white/15"><span class="grid h-11 w-11 place-items-center rounded-xl bg-white/10 text-gold"><i data-lucide="truck" class="h-5 w-5"></i></span><h3 class="mt-5 font-extrabold">Logistik</h3><p class="mt-1 text-xs leading-5 text-rela-100">Akses kenderaan dan kelengkapan operasi.</p></a>
+                </div>
+                <div class="mt-4 rounded-2xl bg-black/15 px-5 py-4 ring-1 ring-white/10"><p class="text-xs text-rela-200">Kesiapsiagaan operasi</p><p class="font-bold">Pasukan dan aset dalam satu paparan</p></div>
+              </article>
+            </div>
+
+            <button id="portalPrev" class="absolute left-7 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-rela-950/70 text-white backdrop-blur transition hover:bg-gold hover:text-rela-950" aria-label="Slaid sebelumnya"><i data-lucide="chevron-left" class="h-5 w-5"></i></button>
+            <button id="portalNext" class="absolute right-7 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-rela-950/70 text-white backdrop-blur transition hover:bg-gold hover:text-rela-950" aria-label="Slaid seterusnya"><i data-lucide="chevron-right" class="h-5 w-5"></i></button>
+            <div class="mt-4 flex justify-center gap-2" aria-label="Navigasi slider"><button class="portal-dot active h-2 w-2 rounded-full bg-rela-300 transition-all" data-slide="0" aria-label="Slaid 1"></button><button class="portal-dot h-2 w-2 rounded-full bg-rela-300 transition-all" data-slide="1" aria-label="Slaid 2"></button><button class="portal-dot h-2 w-2 rounded-full bg-rela-300 transition-all" data-slide="2" aria-label="Slaid 3"></button></div>
+          </div>
+          <div class="absolute -bottom-8 -left-4 rounded-2xl border border-white bg-white p-4 shadow-card sm:-left-8">
+            <div class="flex items-center gap-3"><span class="grid h-10 w-10 place-items-center rounded-xl bg-amber-100 text-amber-700"><i data-lucide="headphones" class="h-5 w-5"></i></span><div><p class="text-xs text-slate-500">Perlukan bantuan?</p><p class="text-sm font-extrabold text-slate-900">Hubungi Meja Bantuan</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="perkhidmatan" class="py-24">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center reveal">
+          <span class="text-sm font-extrabold uppercase tracking-[.18em] text-rela-700">Akses Pantas</span>
+          <h2 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">Pilih perkhidmatan yang anda perlukan</h2>
+          <p class="mt-4 leading-7 text-slate-600">Urus permohonan dan semakan dengan lebih ringkas melalui saluran digital MyRELA.</p>
+        </div>
+
+        <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          <a href="#" class="group rounded-3xl border border-slate-200 bg-white p-6 shadow-card transition hover:-translate-y-2 hover:border-rela-200 reveal">
+            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-rela-100 text-rela-700 transition group-hover:bg-rela-700 group-hover:text-white"><i data-lucide="user-round-plus" class="h-7 w-7"></i></span>
+            <h3 class="mt-6 text-lg font-extrabold text-slate-950">Permohonan Online</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Ketahui kelebihan menjadi anggota dan hantar permohonan secara digital.</p>
+            <span class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-rela-700">Mohon sekarang <i data-lucide="arrow-right" class="h-4 w-4 transition group-hover:translate-x-1"></i></span>
+          </a>
+          <a id="daftar" href="#" class="group rounded-3xl border border-slate-200 bg-white p-6 shadow-card transition hover:-translate-y-2 hover:border-amber-200 reveal">
+            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-amber-100 text-amber-700 transition group-hover:bg-amber-500 group-hover:text-white"><i data-lucide="building-2" class="h-7 w-7"></i></span>
+            <h3 class="mt-6 text-lg font-extrabold text-slate-950">Daftar Agensi</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Daftar bagi perkhidmatan jangka panjang atau sementara tujuh hari dan ke atas.</p>
+            <span class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-amber-700">Daftar agensi <i data-lucide="arrow-right" class="h-4 w-4 transition group-hover:translate-x-1"></i></span>
+          </a>
+          <a href="#" class="group rounded-3xl border border-slate-200 bg-white p-6 shadow-card transition hover:-translate-y-2 hover:border-emerald-200 reveal">
+            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-emerald-100 text-emerald-700 transition group-hover:bg-emerald-600 group-hover:text-white"><i data-lucide="scan-search" class="h-7 w-7"></i></span>
+            <h3 class="mt-6 text-lg font-extrabold text-slate-950">Semak Status</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Semak status keahlian dan perkembangan permohonan anda dengan mudah.</p>
+            <span class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-emerald-700">Semak status <i data-lucide="arrow-right" class="h-4 w-4 transition group-hover:translate-x-1"></i></span>
+          </a>
+          <a href="#" class="group rounded-3xl border border-slate-200 bg-white p-6 shadow-card transition hover:-translate-y-2 hover:border-sky-200 reveal">
+            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-sky-100 text-sky-700 transition group-hover:bg-sky-600 group-hover:text-white"><i data-lucide="shield" class="h-7 w-7"></i></span>
+            <h3 class="mt-6 text-lg font-extrabold text-slate-950">Mohon Kawalan</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600">Mohon perkhidmatan kawalan jangka pendek atau harian bagi acara anda.</p>
+            <span class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-sky-700">Buat permohonan <i data-lucide="arrow-right" class="h-4 w-4 transition group-hover:translate-x-1"></i></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-rela-950 py-24 text-white">
+      <div class="mx-auto grid max-w-7xl items-center gap-12 px-5 lg:grid-cols-2 lg:px-8">
+        <div class="reveal">
+          <span class="inline-flex rounded-full bg-white/10 px-4 py-2 text-xs font-extrabold uppercase tracking-[.18em] text-rela-200 ring-1 ring-white/10">Tentang MyRELA</span>
+          <h2 class="mt-5 text-3xl font-extrabold leading-tight sm:text-4xl">Satu ekosistem digital untuk pengurusan RELA yang menyeluruh.</h2>
+          <p class="mt-5 max-w-xl leading-8 text-rela-100/80">Dibangunkan untuk mengautomasikan proses penting, merapatkan komunikasi dan meningkatkan kesiapsiagaan anggota melalui pengurusan maklumat yang lebih cekap.</p>
+          <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+            <div><p class="text-3xl font-extrabold text-gold">12+</p><p class="mt-1 text-sm text-rela-200">Modul utama</p></div>
+            <div><p class="text-3xl font-extrabold text-gold">24/7</p><p class="mt-1 text-sm text-rela-200">Akses portal</p></div>
+            <div><p class="text-3xl font-extrabold text-gold">1</p><p class="mt-1 text-sm text-rela-200">Platform bersepadu</p></div>
+          </div>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 reveal">
+          <div class="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10"><i data-lucide="workflow" class="h-7 w-7 text-gold"></i><h3 class="mt-5 font-extrabold">Proses Bersepadu</h3><p class="mt-2 text-sm leading-6 text-rela-100/70">Maklumat dan tugasan diurus melalui aliran kerja yang lebih tersusun.</p></div>
+          <div class="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10"><i data-lucide="message-square-more" class="h-7 w-7 text-gold"></i><h3 class="mt-5 font-extrabold">Komunikasi Pantas</h3><p class="mt-2 text-sm leading-6 text-rela-100/70">Hebahan dan notifikasi disampaikan kepada pengguna dengan lebih berkesan.</p></div>
+          <div class="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10"><i data-lucide="database-zap" class="h-7 w-7 text-gold"></i><h3 class="mt-5 font-extrabold">Data Terpusat</h3><p class="mt-2 text-sm leading-6 text-rela-100/70">Rekod penting disimpan secara sistematik dan mudah dicapai.</p></div>
+          <div class="rounded-3xl bg-gradient-to-br from-rela-600 to-rela-700 p-6 ring-1 ring-white/10"><i data-lucide="shield-check" class="h-7 w-7 text-white"></i><h3 class="mt-5 font-extrabold">Selamat & Dipercayai</h3><p class="mt-2 text-sm leading-6 text-rela-100">Akses terkawal bagi melindungi maklumat organisasi dan pengguna.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="modul" class="py-24">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8">
+        <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-end reveal">
+          <div class="max-w-2xl"><span class="text-sm font-extrabold uppercase tracking-[.18em] text-rela-700">Modul MyRELA</span><h2 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">Semua keperluan pengurusan dalam satu platform</h2></div>
+          <p class="max-w-md text-sm leading-7 text-slate-600">Modul saling berhubung untuk membantu pengurusan anggota, sumber, latihan dan operasi.</p>
+        </div>
+
+        <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          <article class="lg:col-span-2 rounded-3xl bg-gradient-to-br from-rela-900 to-rela-700 p-7 text-white shadow-premium reveal"><i data-lucide="users-round" class="h-8 w-8 text-gold"></i><h3 class="mt-6 text-xl font-extrabold">Pengurusan Anggota</h3><p class="mt-3 max-w-lg text-sm leading-7 text-rela-100">Mengendalikan permohonan, pembaharuan, penetapan platun, lantikan, kebajikan dan aduan anggota.</p></article>
+          <article class="rounded-3xl border border-slate-200 bg-white p-7 shadow-card reveal"><i data-lucide="graduation-cap" class="h-8 w-8 text-rela-700"></i><h3 class="mt-6 text-lg font-extrabold">Latihan</h3><p class="mt-3 text-sm leading-6 text-slate-600">Kursus, kuota, kehadiran, ujian saringan dan laporan latihan.</p></article>
+          <article class="rounded-3xl border border-slate-200 bg-white p-7 shadow-card reveal"><i data-lucide="gavel" class="h-8 w-8 text-rose-600"></i><h3 class="mt-6 text-lg font-extrabold">Tatatertib</h3><p class="mt-3 text-sm leading-6 text-slate-600">Pengendalian aduan, kes, pertuduhan, rayuan dan surat berkaitan.</p></article>
+          <article class="rounded-3xl border border-slate-200 bg-white p-7 shadow-card reveal"><i data-lucide="medal" class="h-8 w-8 text-amber-600"></i><h3 class="mt-6 text-lg font-extrabold">Pingat</h3><p class="mt-3 text-sm leading-6 text-slate-600">Pencalonan, LNPT, permohonan dan keputusan penganugerahan.</p></article>
+          <article class="rounded-3xl border border-slate-200 bg-white p-7 shadow-card reveal"><i data-lucide="truck" class="h-8 w-8 text-sky-600"></i><h3 class="mt-6 text-lg font-extrabold">Logistik</h3><p class="mt-3 text-sm leading-6 text-slate-600">Kenderaan, pemandu, pergerakan, tempahan dan laporan logistik.</p></article>
+          <article class="rounded-3xl border border-slate-200 bg-white p-7 shadow-card reveal"><i data-lucide="shirt" class="h-8 w-8 text-violet-600"></i><h3 class="mt-6 text-lg font-extrabold">Pakaian</h3><p class="mt-3 text-sm leading-6 text-slate-600">Inventori, pelarasan dan agihan pakaian serta kelengkapan operasi.</p></article>
+          <article class="rounded-3xl border border-slate-200 bg-white p-7 shadow-card reveal"><i data-lucide="clipboard-check" class="h-8 w-8 text-emerald-600"></i><h3 class="mt-6 text-lg font-extrabold">Penugasan</h3><p class="mt-3 text-sm leading-6 text-slate-600">Permohonan tugas, tawaran, penerimaan dan tuntutan elaun.</p></article>
+          <article class="lg:col-span-2 rounded-3xl border border-rela-100 bg-rela-50 p-7 reveal"><div class="flex h-full flex-col justify-between gap-8 sm:flex-row sm:items-center"><div><i data-lucide="layout-dashboard" class="h-8 w-8 text-rela-700"></i><h3 class="mt-6 text-xl font-extrabold text-slate-950">Modul Pentadbiran Lain</h3><p class="mt-3 max-w-xl text-sm leading-7 text-slate-600">Prestasi, pejabat, kedatangan, sumber manusia, program dan aplikasi mudah alih.</p></div><a href="#" class="shrink-0 rounded-2xl bg-white px-5 py-3 text-sm font-extrabold text-rela-800 shadow-sm ring-1 ring-rela-200">Lihat semua modul</a></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="cara" class="bg-slate-50 py-24">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center reveal"><span class="text-sm font-extrabold uppercase tracking-[.18em] text-rela-700">Mudah Digunakan</span><h2 class="mt-3 text-3xl font-extrabold text-slate-950 sm:text-4xl">Mulakan dalam empat langkah</h2></div>
+        <div class="mt-14 grid gap-5 md:grid-cols-4">
+          <div class="relative rounded-3xl bg-white p-6 shadow-card reveal"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-rela-900 font-extrabold text-white">01</span><h3 class="mt-5 font-extrabold">Pilih perkhidmatan</h3><p class="mt-2 text-sm leading-6 text-slate-600">Pilih permohonan anggota, agensi, semakan atau kawalan.</p></div>
+          <div class="relative rounded-3xl bg-white p-6 shadow-card reveal"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-rela-900 font-extrabold text-white">02</span><h3 class="mt-5 font-extrabold">Lengkapkan maklumat</h3><p class="mt-2 text-sm leading-6 text-slate-600">Isi butiran yang diperlukan dengan tepat dan lengkap.</p></div>
+          <div class="relative rounded-3xl bg-white p-6 shadow-card reveal"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-rela-900 font-extrabold text-white">03</span><h3 class="mt-5 font-extrabold">Hantar permohonan</h3><p class="mt-2 text-sm leading-6 text-slate-600">Semak semula maklumat sebelum dihantar untuk diproses.</p></div>
+          <div class="relative rounded-3xl bg-white p-6 shadow-card reveal"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-rela-900 font-extrabold text-white">04</span><h3 class="mt-5 font-extrabold">Pantau status</h3><p class="mt-2 text-sm leading-6 text-slate-600">Dapatkan perkembangan dan makluman melalui portal.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="login" class="py-24">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8">
+        <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-rela-950 via-rela-900 to-rela-700 px-6 py-12 text-white shadow-premium sm:px-12 lg:px-16 lg:py-16 reveal">
+          <div class="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-2xl"></div>
+          <div class="relative flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
+            <div class="max-w-2xl"><span class="inline-flex rounded-full bg-white/10 px-4 py-2 text-xs font-extrabold uppercase tracking-[.16em] ring-1 ring-white/15">Portal Rasmi MyRELA</span><h2 class="mt-5 text-3xl font-extrabold sm:text-4xl">Bersedia mengurus urusan RELA secara digital?</h2><p class="mt-4 leading-7 text-rela-100/80">Log masuk ke akaun anda atau mulakan permohonan baharu melalui platform MyRELA.</p></div>
+            <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row"><a href="https://myrela.rela.gov.my/login" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 font-extrabold text-rela-900 transition hover:-translate-y-1"><i data-lucide="log-in" class="h-5 w-5"></i> Log Masuk</a><a href="#perkhidmatan" class="inline-flex min-h-12 items-center justify-center rounded-2xl bg-white/10 px-6 py-3.5 font-extrabold text-white ring-1 ring-white/20 transition hover:bg-white/15">Permohonan Online</a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="pb-24">
+      <div class="mx-auto max-w-4xl px-5 lg:px-8">
+        <div class="text-center reveal"><span class="text-sm font-extrabold uppercase tracking-[.18em] text-rela-700">Soalan Lazim</span><h2 class="mt-3 text-3xl font-extrabold text-slate-950">Maklumat yang sering ditanya</h2></div>
+        <div class="mt-10 space-y-3">
+          <details class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm reveal"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-extrabold text-slate-900">Siapakah yang boleh mendaftar sebagai anggota RELA?<i data-lucide="plus" class="h-5 w-5 text-rela-700 transition group-open:rotate-45"></i></summary><p class="mt-4 pr-8 text-sm leading-7 text-slate-600">Permohonan tertakluk kepada syarat kelayakan semasa yang ditetapkan oleh Jabatan Sukarelawan Malaysia.</p></details>
+          <details class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm reveal"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-extrabold text-slate-900">Bagaimanakah saya menyemak status permohonan?<i data-lucide="plus" class="h-5 w-5 text-rela-700 transition group-open:rotate-45"></i></summary><p class="mt-4 pr-8 text-sm leading-7 text-slate-600">Gunakan fungsi “Semak Status” dan masukkan maklumat pengenalan atau rujukan permohonan yang diperlukan.</p></details>
+          <details class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm reveal"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-extrabold text-slate-900">Apakah perbezaan Daftar Agensi dan Mohon Kawalan?<i data-lucide="plus" class="h-5 w-5 text-rela-700 transition group-open:rotate-45"></i></summary><p class="mt-4 pr-8 text-sm leading-7 text-slate-600">Daftar Agensi sesuai untuk perkhidmatan jangka panjang atau sementara tujuh hari dan ke atas, manakala Mohon Kawalan untuk perkhidmatan jangka pendek atau harian.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white">
+    <div class="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
+      <div class="sm:col-span-2 lg:col-span-1"><img src="https://myrela.rela.gov.my/my-assets/img/logo-myrela.svg" alt="Logo MyRELA" class="h-11 w-auto"><p class="mt-5 text-sm leading-7 text-slate-600">Sistem Pengurusan Maklumat Jabatan Sukarelawan Malaysia.</p></div>
+      <div><h3 class="font-extrabold text-slate-950">Pautan Pantas</h3><div class="mt-4 grid gap-3 text-sm text-slate-600"><a href="#perkhidmatan" class="hover:text-rela-700">Perkhidmatan</a><a href="#modul" class="hover:text-rela-700">Modul</a><a href="#cara" class="hover:text-rela-700">Cara Penggunaan</a></div></div>
+      <div><h3 class="font-extrabold text-slate-950">Bantuan</h3><div class="mt-4 grid gap-3 text-sm text-slate-600"><a href="#faq" class="hover:text-rela-700">Soalan Lazim</a><a href="#" class="hover:text-rela-700">Terma & Syarat</a><a href="#" class="hover:text-rela-700">Dasar Privasi</a></div></div>
+      <div><h3 class="font-extrabold text-slate-950">Jabatan</h3><p class="mt-4 text-sm leading-7 text-slate-600">Jabatan Sukarelawan Malaysia (RELA)<br>Kementerian Dalam Negeri</p></div>
+    </div>
+    <div class="border-t border-slate-200"><div class="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between lg:px-8"><p>© 2026 Jabatan Sukarelawan Malaysia (RELA). Hak cipta terpelihara.</p><a href="#utama" class="inline-flex items-center gap-2 font-bold text-rela-700">Kembali ke atas <i data-lucide="arrow-up" class="h-4 w-4"></i></a></div></div>
+  </footer>
+
+  <div id="cookieBar" class="fixed bottom-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 rounded-2xl border border-white/80 bg-white/95 p-4 shadow-premium glass">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><p class="text-sm leading-6 text-slate-600">Portal ini menggunakan kuki untuk meningkatkan pengalaman pengguna. Dengan meneruskan, anda bersetuju dengan penggunaan kuki.</p><button id="acceptCookie" class="shrink-0 rounded-xl bg-rela-900 px-5 py-3 text-sm font-extrabold text-white">Terima</button></div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    lucide.createIcons();
+    const navbar = document.getElementById('navbar');
+    const progress = document.getElementById('progress');
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('shadow-sm', window.scrollY > 24);
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = `${h ? (window.scrollY / h) * 100 : 0}%`;
+    });
+
+    menuBtn.addEventListener('click', () => {
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      mobileMenu.classList.toggle('hidden');
+      menuBtn.setAttribute('aria-expanded', String(!isOpen));
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
+    }, { threshold: .12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    const portalSlider = document.getElementById('portalSlider');
+    const portalTrack = document.getElementById('portalTrack');
+    const portalSlides = [...document.querySelectorAll('.portal-slide')];
+    const portalDots = [...document.querySelectorAll('.portal-dot')];
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let portalIndex = 0;
+    let portalTimer;
+    const showPortalSlide = index => {
+      portalIndex = (index + 3) % 3;
+      portalSlides.forEach((slide, i) => {
+        const distance = (i - portalIndex + 3) % 3;
+        slide.dataset.position = distance === 0 ? '0' : distance === 1 ? '1' : '-1';
+      });
+      portalDots.forEach((dot, i) => dot.classList.toggle('active', i === portalIndex));
+    };
+    const stopPortalSlider = () => clearInterval(portalTimer);
+    const startPortalSlider = () => {
+      if (reduceMotion) return;
+      stopPortalSlider();
+      portalTimer = setInterval(() => showPortalSlide(portalIndex + 1), 4500);
+    };
+    document.getElementById('portalPrev').addEventListener('click', () => { showPortalSlide(portalIndex - 1); startPortalSlider(); });
+    document.getElementById('portalNext').addEventListener('click', () => { showPortalSlide(portalIndex + 1); startPortalSlider(); });
+    portalDots.forEach(dot => dot.addEventListener('click', () => { showPortalSlide(Number(dot.dataset.slide)); startPortalSlider(); }));
+    portalSlider.addEventListener('mouseenter', stopPortalSlider);
+    portalSlider.addEventListener('mouseleave', startPortalSlider);
+    portalSlider.addEventListener('focusin', stopPortalSlider);
+    portalSlider.addEventListener('focusout', startPortalSlider);
+    startPortalSlider();
+
+    const cookieBar = document.getElementById('cookieBar');
+    if (localStorage.getItem('myrela_cookie_ok')) cookieBar.remove();
+    document.getElementById('acceptCookie')?.addEventListener('click', () => {
+      localStorage.setItem('myrela_cookie_ok', '1'); cookieBar.remove();
+    });
+  </script>
+</body>
+</html>
