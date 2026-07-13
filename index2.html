@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="ms" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REKSA - Platform Pengurusan Komuniti & Respons Pintar Negara</title>
+    
+    <!-- SEO & Open Graph Metadata -->
+    <meta name="description" content="Sistem pengurusan keselamatan, mobilisasi sukarelawan, dan respons kecemasan pintar generasi baharu untuk agensi, organisasi, dan komuniti yang berdaya tahan.">
+    <meta name="keywords" content="REKSA, Gov-Tech, Keselamatan Komuniti, Sukarelawan Malaysia, Respons Pintar, Dashboard Pengurusan, RELA Digital">
+    <meta name="author" content="REKSA Technologies">
+    <meta property="og:title" content="REKSA - Ekosistem Pengurusan Komuniti Pintar">
+    <meta property="og:description" content="Sistem automasi respons dan penyelarasan sukarelawan bersepadu dengan analitik masa nyata.">
+    <meta property="og:type" content="website">
+    
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS & Configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            emerald: {
+                                50: '#ecfdf5',
+                                500: '#10b981',
+                                600: '#059669',
+                                900: '#064e3b'
+                            },
+                            blue: {
+                                50: '#eff6ff',
+                                500: '#3b82f6',
+                                600: '#2563eb',
+                                900: '#1e3a8a'
+                            },
+                            indigo: {
+                                50: '#f5f3ff',
+                                500: '#6366f1',
+                                600: '#4f46e5',
+                                900: '#312e81'
+                            }
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out infinite 3s',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-12px)' },
+                        },
+                        glow: {
+                            '0%': { opacity: 0.3, filter: 'blur(40px)' },
+                            '100%': { opacity: 0.6, filter: 'blur(60px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Chart.js for real-time interactive simulation -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Alpine.js for interactive states -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .light .glassmorphism {
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Premium Custom-Engineered Digital RELA Camouflage Pattern */
+        .rela-camo-pattern {
+            background-color: #1b3524;
+            background-image: 
+                linear-gradient(90deg, rgba(12,28,18,0.9) 0%, rgba(12,28,18,0.9) 25%, transparent 25%, transparent 100%),
+                linear-gradient(0deg, rgba(38,69,48,0.85) 0%, rgba(38,69,48,0.85) 50%, transparent 50%, transparent 100%),
+                linear-gradient(90deg, rgba(74,110,84,0.6) 0%, rgba(74,110,84,0.6) 50%, transparent 50%, transparent 100%),
+                linear-gradient(0deg, rgba(20,40,26,0.95) 0%, rgba(20,40,26,0.95) 30%, transparent 30%, transparent 100%);
+            background-size: 14px 14px, 20px 20px, 10px 10px, 24px 24px;
+        }
+    </style>
+</head>
+<body 
+    x-data="{ 
+        darkMode: true, 
+        accentColor: 'emerald', 
+        mobileMenu: false, 
+        scrolled: false,
+        activePersona: 'pegawai',
+        toastActive: false,
+        toastMessage: '',
+        toastType: 'success',
+        demoModal: false,
+        officerStatus: 'SEDANG BERTUGAS',
+        triggerToast(msg, type = 'success') {
+            this.toastMessage = msg;
+            this.toastType = type;
+            this.toastActive = true;
+            setTimeout(() => { this.toastActive = false; }, 4000);
+        }
+    }" 
+    :class="{ 'dark bg-[#070A13] text-slate-100': darkMode, 'bg-slate-50 text-slate-800 light': !darkMode }" 
+    @scroll.window="scrolled = (window.pageYOffset > 50) ? true : false"
+    class="transition-colors duration-300 font-sans selection:bg-emerald-500 selection:text-white"
+>
+    <!-- Toast Notification Banner -->
+    <div 
+        x-cloak 
+        x-show="toastActive" 
+        x-transition:enter="transition ease-out duration-300 transform" 
+        x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2" 
+        x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0" 
+        x-transition:leave="transition ease-in duration-200" 
+        x-transition:leave-start="opacity-100" 
+        x-transition:leave-end="opacity-0" 
+        class="fixed bottom-6 right-6 z-50 max-w-sm w-full bg-white dark:bg-[#111827] shadow-2xl rounded-2xl border border-emerald-500/20 p-4 flex items-center space-x-4"
+    >
+        <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+             :class="toastType === 'success' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-500' : 'bg-rose-100 dark:bg-rose-900/30 text-rose-500'">
+            <i class="fa-solid" :class="toastType === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
+        </div>
+        <div class="flex-1">
+            <p class="text-sm font-semibold text-slate-900 dark:text-white" x-text="toastType === 'success' ? 'Berjaya' : 'Ralat'"></p>
+            <p class="text-xs text-slate-500 dark:text-slate-400" x-text="toastMessage"></p>
+        </div>
+        <button @click="toastActive = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <!-- Floating Theme and Accent Switcher (Premium UI Control) -->
+    <div class="fixed bottom-6 left-6 z-50 flex items-center space-x-2 glassmorphism border border-slate-200/20 dark:border-white/10 p-2 rounded-full shadow-lg">
+        <!-- Dark/Light Toggle -->
+        <button 
+            @click="darkMode = !darkMode; triggerToast(darkMode ? 'Mod gelap diaktifkan' : 'Mod terang diaktifkan', 'success')" 
+            class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 bg-slate-200 dark:bg-white/10 hover:scale-105"
+            title="Tukar Tema"
+        >
+            <i class="fa-solid" :class="darkMode ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-900'"></i>
+        </button>
+        <div class="h-6 w-px bg-slate-300 dark:bg-white/10"></div>
+        <!-- Color Accents -->
+        <button @click="accentColor = 'emerald'; triggerToast('Tema Emerald diaktifkan', 'success')" class="w-6 h-6 rounded-full bg-emerald-500 hover:scale-110 transition-transform" :class="accentColor === 'emerald' ? 'ring-2 ring-offset-2 ring-emerald-500' : ''"></button>
+        <button @click="accentColor = 'blue'; triggerToast('Tema Blue Corporate diaktifkan', 'success')" class="w-6 h-6 rounded-full bg-blue-500 hover:scale-110 transition-transform" :class="accentColor === 'blue' ? 'ring-2 ring-offset-2 ring-blue-500' : ''"></button>
+        <button @click="accentColor = 'indigo'; triggerToast('Tema Royal Indigo diaktifkan', 'success')" class="w-6 h-6 rounded-full bg-indigo-500 hover:scale-110 transition-transform" :class="accentColor === 'indigo' ? 'ring-2 ring-offset-2 ring-indigo-500' : ''"></button>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header 
+        :class="{ 'bg-white/80 dark:bg-[#070A13]/80 backdrop-blur-md shadow-lg border-b border-slate-200/10 py-3': scrolled, 'bg-transparent py-5': !scrolled }" 
+        class="fixed top-0 left-0 w-full z-40 transition-all duration-300"
+    >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="#" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300"
+                         :class="{
+                             'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)]': accentColor === 'emerald',
+                             'bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)]': accentColor === 'blue',
+                             'bg-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)]': accentColor === 'indigo'
+                         }">
+                        <i class="fa-solid fa-shield-halved text-white text-lg animate-pulse-slow"></i>
+                    </div>
+                    <div>
+                        <span class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white transition-all group-hover:opacity-80">
+                            REKSA<span :class="{ 'text-emerald-500': accentColor === 'emerald', 'text-blue-500': accentColor === 'blue', 'text-indigo-500': accentColor === 'indigo' }">.</span>
+                        </span>
+                        <p class="text-[9px] uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">Respons & Keselamatan</p>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation Menu -->
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#masalah" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Masalah & Solusi</a>
+                    <a href="#bento" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Ciri Utama</a>
+                    <a href="#showcase" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Showcase</a>
+                    <a href="#steps" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Proses</a>
+                    <a href="#faq" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Soalan Lazim</a>
+                </nav>
+
+                <!-- Navigation Action Buttons -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <button @click="triggerToast('Fungsi Log Masuk Portal akan dilancarkan tidak lama lagi.', 'info')" class="text-sm font-semibold hover:opacity-80 transition-opacity">Log Masuk</button>
+                    <button 
+                        @click="demoModal = true"
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-lg transform active:scale-95 transition-all"
+                        :class="{
+                            'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20': accentColor === 'emerald',
+                            'bg-blue-500 hover:bg-blue-600 shadow-blue-500/20': accentColor === 'blue',
+                            'bg-indigo-500 hover:bg-indigo-600 shadow-indigo-500/20': accentColor === 'indigo'
+                        }"
+                    >
+                        Hubungi Kami <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <div class="md:hidden flex items-center space-x-3">
+                    <button 
+                        @click="mobileMenu = !mobileMenu" 
+                        class="p-2 rounded-lg text-slate-600 dark:text-slate-300 focus:outline-none"
+                    >
+                        <i class="fa-solid text-xl" :class="mobileMenu ? 'fa-xmark' : 'fa-bars'"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div 
+            x-show="mobileMenu" 
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-4"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-4"
+            class="md:hidden bg-white dark:bg-[#0C1222] border-b border-slate-200 dark:border-white/5 shadow-2xl px-4 py-6 space-y-4"
+        >
+            <nav class="flex flex-col space-y-4">
+                <a href="#masalah" @click="mobileMenu = false" class="text-base font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-500">Masalah & Solusi</a>
+                <a href="#bento" @click="mobileMenu = false" class="text-base font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-500">Ciri Utama</a>
+                <a href="#showcase" @click="mobileMenu = false" class="text-base font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-500">Showcase</a>
+                <a href="#steps" @click="mobileMenu = false" class="text-base font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-500">Proses</a>
+                <a href="#faq" @click="mobileMenu = false" class="text-base font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-500">Soalan Lazim</a>
+            </nav>
+            <div class="border-t border-slate-200 dark:border-white/10 pt-4 flex flex-col space-y-3">
+                <button @click="triggerToast('Akses log masuk mudah alih sedang dikemas kini.', 'info')" class="w-full text-center py-2.5 font-medium border border-slate-200 dark:border-white/10 rounded-xl">Log Masuk</button>
+                <button 
+                    @click="demoModal = true; mobileMenu = false"
+                    class="w-full text-center py-2.5 rounded-xl font-semibold text-white"
+                    :class="{
+                        'bg-emerald-500': accentColor === 'emerald',
+                        'bg-blue-500': accentColor === 'blue',
+                        'bg-indigo-500': accentColor === 'indigo'
+                    }"
+                >
+                    Hubungi Kami
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-24 overflow-hidden lg:pt-40 lg:pb-36">
+        <!-- Background Glowing Ambient Orbs -->
+        <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-pulse-slow"
+                 :class="{
+                     'bg-emerald-500/40': accentColor === 'emerald',
+                     'bg-blue-500/40': accentColor === 'blue',
+                     'bg-indigo-500/40': accentColor === 'indigo'
+                 }"></div>
+            <div class="absolute top-1/2 -right-40 w-96 h-96 rounded-full mix-blend-screen filter blur-[100px] opacity-25 animate-pulse-slow delay-1000"
+                 :class="{
+                     'bg-cyan-500/30': accentColor === 'emerald' || accentColor === 'blue',
+                     'bg-purple-500/30': accentColor === 'indigo'
+                 }"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Content Area -->
+                <div class="lg:col-span-6 space-y-8 text-center lg:text-left">
+                    <!-- Eyebrow Badge -->
+                    <div class="inline-flex items-center space-x-2 bg-emerald-500/10 dark:bg-emerald-500/5 px-4 py-2 rounded-full border border-emerald-500/20">
+                        <span class="flex h-2 w-2 relative">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span class="text-xs font-bold uppercase tracking-wider" :class="{ 'text-emerald-500': accentColor === 'emerald', 'text-blue-500': accentColor === 'blue', 'text-indigo-500': accentColor === 'indigo' }">
+                            Sistem Keselamatan Negara Bersepadu
+                        </span>
+                    </div>
+
+                    <!-- Main Headline -->
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+                        Mobilisasi Digital <br class="hidden sm:inline">
+                        <span class="text-transparent bg-clip-text"
+                              :class="{
+                                  'bg-gradient-to-r from-emerald-400 to-teal-500': accentColor === 'emerald',
+                                  'bg-gradient-to-r from-blue-400 to-indigo-500': accentColor === 'blue',
+                                  'bg-gradient-to-r from-indigo-400 to-purple-500': accentColor === 'indigo'
+                              }">Anggota RELA Pintar</span>
+                    </h1>
+
+                    <!-- Subheadline -->
+                    <p class="text-base sm:text-lg text-slate-500 dark:text-slate-400 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                        Memacu kecekapan Jabatan Sukarelawan Malaysia (RELA) melalui Pakaian Operasi Digital (POD) pintar, koordinasi geospatial masa nyata, dan respons kecemasan automatik berlandaskan piawaian MyRELA.
+                    </p>
+
+                    <!-- CTAs -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button 
+                            @click="demoModal = true"
+                            class="w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold text-white shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+                            :class="{
+                                'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/35': accentColor === 'emerald',
+                                'bg-blue-500 hover:bg-blue-600 shadow-blue-500/35': accentColor === 'blue',
+                                'bg-indigo-500 hover:bg-indigo-600 shadow-indigo-500/35': accentColor === 'indigo'
+                            }"
+                        >
+                            Mulakan Sekarang
+                        </button>
+                        <a 
+                            href="#showcase"
+                            class="w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold border border-slate-300 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300 flex items-center justify-center"
+                        >
+                            <i class="fa-solid fa-play mr-2 text-xs"></i> Paparan Anggota
+                        </a>
+                    </div>
+
+                    <!-- Trust Indicators (Live Realtime Counter) -->
+                    <div class="pt-6 border-t border-slate-200 dark:border-white/5 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold" :class="{ 'text-emerald-500': accentColor === 'emerald', 'text-blue-500': accentColor === 'blue', 'text-indigo-500': accentColor === 'indigo' }">45K+</p>
+                            <p class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Ahli Aktif</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-slate-100">12 Saat</p>
+                            <p class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Masa Respons</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-slate-100">99.9%</p>
+                            <p class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Uptime Sistem</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Visual Area: Interactive Mockup Panel with RELA Digital Camo Officer -->
+                <div class="lg:col-span-6 relative flex flex-col space-y-6">
+                    
+                    <!-- Floating High-Fidelity RELA Member Card with Digital Camouflage -->
+                    <div class="relative bg-slate-900/90 rounded-3xl border border-white/15 p-5 shadow-2xl overflow-hidden animate-float">
+                        <!-- Camouflage Background Banner Inside Card -->
+                        <div class="absolute top-0 left-0 right-0 h-24 rela-camo-pattern opacity-80 border-b border-white/10 flex items-end justify-between px-6 pb-2">
+                            <span class="text-white text-[10px] uppercase font-bold tracking-widest bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-500/30">RELA MALAYSIA</span>
+                            <span class="text-xs bg-emerald-500 text-white font-mono font-bold px-2 py-0.5 rounded shadow">POD GRED-A</span>
+                        </div>
+                        
+                        <div class="relative mt-12 flex flex-col sm:flex-row items-center gap-5 z-10">
+                            <!-- Premium Officer Image Wearing Digital Camo Tactical Gear -->
+                            <div class="relative w-28 h-28 rounded-2xl overflow-hidden border-4 border-slate-900 shadow-xl flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&q=80&w=300" 
+                                     alt="Petugas RELA Berpakaian Digital Beraksi" 
+                                     class="w-full h-full object-cover"
+                                     onerror="this.src='https://placehold.co/120x120/1e392a/ffffff?text=RELA+POD'">
+                                <!-- Live Pulse Status over Photo -->
+                                <div class="absolute bottom-1 right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-slate-900 animate-pulse"></div>
+                            </div>
+                            
+                            <!-- Officer Data details -->
+                            <div class="flex-1 text-center sm:text-left space-y-2">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                                    <h3 class="text-base font-extrabold text-white tracking-tight">Koperal (R) Ahmad Safwan</h3>
+                                    <span class="text-[9px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold inline-block self-center sm:self-start">
+                                        ID: MY-892410
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-400 font-medium">Skuad Kawalan Perimeter Sektor Tengah</p>
+                                
+                                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1 text-[10px]">
+                                    <span class="bg-white/5 border border-white/10 px-2 py-1 rounded-md text-slate-300">
+                                        <i class="fa-solid fa-location-crosshairs text-emerald-400 mr-1"></i> Gombak HQ
+                                    </span>
+                                    <!-- Dynamic Action-Toggled badge -->
+                                    <span class="transition-all duration-300 px-2 py-1 rounded-md font-bold text-white shadow-sm"
+                                          :class="officerStatus === 'SEDANG BERTUGAS' ? 'bg-rose-500/80 border border-rose-400/40 animate-pulse' : 'bg-amber-500/80 border border-amber-400/40'">
+                                        <i class="fa-solid fa-person-circle-check mr-1"></i> <span x-text="officerStatus"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mini Interaction: Toggle Duty state of the camo officer -->
+                        <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-slate-400">
+                            <span>Siri Operasi Digital: <strong class="text-white">REKSA-v3</strong></span>
+                            <button 
+                                @click="officerStatus = (officerStatus === 'SEDANG BERTUGAS') ? 'SIAP SEDIA' : 'SEDANG BERTUGAS'; 
+                                        triggerToast('Status Tugasan Anggota Dikemaskini!', 'success')"
+                                class="px-3 py-1 bg-white/5 hover:bg-white/10 text-white rounded-lg border border-white/10 text-[10px] font-bold transition-all active:scale-95"
+                            >
+                                <i class="fa-solid fa-rotate mr-1"></i> Tukar Mod Tugasan
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Administrative Control Panel Mockup underneath -->
+                    <div class="relative bg-slate-950/80 dark:bg-slate-950/90 rounded-3xl border border-white/10 p-5 shadow-2xl overflow-hidden animate-float-delayed">
+                        <div class="flex items-center justify-between pb-3 border-b border-white/5 mb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                                <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                <span class="text-xs text-slate-400 font-mono ml-2">reksa_admin_panel.exe</span>
+                            </div>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 flex items-center gap-1.5 animate-pulse">
+                                <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span> MOBILISASI AKTIF
+                            </span>
+                        </div>
+
+                        <!-- Mockup Internal Content Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Left: Status Stats -->
+                            <div class="space-y-3">
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5">
+                                    <p class="text-xs text-slate-400">Jumlah Anggota Lapangan</p>
+                                    <p class="text-xl font-bold text-white tracking-tight mt-1">1,482 <span class="text-[10px] text-emerald-400 font-normal">(+12%)</span></p>
+                                </div>
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5">
+                                    <p class="text-xs text-slate-400">Panggilan Amaran Aktif</p>
+                                    <p class="text-xl font-bold text-white tracking-tight mt-1">18 <span class="text-[10px] text-rose-400 font-normal">Mendesak</span></p>
+                                </div>
+                            </div>
+
+                            <!-- Right: Map/Operational Simulation -->
+                            <div class="bg-white/5 rounded-xl p-4 border border-white/5 flex flex-col justify-between h-44 relative overflow-hidden">
+                                <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+                                
+                                <div class="relative z-10 flex items-center justify-between">
+                                    <span class="text-[11px] font-semibold text-slate-300">Zon Kuala Lumpur</span>
+                                    <span class="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-mono">GPS AKTIF</span>
+                                </div>
+
+                                <div class="relative z-10 my-auto flex justify-center items-center">
+                                    <div class="relative flex h-12 w-12 items-center justify-center">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
+                                        <div class="relative h-6 w-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center shadow-lg">
+                                            <i class="fa-solid fa-shield-halved text-[9px] text-white"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="relative z-10 text-[10px] text-slate-400 border-t border-white/5 pt-1.5">
+                                    <p class="truncate"><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> Zon Sentul: Mobilisasi Ambulans</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategic Partners & Social Proof -->
+    <section class="py-12 border-t border-b border-slate-200/10 dark:border-white/5 bg-slate-100/50 dark:bg-white/2">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-xs font-semibold uppercase tracking-widest text-slate-400 mb-8">Rakan Strategik Integriti & Kolaborasi Keselamatan</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center opacity-60 dark:opacity-40">
+                <!-- Strategic Partner 1 -->
+                <div class="flex items-center space-x-2 grayscale hover:grayscale-0 transition-all cursor-pointer">
+                    <i class="fa-solid fa-building-shield text-2xl text-slate-400 dark:text-slate-300"></i>
+                    <span class="font-bold text-xs tracking-wider">KEMENTERIAN DALAM NEGERI</span>
+                </div>
+                <!-- Strategic Partner 2 -->
+                <div class="flex items-center space-x-2 grayscale hover:grayscale-0 transition-all cursor-pointer">
+                    <i class="fa-solid fa-handshake-angle text-2xl text-slate-400 dark:text-slate-300"></i>
+                    <span class="font-bold text-xs tracking-wider">SUKARELAWAN NEGARA</span>
+                </div>
+                <!-- Strategic Partner 3 -->
+                <div class="flex items-center space-x-2 grayscale hover:grayscale-0 transition-all cursor-pointer">
+                    <i class="fa-solid fa-hospital-user text-2xl text-slate-400 dark:text-slate-300"></i>
+                    <span class="font-bold text-xs tracking-wider">RESPONS KECEMASAN 999</span>
+                </div>
+                <!-- Strategic Partner 4 -->
+                <div class="flex items-center space-x-2 grayscale hover:grayscale-0 transition-all cursor-pointer">
+                    <i class="fa-solid fa-network-wired text-2xl text-slate-400 dark:text-slate-300"></i>
+                    <span class="font-bold text-xs tracking-wider">CIVIC TECH ALLIANCE</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Masalah & Solusi (Problem & Solution Section) -->
+    <section id="masalah" class="py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header Section -->
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Merungkai Kemelut Pengurusan Manual</h2>
+                <p class="text-base sm:text-lg text-slate-500 dark:text-slate-400">Sistem komunikasi yang lapuk melambatkan koordinasi. REKSA direka khas untuk merapatkan jurang kecekapan operasi keselamatan komuniti dan agensi RELA.</p>
+            </div>
+
+            <!-- Problem vs Solution Matrix -->
+            <div class="grid lg:grid-cols-2 gap-8 items-stretch">
+                <!-- Column 1: Cabaran Lama -->
+                <div class="bg-rose-500/5 dark:bg-rose-950/10 border border-rose-500/20 rounded-3xl p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-500 flex items-center justify-center mb-6">
+                            <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-rose-600 dark:text-rose-400 mb-2">Cabaran Operasi Tradisional</h3>
+                        <p class="text-sm text-slate-400">Kekangan kaedah manual yang kerap melambatkan tindak balas agensi dan kompromi terhadap keselamatan komuniti.</p>
+                    </div>
+
+                    <div class="space-y-4 pt-6 border-t border-rose-500/10">
+                        <div class="flex items-start space-x-3">
+                            <div class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Mobilisasi Anggota yang Lambat</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Panggilan telefon secara berperingkat memakan masa berjam-jam untuk mengumpulkan sukarelawan.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Ketiadaan Lokasi Sebenar (GPS Tracking)</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Penyelaras sukar mengesan kedudukan tepat anggota di lapangan, meningkatkan ralat geografi.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Laporan Berasingan & Bertindih</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Rekod aduan bertulis bercampur aduk, menyukarkan analitik data kecemasan makro.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 2: Solusi Pintar REKSA -->
+                <div class="bg-emerald-500/5 dark:bg-emerald-950/10 border border-emerald-500/20 rounded-3xl p-6 sm:p-8 space-y-6 flex flex-col justify-between"
+                     :class="{
+                         'border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-950/10': accentColor === 'emerald',
+                         'border-blue-500/20 bg-blue-500/5 dark:bg-blue-950/10': accentColor === 'blue',
+                         'border-indigo-500/20 bg-indigo-500/5 dark:bg-indigo-950/10': accentColor === 'indigo'
+                     }">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl text-white flex items-center justify-center mb-6 shadow-md"
+                             :class="{
+                                 'bg-emerald-500': accentColor === 'emerald',
+                                 'bg-blue-500': accentColor === 'blue',
+                                 'bg-indigo-500': accentColor === 'indigo'
+                             }">
+                            <i class="fa-solid fa-bolt text-xl"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold mb-2"
+                            :class="{
+                                'text-emerald-500': accentColor === 'emerald',
+                                'text-blue-500': accentColor === 'blue',
+                                'text-indigo-500': accentColor === 'indigo'
+                            }">Solusi Pintar REKSA</h3>
+                        <p class="text-sm text-slate-400">Ekosistem digital moden membawakan kepantasan mutlak, integrasi awan bersepadu, dan pelaporan pintar.</p>
+                    </div>
+
+                    <div class="space-y-4 pt-6 border-t border-emerald-500/10">
+                        <div class="flex items-start space-x-3">
+                            <div class="mt-1 flex-shrink-0 w-5 h-5 rounded-full text-white flex items-center justify-center text-[10px]"
+                                 :class="{
+                                     'bg-emerald-500': accentColor === 'emerald',
+                                     'bg-blue-500': accentColor === 'blue',
+                                     'bg-indigo-500': accentColor === 'indigo'
+                                 }">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Mobilisasi Pintar Satu-Klik</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Teknologi geofencing menyalurkan amaran terus ke telefon bimbit sukarelawan berdekatan.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="mt-1 flex-shrink-0 w-5 h-5 rounded-full text-white flex items-center justify-center text-[10px]"
+                                 :class="{
+                                     'bg-emerald-500': accentColor === 'emerald',
+                                     'bg-blue-500': accentColor === 'blue',
+                                     'bg-indigo-500': accentColor === 'indigo'
+                                 }">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Pemantauan Lokasi Real-Time</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Peta interaktif membolehkan penyelarasan posisi anggota secara tepat serta-merta.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="mt-1 flex-shrink-0 w-5 h-5 rounded-full text-white flex items-center justify-center text-[10px]"
+                                 :class="{
+                                     'bg-emerald-500': accentColor === 'emerald',
+                                     'bg-blue-500': accentColor === 'blue',
+                                     'bg-indigo-500': accentColor === 'indigo'
+                                 }">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Automasi Laporan & AI Insight</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Mengumpul laporan secara struktur demi mengesan trend jenayah atau kawasan banjir berisiko.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Grid Features Section -->
+    <section id="bento" class="py-24 bg-slate-100/50 dark:bg-white/2 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Ciri Generasi Masa Hadapan</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Segalanya Terkawal dalam Satu Platform</h2>
+                <p class="text-base sm:text-lg text-slate-400">Dikuasakan oleh seni bina cloud moden bagi kelajuan, integriti data, dan kebolehgunaan tinggi.</p>
+            </div>
+
+            <!-- Bento Grid Structure -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Box 1: Real-time Dispatch Panel (Medium Grid) -->
+                <div class="md:col-span-2 bg-white dark:bg-slate-900/40 rounded-3xl p-6 sm:p-8 border border-slate-200/50 dark:border-white/5 flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
+                    <div class="space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+                            <i class="fa-solid fa-tower-broadcast text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Penyelarasan & Mobilisasi Geofencing</h3>
+                        <p class="text-sm text-slate-400">Sistem pintar secara automatik mengenal pasti radius anggota terdekat dalam lingkungan kawasan kejadian dan menghantar notifikasi kecemasan dalam milisaat.</p>
+                    </div>
+                    <!-- Small Graphic Simulation inside Grid Box -->
+                    <div class="mt-8 bg-slate-100 dark:bg-[#070A13] border border-slate-200/50 dark:border-white/5 rounded-2xl p-4 flex justify-between items-center space-x-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="flex h-3.5 w-3.5 relative">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-rose-500"></span>
+                            </span>
+                            <div>
+                                <p class="text-xs font-bold">Aduan Kebakaran Hutan</p>
+                                <p class="text-[10px] text-slate-400">Zon Cheras - GPS: 3.124, 101.745</p>
+                            </div>
+                        </div>
+                        <span class="text-[11px] bg-indigo-500/20 text-indigo-400 px-2.5 py-1 rounded-full font-bold">4 Sukarelawan Dipanggil</span>
+                    </div>
+                </div>
+
+                <!-- Box 2: Security & Encryption (Small Grid) -->
+                <div class="bg-white dark:bg-slate-900/40 rounded-3xl p-6 sm:p-8 border border-slate-200/50 dark:border-white/5 flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
+                    <div class="space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                            <i class="fa-solid fa-user-shield text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Sistem Gred Ketenteraan</h3>
+                        <p class="text-sm text-slate-400">Integriti maklumat disokong dengan penyulitan hujung-ke-hujung (E2EE) bertaraf sekuriti persekutuan.</p>
+                    </div>
+                    <div class="mt-6 flex space-x-1.5 overflow-hidden">
+                        <span class="px-2.5 py-1 text-[10px] bg-slate-100 dark:bg-white/5 rounded-full border border-slate-200/50 dark:border-white/5 text-slate-400"><i class="fa-solid fa-shield mr-1"></i> AES-256</span>
+                        <span class="px-2.5 py-1 text-[10px] bg-slate-100 dark:bg-white/5 rounded-full border border-slate-200/50 dark:border-white/5 text-slate-400"><i class="fa-solid fa-key mr-1"></i> TLS 1.3</span>
+                    </div>
+                </div>
+
+                <!-- Box 3: Analytics (Small Grid) -->
+                <div class="bg-white dark:bg-slate-900/40 rounded-3xl p-6 sm:p-8 border border-slate-200/50 dark:border-white/5 flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
+                    <div class="space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                            <i class="fa-solid fa-chart-line text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Analitik Tingkah Laku</h3>
+                        <p class="text-sm text-slate-400">Kenal pasti isu keselamatan berulang mengikut geografi untuk tindakan pencegahan.</p>
+                    </div>
+                    <!-- Small Sparkline emulation -->
+                    <div class="mt-8 flex items-end space-x-1 h-12">
+                        <div class="w-full bg-slate-200 dark:bg-white/10 h-[30%] rounded-sm"></div>
+                        <div class="w-full bg-slate-200 dark:bg-white/10 h-[55%] rounded-sm"></div>
+                        <div class="w-full bg-slate-200 dark:bg-white/10 h-[45%] rounded-sm"></div>
+                        <div class="w-full bg-slate-200 dark:bg-white/10 h-[80%] rounded-sm"></div>
+                        <div class="w-full bg-emerald-500 h-[95%] rounded-sm animate-pulse"></div>
+                    </div>
+                </div>
+
+                <!-- Box 4: Multi-device (Medium Grid) -->
+                <div class="md:col-span-2 bg-white dark:bg-slate-900/40 rounded-3xl p-6 sm:p-8 border border-slate-200/50 dark:border-white/5 flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300">
+                    <div class="space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center">
+                            <i class="fa-solid fa-laptop-medical text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Aplikasi Integrasi Hibrid</h3>
+                        <p class="text-sm text-slate-400">Akses tanpa halangan merentasi peranti Web Admin, Aplikasi Mudah Alih iOS/Android bagi memastikan kesinambungan maklumat tidak kira lokasi anda.</p>
+                    </div>
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 bg-slate-100 dark:bg-white/5 rounded-xl text-xs font-semibold"><i class="fa-brands fa-apple mr-1"></i> iOS App Store</span>
+                        <span class="px-3 py-1.5 bg-slate-100 dark:bg-white/5 rounded-xl text-xs font-semibold"><i class="fa-brands fa-google-play mr-1"></i> Google Play</span>
+                        <span class="px-3 py-1.5 bg-slate-100 dark:bg-white/5 rounded-xl text-xs font-semibold"><i class="fa-solid fa-globe mr-1"></i> Web App</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Showcase with Interactive Live Sandbox Tabs -->
+    <section id="showcase" class="py-24 relative overflow-hidden" x-data="{ currentShowcase: 'dashboard' }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Saksikan Kemampuan Penuh</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Antaramuka Berprestasi Tinggi & Bersepadu</h2>
+                <p class="text-base sm:text-lg text-slate-400">Terokai modul sistem kecemasan, visualisasi uniform anggota dan peta geospatial.</p>
+            </div>
+
+            <!-- Dashboard Selector Tabs (Integrated POD Tab) -->
+            <div class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-8">
+                <button 
+                    @click="currentShowcase = 'dashboard'; triggerToast('Menukar kepada Admin Dashboard View', 'success')" 
+                    :class="currentShowcase === 'dashboard' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white/5 hover:bg-white/10 text-slate-400'"
+                    class="px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center space-x-2"
+                >
+                    <i class="fa-solid fa-chart-line"></i> <span>Papan Pemuka Utama</span>
+                </button>
+                <button 
+                    @click="currentShowcase = 'camo_pod'; triggerToast('Meneliti Pakaian Operasi Digital (POD) RELA', 'success')"
+                    :class="currentShowcase === 'camo_pod' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white/5 hover:bg-white/10 text-slate-400'"
+                    class="px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center space-x-2"
+                >
+                    <i class="fa-solid fa-vest"></i> <span>Pakaian Operasi Digital (POD)</span>
+                </button>
+                <button 
+                    @click="currentShowcase = 'mobile'; triggerToast('Menukar kepada Mobile App View', 'success')" 
+                    :class="currentShowcase === 'mobile' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white/5 hover:bg-white/10 text-slate-400'"
+                    class="px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center space-x-2"
+                >
+                    <i class="fa-solid fa-mobile-screen-button"></i> <span>Aplikasi Sukarelawan</span>
+                </button>
+                <button 
+                    @click="currentShowcase = 'analytics'; triggerToast('Menukar kepada Analytics Insights View', 'success')" 
+                    :class="currentShowcase === 'analytics' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white/5 hover:bg-white/10 text-slate-400'"
+                    class="px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center space-x-2"
+                >
+                    <i class="fa-solid fa-map-location-dot"></i> <span>Peta Analitik</span>
+                </button>
+            </div>
+
+            <!-- Interactive Area Container -->
+            <div class="relative bg-slate-950/80 rounded-3xl border border-white/10 p-6 sm:p-10 shadow-3xl">
+                
+                <!-- Display 1: Admin Dashboard Mock -->
+                <div x-show="currentShowcase === 'dashboard'" x-transition:enter="transition ease-out duration-300" class="space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white flex items-center gap-2">Pusat Kawalan Utama <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full">Sistem Utama</span></h3>
+                            <p class="text-sm text-slate-400">Pengurusan peranti IoT, penugasan anggota di lapangan, dan pengurusan kes dalam satu paparan dwi-skrin.</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button @click="triggerToast('Menjana Laporan PDF Baru...', 'success')" class="px-4 py-2 bg-white/10 hover:bg-white/25 rounded-xl text-xs font-semibold text-white transition-colors"><i class="fa-solid fa-file-pdf mr-1.5"></i> Ekspor PDF</button>
+                            <button @click="triggerToast('Data disegerakkan semula.', 'success')" class="p-2 bg-emerald-500 hover:bg-emerald-600 rounded-xl text-white transition-colors"><i class="fa-solid fa-rotate"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Simulated Live Dashboard Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-400">Jumlah Sukarelawan</p>
+                                <p class="text-2xl font-bold text-white mt-1">45,182 <span class="text-[10px] text-emerald-400 font-normal"><i class="fa-solid fa-arrow-up"></i> +4.2%</span></p>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center"><i class="fa-solid fa-users text-lg"></i></div>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-400">Kes Selesai (Bulan Ini)</p>
+                                <p class="text-2xl font-bold text-white mt-1">3,491 <span class="text-[10px] text-emerald-400 font-normal"><i class="fa-solid fa-arrow-up"></i> +8.1%</span></p>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center"><i class="fa-solid fa-clipboard-check text-lg"></i></div>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-400">Masa Purata Respons</p>
+                                <p class="text-2xl font-bold text-white mt-1">12.5 Min <span class="text-[10px] text-emerald-400 font-normal"><i class="fa-solid fa-arrow-down"></i> -18.2%</span></p>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center"><i class="fa-solid fa-bolt text-lg"></i></div>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-400">Zon Kecemasan Semasa</p>
+                                <p class="text-2xl font-bold text-white mt-1">12 <span class="text-[10px] text-rose-400 font-normal"><i class="fa-solid fa-bell"></i> 4 Kritikal</span></p>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation text-lg"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Data Chart Area -->
+                    <div class="bg-white/5 rounded-2xl border border-white/5 p-4 sm:p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-sm font-semibold text-white">Trend Tanggapan Respons Mingguan</h4>
+                            <span class="text-xs text-slate-400"><i class="fa-solid fa-circle text-emerald-500 mr-1.5 text-[8px]"></i> Kemas Kini Setiap Saat</span>
+                        </div>
+                        <div class="h-64 flex items-end justify-between space-x-2 pt-6">
+                            <div class="w-full flex flex-col items-center justify-end h-full">
+                                <div class="bg-indigo-500/40 hover:bg-indigo-500/80 w-full rounded-t-lg transition-all" style="height: 45%;"></div>
+                                <span class="text-[10px] text-slate-400 mt-2">Isnin</span>
+                            </div>
+                            <div class="w-full flex flex-col items-center justify-end h-full">
+                                <div class="bg-indigo-500/40 hover:bg-indigo-500/80 w-full rounded-t-lg transition-all" style="height: 60%;"></div>
+                                <span class="text-[10px] text-slate-400 mt-2">Selasa</span>
+                            </div>
+                            <div class="w-full flex flex-col items-center justify-end h-full">
+                                <div class="bg-indigo-500/40 hover:bg-indigo-500/80 w-full rounded-t-lg transition-all" style="height: 80%;"></div>
+                                <span class="text-[10px] text-slate-400 mt-2">Rabu</span>
+                            </div>
+                            <div class="w-full flex flex-col items-center justify-end h-full">
+                                <div class="bg-indigo-500 hover:bg-indigo-600 w-full rounded-t-lg transition-all" style="height: 95%;"></div>
+                                <span class="text-[10px] text-slate-400 mt-2">Khamis</span>
+                            </div>
+                            <div class="w-full flex flex-col items-center justify-end h-full">
+                                <div class="bg-indigo-500/40 hover:bg-indigo-500/80 w-full rounded-t-lg transition-all" style="height: 50%;"></div>
+                                <span class="text-[10px] text-slate-400 mt-2">Jumaat</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Display 2: Pakaian Operasi Digital (POD) Detail Mock -->
+                <div x-show="currentShowcase === 'camo_pod'" x-transition:enter="transition ease-out duration-300" class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="flex-1 space-y-6">
+                        <div class="inline-flex items-center space-x-2 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                            <i class="fa-solid fa-vest text-emerald-400 text-xs"></i>
+                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Inovasi Uniform Pintar</span>
+                        </div>
+                        <h3 class="text-2xl font-extrabold text-white">Pakaian Operasi Digital (POD) RELA Generasi Baru</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Pakaian Operasi Digital (POD) RELA kini dipertingkatkan dengan fabrik berdaya tahan tinggi, corak celoreng piksel gred persekutuan yang taktikal, serta lencana pintar berkuasa RFID dan IoT untuk menjejak integriti, kesihatan, dan keselamatan anggota secara langsung.
+                        </p>
+                        
+                        <!-- Grid of Features of the Camo Pattern -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-white/5 border border-white/5 p-4 rounded-xl flex items-start space-x-3">
+                                <span class="text-emerald-500 text-lg mt-0.5"><i class="fa-solid fa-microchip"></i></span>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm">Lencana RFID & IoT Bawaan</h4>
+                                    <p class="text-xs text-slate-400">Pengesahan keanggotaan pantas melalui terminal mudah alih REKSA.</p>
+                                </div>
+                            </div>
+                            <div class="bg-white/5 border border-white/5 p-4 rounded-xl flex items-start space-x-3">
+                                <span class="text-emerald-500 text-lg mt-0.5"><i class="fa-solid fa-shield-halved"></i></span>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm">Ketahanan Ripstop Kalis Air</h4>
+                                    <p class="text-xs text-slate-400">Sesuai digunakan dalam pelbagai senario bencana alam di Malaysia.</p>
+                                </div>
+                            </div>
+                            <div class="bg-white/5 border border-white/5 p-4 rounded-xl flex items-start space-x-3">
+                                <span class="text-emerald-500 text-lg mt-0.5"><i class="fa-solid fa-fingerprint"></i></span>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm">Sistem Pengecaman Kod QR</h4>
+                                    <p class="text-xs text-slate-400">Pengimbasan QR unik pada kolar bagi pelaporan insiden sekelip mata.</p>
+                                </div>
+                            </div>
+                            <div class="bg-white/5 border border-white/5 p-4 rounded-xl flex items-start space-x-3">
+                                <span class="text-emerald-500 text-lg mt-0.5"><i class="fa-solid fa-arrows-to-eye"></i></span>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm">Celoreng Piksel Taktikal</h4>
+                                    <p class="text-xs text-slate-400">Reka bentuk bercorak digital yang meningkatkan disiplin visual pasukan.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Section of POD Showcase containing interactive Camo Card -->
+                    <div class="w-full lg:w-96 flex flex-col space-y-4 flex-shrink-0">
+                        <div class="relative rounded-3xl border border-white/10 overflow-hidden shadow-2xl h-96 group">
+                            <!-- Tactical Camo Background Image overlay with smooth transition -->
+                            <img src="https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&q=80&w=600" 
+                                 alt="Anggota Berpakaian Digital RELA Beraksi" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            
+                            <!-- Pixel pattern background overlay on card edges -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                            
+                            <!-- Information Pill inside image -->
+                            <div class="absolute top-4 left-4 bg-slate-950/80 backdrop-blur border border-white/10 px-3 py-1.5 rounded-xl text-[10px] text-white flex items-center space-x-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span>Pakaian Operasi Digital (POD) No. 4</span>
+                            </div>
+                            
+                            <!-- Core badge descriptions inside image -->
+                            <div class="absolute bottom-4 left-4 right-4 bg-slate-900/90 border border-emerald-500/20 rounded-2xl p-4 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="text-xs font-bold text-white uppercase tracking-wider">POD RELA Gred Premium</h4>
+                                    <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-mono font-bold">Standard RELA</span>
+                                </div>
+                                <p class="text-[11px] text-slate-400">
+                                    "Keseragaman digital mencerminkan kesiapsiagaan sukarelawan profesional di lapangan kritikal."
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-xs text-slate-400"><i class="fa-solid fa-info-circle text-emerald-400 mr-1"></i> Klik 'Paparan Anggota' di atas untuk menguji status simulasi.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Display 3: Mobile Interface Mock -->
+                <div x-show="currentShowcase === 'mobile'" x-transition:enter="transition ease-out duration-300" class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="flex-1 space-y-6">
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-mobile-screen text-emerald-500"></i> Apl Pengguna & Anggota Lapangan</h3>
+                        <p class="text-slate-400 text-sm">Dengan keupayaan luar talian (offline first), anggota boleh melaporkan insiden keselamatan dengan mudah dari kawasan yang sukar dijangkau isyarat selular.</p>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3 bg-white/5 p-3 rounded-xl border border-white/5">
+                                <i class="fa-solid fa-bell text-emerald-500 text-lg"></i>
+                                <span class="text-xs text-slate-300">Push notification automatik berasaskan zon tugasan.</span>
+                            </div>
+                            <div class="flex items-center space-x-3 bg-white/5 p-3 rounded-xl border border-white/5">
+                                <i class="fa-solid fa-camera text-emerald-500 text-lg"></i>
+                                <span class="text-xs text-slate-300">Ambil dan muat naik foto insiden secara langsung sebagai bukti.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- High Fidelity Simulated Phone mockup inside HTML -->
+                    <div class="w-64 bg-[#0A0F1D] border-8 border-slate-800 rounded-[35px] shadow-2xl p-4 flex flex-col justify-between h-[450px] relative overflow-hidden flex-shrink-0 mx-auto">
+                        <!-- Top notch -->
+                        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-4 bg-slate-800 rounded-b-xl z-20"></div>
+
+                        <!-- Interface Simulated -->
+                        <div class="flex justify-between items-center text-[10px] text-slate-400 pt-1">
+                            <span>09:41</span>
+                            <div class="space-x-1">
+                                <i class="fa-solid fa-wifi"></i>
+                                <i class="fa-solid fa-battery-three-quarters"></i>
+                            </div>
+                        </div>
+
+                        <!-- App Header inside Mobile Mockup -->
+                        <div class="mt-4 flex items-center space-x-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white text-xs"><i class="fa-solid fa-user-ninja"></i></div>
+                            <div>
+                                <p class="text-xs font-bold text-white">REKSA Mobile</p>
+                                <p class="text-[9px] text-slate-400">Pegawai ID #9021</p>
+                            </div>
+                        </div>
+
+                        <!-- Active Mission Alert Panel inside Mobile Mockup -->
+                        <div class="bg-rose-500/10 border border-rose-500/30 rounded-xl p-3 my-auto space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider animate-pulse">Zon Merah</span>
+                                <span class="text-[9px] text-slate-400">2 Minit Lalu</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-white">Kemalangan Lebuhraya</h4>
+                            <p class="text-[10px] text-slate-400">KM 25, Gombak. Pasukan pertolongan cemas diperlukan segera.</p>
+                            
+                            <button @click="triggerToast('Tugasan diterima! Menghubungi bilik gerakan...', 'success')" class="w-full py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg text-[10px] font-bold transition-colors">Terima Tugasan</button>
+                        </div>
+
+                        <div class="bg-white/5 border border-white/5 rounded-xl p-2.5 flex items-center justify-between text-[10px]">
+                            <span class="text-slate-400">Statistik Bulanan</span>
+                            <span class="font-bold text-emerald-400">24 Tugasan Selesai</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Display 4: Analytics Map Integration -->
+                <div x-show="currentShowcase === 'analytics'" x-transition:enter="transition ease-out duration-300" class="space-y-6">
+                    <div class="flex justify-between items-center border-b border-white/5 pb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-earth-asia text-emerald-500"></i> Penilaian Geospatial & Penandaan GPS</h3>
+                            <p class="text-sm text-slate-400">Teknologi spatial canggih membolehkan pencerapan haba (Heatmap) bagi mengenalpasti lokasi kecemasan berisiko tinggi secara sistematik.</p>
+                        </div>
+                    </div>
+
+                    <!-- Simulated Geographic Heatmap inside Showcase -->
+                    <div class="bg-slate-900 border border-white/10 rounded-2xl p-4 sm:p-8 relative h-80 flex items-center justify-center overflow-hidden">
+                        <!-- Abstract Glowing Orbs simulating Heat spots -->
+                        <div class="absolute top-1/4 left-1/3 w-32 h-32 rounded-full bg-rose-500 filter blur-3xl opacity-40"></div>
+                        <div class="absolute bottom-1/3 right-1/4 w-40 h-40 rounded-full bg-amber-500 filter blur-3xl opacity-30"></div>
+                        <div class="absolute top-1/3 right-1/3 w-24 h-24 rounded-full bg-emerald-500 filter blur-2xl opacity-20"></div>
+
+                        <!-- Simulated Grid Lines Overlaid -->
+                        <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:30px_30px]"></div>
+
+                        <!-- Mockup GPS Markers floating in map style -->
+                        <div class="absolute top-1/3 left-1/2 flex items-center space-x-2 bg-slate-950/90 border border-rose-500/30 p-2 rounded-xl shadow-lg z-10 cursor-pointer hover:scale-105 transition-transform" @click="triggerToast('Meneliti Laporan: Zon Panas Kuala Lumpur', 'info')">
+                            <div class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></div>
+                            <div>
+                                <p class="text-[10px] font-bold text-white">Pusat Banjir (Kuala Lumpur)</p>
+                                <p class="text-[9px] text-slate-400">Status: Sangat Kritikal</p>
+                            </div>
+                        </div>
+
+                        <div class="absolute bottom-1/4 left-1/4 flex items-center space-x-2 bg-slate-950/90 border border-emerald-500/30 p-2 rounded-xl shadow-lg z-10 cursor-pointer hover:scale-105 transition-transform" @click="triggerToast('Meneliti Laporan: Zon Selamat Selangor', 'info')">
+                            <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                            <div>
+                                <p class="text-[10px] font-bold text-white">Zon Siap Sedia Selangor</p>
+                                <p class="text-[9px] text-slate-400">Status: Sederhana Aman</p>
+                            </div>
+                        </div>
+
+                        <span class="absolute bottom-4 right-4 bg-slate-950/90 border border-white/5 rounded-lg px-3 py-1.5 text-[10px] text-slate-400">Paparan Satelit Masa Nyata v2.4</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works (Langkah Penggunaan) -->
+    <section id="steps" class="py-24 bg-slate-100/50 dark:bg-[#0C1221]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Langkah Integrasi Mudah</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Kefasihan Operasi Dalam 4 Langkah</h2>
+                <p class="text-base sm:text-lg text-slate-400">Bagaimana platform REKSA diintegrasikan dengan lancar dalam struktur organisasi atau agensi anda.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+                <!-- Line decoration (Hidden on mobile) -->
+                <div class="hidden md:block absolute top-12 left-1/8 right-1/8 h-0.5 bg-slate-200 dark:bg-white/10 z-0"></div>
+
+                <!-- Step 1 -->
+                <div class="relative z-10 text-center space-y-4 group">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 flex items-center justify-center font-extrabold text-lg shadow-lg group-hover:scale-110 transition-transform"
+                         :class="{ 'border-emerald-500': accentColor === 'emerald', 'border-blue-500': accentColor === 'blue', 'border-indigo-500': accentColor === 'indigo' }">
+                        01
+                    </div>
+                    <h3 class="text-lg font-bold">Pendaftaran Agensi</h3>
+                    <p class="text-xs text-slate-400 max-w-xs mx-auto">Daftar organisasi, pentadbir, dan takrifkan sempadan zon geofencing utama anda.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative z-10 text-center space-y-4 group">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 flex items-center justify-center font-extrabold text-lg shadow-lg group-hover:scale-110 transition-transform"
+                         :class="{ 'border-emerald-500': accentColor === 'emerald', 'border-blue-500': accentColor === 'blue', 'border-indigo-500': accentColor === 'indigo' }">
+                        02
+                    </div>
+                    <h3 class="text-lg font-bold">Kemasukan Ahli</h3>
+                    <p class="text-xs text-slate-400 max-w-xs mx-auto">Import pangkalan data ahli sedia ada atau jemput ahli baru menyertai melalui pautan jemputan khas.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative z-10 text-center space-y-4 group">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 flex items-center justify-center font-extrabold text-lg shadow-lg group-hover:scale-110 transition-transform"
+                         :class="{ 'border-emerald-500': accentColor === 'emerald', 'border-blue-500': accentColor === 'blue', 'border-indigo-500': accentColor === 'indigo' }">
+                        03
+                    </div>
+                    <h3 class="text-lg font-bold">Penugasan Kecemasan</h3>
+                    <p class="text-xs text-slate-400 max-w-xs mx-auto">Hantar amaran tugas secara automatik berdasarkan kedekatan lokasi GPS.</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="relative z-10 text-center space-y-4 group">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 flex items-center justify-center font-extrabold text-lg shadow-lg group-hover:scale-110 transition-transform"
+                         :class="{ 'border-emerald-500': accentColor === 'emerald', 'border-blue-500': accentColor === 'blue', 'border-indigo-500': accentColor === 'indigo' }">
+                        04
+                    </div>
+                    <h3 class="text-lg font-bold">Laporan & Analitik</h3>
+                    <p class="text-xs text-slate-400 max-w-xs mx-auto">Pantau pencapaian, kualiti bantuan dan hasilkan fail analitik automatik untuk kegunaan persekutuan.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonial Slider Section -->
+    <section class="py-24 relative overflow-hidden" x-data="{ activeSlide: 1 }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Pengakuan Sahih Pengguna</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Apa Kata Pengguna Kami</h2>
+                <p class="text-base sm:text-lg text-slate-400">Dari pentadbir persekutuan sehinggalah sukarelawan di pelosok kampung.</p>
+            </div>
+
+            <!-- Carousel Wrapper -->
+            <div class="relative max-w-4xl mx-auto">
+                
+                <!-- Slide 1 -->
+                <div x-show="activeSlide === 1" x-transition:enter="transition duration-300 transform opacity-0 scale-95" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 sm:p-12 shadow-xl space-y-6">
+                    <div class="flex items-center space-x-1 text-amber-400">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-base sm:text-lg italic leading-relaxed text-slate-600 dark:text-slate-300">
+                        "Sejak menggunakan platform REKSA, kadar respons mobilisasi ahli kami meningkat sehingga 80%. Kami tidak lagi membuang masa menelefon setiap seorang ahli, sistem amaran zon pintar menguruskan segalanya dengan sempurna."
+                    </p>
+                    <div class="flex items-center space-x-4">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=120&h=120" alt="Testimonial User" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold text-slate-900 dark:text-white">Tuan Ibrahim Zainal</p>
+                            <p class="text-xs text-slate-400">Ketua Penyelaras Keselamatan Kawasan Zon Tengah</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div x-show="activeSlide === 2" x-transition:enter="transition duration-300 transform opacity-0 scale-95" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8 sm:p-12 shadow-xl space-y-6">
+                    <div class="flex items-center space-x-1 text-amber-400">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-base sm:text-lg italic leading-relaxed text-slate-600 dark:text-slate-300">
+                        "Sebagai sukarelawan, apl REKSA memudahkan saya menerima amaran insiden tepat pada waktunya. GPS dalam aplikasi sangat membantu saya untuk sampai ke lokasi bencana dengan selamat dan terpantas."
+                    </p>
+                    <div class="flex items-center space-x-4">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120&h=120" alt="Testimonial User 2" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold text-slate-900 dark:text-white">Siti Khadijah</p>
+                            <p class="text-xs text-slate-400">Sukarelawan Medik Ambulans Kebangsaan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide Control Dots -->
+                <div class="flex justify-center space-x-2 mt-8">
+                    <button @click="activeSlide = 1" :class="activeSlide === 1 ? 'w-8 bg-emerald-500' : 'w-2 bg-slate-300 dark:bg-white/10'" class="h-2 rounded-full transition-all duration-300"></button>
+                    <button @click="activeSlide = 2" :class="activeSlide === 2 ? 'w-8 bg-emerald-500' : 'w-2 bg-slate-300 dark:bg-white/10'" class="h-2 rounded-full transition-all duration-300"></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section (Accordion) -->
+    <section id="faq" class="py-24 bg-slate-100/50 dark:bg-[#070A13]">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Pertanyaan Lazim</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Soalan-soalan Lazim (FAQ)</h2>
+                <p class="text-base sm:text-lg text-slate-400">Semua perkara yang perlu anda ketahui berkenaan pelancaran sistem REKSA.</p>
+            </div>
+
+            <!-- Accordion List Wrapper -->
+            <div class="space-y-4" x-data="{ activeFaq: null }">
+                
+                <!-- FAQ Item 1 -->
+                <div class="border border-slate-200/50 dark:border-white/5 rounded-2xl overflow-hidden transition-all duration-200" :class="activeFaq === 1 ? 'bg-slate-100/80 dark:bg-white/5' : 'bg-white dark:bg-slate-900/10'">
+                    <button 
+                        @click="activeFaq = (activeFaq === 1) ? null : 1" 
+                        class="w-full text-left px-6 py-5 flex items-center justify-between font-semibold"
+                    >
+                        <span>Adakah REKSA mematuhi piawaian perlindungan data peribadi (PDPA)?</span>
+                        <i class="fa-solid" :class="activeFaq === 1 ? 'fa-minus' : 'fa-plus'"></i>
+                    </button>
+                    <div 
+                        x-show="activeFaq === 1" 
+                        x-transition:enter="transition duration-150 ease-out" 
+                        class="px-6 pb-5 text-sm text-slate-500 dark:text-slate-400 leading-relaxed"
+                    >
+                        Ya, sepenuhnya. Setiap transmisi maklumat disulitkan dengan algoritma AES-256 yang menepati pematuhan Akta Perlindungan Data Peribadi 2010 (PDPA) Malaysia dan standard korporat global.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="border border-slate-200/50 dark:border-white/5 rounded-2xl overflow-hidden transition-all duration-200" :class="activeFaq === 2 ? 'bg-slate-100/80 dark:bg-white/5' : 'bg-white dark:bg-slate-900/10'">
+                    <button 
+                        @click="activeFaq = (activeFaq === 2) ? null : 2" 
+                        class="w-full text-left px-6 py-5 flex items-center justify-between font-semibold"
+                    >
+                        <span>Bolehkah platform ini digabungkan bersama sistem warisan sedia ada?</span>
+                        <i class="fa-solid" :class="activeFaq === 2 ? 'fa-minus' : 'fa-plus'"></i>
+                    </button>
+                    <div 
+                        x-show="activeFaq === 2" 
+                        x-transition:enter="transition duration-150 ease-out" 
+                        class="px-6 pb-5 text-sm text-slate-500 dark:text-slate-400 leading-relaxed"
+                    >
+                        Tentu sekali. REKSA menyediakan penyepaduan API RESTful bertahap tinggi serta webhook yang lancar, membolehkan perpindahan data dan interaksi selari bersama pengurusan pangkalan data warisan anda secara terus.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="border border-slate-200/50 dark:border-white/5 rounded-2xl overflow-hidden transition-all duration-200" :class="activeFaq === 3 ? 'bg-slate-100/80 dark:bg-white/5' : 'bg-white dark:bg-slate-900/10'">
+                    <button 
+                        @click="activeFaq = (activeFaq === 3) ? null : 3" 
+                        class="w-full text-left px-6 py-5 flex items-center justify-between font-semibold"
+                    >
+                        <span>Bagaimanakah aplikasi mudah alih beroperasi dalam zon tanpa liputan internet?</span>
+                        <i class="fa-solid" :class="activeFaq === 3 ? 'fa-minus' : 'fa-plus'"></i>
+                    </button>
+                    <div 
+                        x-show="activeFaq === 3" 
+                        x-transition:enter="transition duration-150 ease-out" 
+                        class="px-6 pb-5 text-sm text-slate-500 dark:text-slate-400 leading-relaxed"
+                    >
+                        Apl mudah alih REKSA direka mengikut falsafah Offline-First. Semua laporan tugasan dan pengesanan posisi GPS tempatan akan disimpan di dalam storan peranti sementara dan disegerakkan ke pangkalan data awan sejurus sahaja isyarat dikesan.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Banner Section -->
+    <section class="py-24 relative overflow-hidden">
+        <!-- Inner glow decoration -->
+        <div class="absolute inset-0 z-0 pointer-events-none">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full filter blur-[120px] opacity-20"
+                 :class="{
+                     'bg-emerald-500/40': accentColor === 'emerald',
+                     'bg-blue-500/40': accentColor === 'blue',
+                     'bg-indigo-500/40': accentColor === 'indigo'
+                 }"></div>
+        </div>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
+            <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                Bersedia untuk Memulakan <br>
+                Transformasi Digital Komuniti?
+            </h2>
+            <p class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                Tingkatkan kadar keselamatan, optimumkan respons kecemasan dan satukan tadbir urus operasi persekutuan mahupun persendirian anda hari ini.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <button 
+                    @click="demoModal = true"
+                    class="w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold text-white shadow-2xl transition-transform hover:scale-105"
+                    :class="{
+                        'bg-emerald-500 shadow-emerald-500/30': accentColor === 'emerald',
+                        'bg-blue-500 shadow-blue-500/30': accentColor === 'blue',
+                        'bg-indigo-500 shadow-indigo-500/30': accentColor === 'indigo'
+                    }"
+                >
+                    Hubungi Wakil Jualan <i class="fa-solid fa-phone ml-2 text-xs"></i>
+                </button>
+                <button 
+                    @click="demoModal = true"
+                    class="w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold border border-slate-300 dark:border-white/10 hover:bg-white/5 transition-all"
+                >
+                    Minta Sesi Taklimat
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-slate-950 text-slate-400 pt-20 pb-10 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 pb-16 border-b border-white/5">
+                
+                <!-- Column 1: Brand Info -->
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white text-sm"><i class="fa-solid fa-shield-halved"></i></div>
+                        <span class="text-xl font-bold text-white tracking-tight">REKSA.</span>
+                    </div>
+                    <p class="text-xs leading-relaxed">
+                        Gerbang integrasi automasi respons insiden pintar serta kedaulatan kesejahteraan sosial bertaraf nasional.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-linkedin"></i></a>
+                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-white">Sistem Utama</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#masalah" class="hover:text-white transition-colors">Masalah & Solusi</a></li>
+                        <li><a href="#bento" class="hover:text-white transition-colors">Ciri Bento Grid</a></li>
+                        <li><a href="#showcase" class="hover:text-white transition-colors">Demostrasi Dashboard</a></li>
+                        <li><a href="#steps" class="hover:text-white transition-colors">Langkah Penggunaan</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Legal & Resources -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-white">Sokongan & Perundangan</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#" @click.prevent="triggerToast('Halaman Polisi Privasi dipaparkan', 'success')" class="hover:text-white transition-colors">Polisi Privasi</a></li>
+                        <li><a href="#" @click.prevent="triggerToast('Halaman Terma Penggunaan dipaparkan', 'success')" class="hover:text-white transition-colors">Terma & Syarat</a></li>
+                        <li><a href="#" @click.prevent="triggerToast('Sistem API sedang dikemas kini.', 'info')" class="hover:text-white transition-colors">Pangkalan Data & API</a></li>
+                        <li><a href="#faq" class="hover:text-white transition-colors">Soalan Lazim (FAQ)</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Newsletter -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-white">Langgan Buletin</h4>
+                    <p class="text-xs leading-relaxed">Terima berita terkini tentang kemas kini ekosistem keselamatan negara.</p>
+                    <div class="flex space-x-2">
+                        <input type="email" placeholder="Alamat e-mel" class="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 w-full">
+                        <button @click="triggerToast('Terima kasih kerana melanggan buletin kami!', 'success')" class="px-4 py-2 bg-emerald-500 text-white rounded-xl text-xs font-semibold hover:bg-emerald-600 transition-colors">Langgan</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Copyright and Back to top -->
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p class="text-[11px] text-slate-500">&copy; 2026 REKSA Technologies. Hak Cipta Terpelihara. Diinspirasikan oleh standard MyRELA.</p>
+                <a href="#" class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 text-xs text-slate-400 flex items-center gap-2 transition-all">
+                    Kembali ke Atas <i class="fa-solid fa-arrow-up"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Demo Modal -->
+    <div 
+        x-cloak 
+        x-show="demoModal" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+    >
+        <div 
+            @click.away="demoModal = false" 
+            class="bg-white dark:bg-[#0C1221] border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-10 max-w-lg w-full space-y-6 shadow-3xl text-left"
+            x-transition:enter="transition ease-out duration-300 transform scale-95"
+            x-transition:enter-start="opacity-0 translate-y-4"
+            x-transition:enter-end="opacity-100 translate-y-0"
+        >
+            <div class="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-white/5">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Hubungi Kami / Tempah Demo</h3>
+                <button @click="demoModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Form simulator inside Modal -->
+            <form @submit.prevent="demoModal = false; triggerToast('Sesi taklimat demo berjaya ditempah!', 'success')" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nama Penuh</label>
+                        <input type="text" required placeholder="Siti Aminah" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">E-mel Rasmi</label>
+                        <input type="email" required placeholder="aminah@gov.my" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nama Organisasi / Agensi</label>
+                    <input type="text" required placeholder="Agensi Pengurusan Bencana Kawasan" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Skala Organisasi</label>
+                    <select class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-emerald-500 text-slate-700 dark:text-slate-300">
+                        <option>Bawah 100 Anggota</option>
+                        <option>100 - 500 Anggota</option>
+                        <option>500 - 2,000 Anggota</option>
+                        <option>Lebih 2,000 Anggota</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Ulasan / Keperluan Khas</label>
+                    <textarea rows="3" placeholder="Sila nyatakan keperluan modul khas organisasi anda..." class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-emerald-500"></textarea>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <input type="checkbox" required class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                    <span class="text-[10px] text-slate-400">Saya bersetuju untuk dihubungi oleh wakil teknikal REKSA.</span>
+                </div>
+
+                <button 
+                    type="submit" 
+                    class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-colors"
+                    :class="{
+                        'bg-emerald-500 hover:bg-emerald-600': accentColor === 'emerald',
+                        'bg-blue-500 hover:bg-blue-600': accentColor === 'blue',
+                        'bg-indigo-500 hover:bg-indigo-600': accentColor === 'indigo'
+                    }"
+                >
+                    Hantar Permohonan Sesi Demo
+                </button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
