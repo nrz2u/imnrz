@@ -227,8 +227,8 @@
     </style>
 </head>
 <body 
-    x-data="{ 
-        darkMode: true, 
+    x-data="{
+        darkMode: false,
         accentColor: 'emerald', 
         mobileMenu: false, 
         scrolled: false,
@@ -292,7 +292,7 @@
 
     <!-- Navigation Bar -->
     <header 
-        :class="{ 'bg-white/80 dark:bg-[#070A13]/80 backdrop-blur-md shadow-lg border-b border-slate-200/10 py-3': scrolled, 'bg-transparent py-5': !scrolled }" 
+        :class="{ 'bg-[#070A13]/90 backdrop-blur-md shadow-lg border-b border-white/10 py-3': scrolled, 'bg-transparent py-5': !scrolled }"
         class="fixed top-0 left-0 w-full z-40 transition-all duration-300"
     >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -308,25 +308,25 @@
                         <i class="fa-solid fa-shield-halved text-white text-lg animate-pulse-slow"></i>
                     </div>
                     <div>
-                        <span class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white transition-all group-hover:opacity-80">
+                        <span class="text-2xl font-extrabold tracking-tight text-white transition-all group-hover:opacity-80">
                             MyRELA<span :class="{ 'text-emerald-500': accentColor === 'emerald', 'text-blue-500': accentColor === 'blue', 'text-indigo-500': accentColor === 'indigo' }">.</span>
                         </span>
-                        <p class="text-[9px] uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">Respons & Keselamatan</p>
+                        <p class="text-[9px] uppercase tracking-wider font-semibold text-white/70">Respons & Keselamatan</p>
                     </div>
                 </a>
 
                 <!-- Desktop Navigation Menu -->
                 <nav class="hidden md:flex items-center space-x-8">
-                    <a href="#masalah" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Masalah & Solusi</a>
-                    <a href="#bento" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Ciri Utama</a>
-                    <a href="#showcase" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Showcase</a>
-                    <a href="#steps" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Proses</a>
-                    <a href="#faq" class="text-sm font-medium hover:text-slate-500 dark:hover:text-slate-300 transition-colors">Soalan Lazim</a>
+                    <a href="#masalah" class="text-sm font-medium text-white/80 hover:text-white transition-colors">Masalah & Solusi</a>
+                    <a href="#bento" class="text-sm font-medium text-white/80 hover:text-white transition-colors">Ciri Utama</a>
+                    <a href="#showcase" class="text-sm font-medium text-white/80 hover:text-white transition-colors">Showcase</a>
+                    <a href="#steps" class="text-sm font-medium text-white/80 hover:text-white transition-colors">Proses</a>
+                    <a href="#faq" class="text-sm font-medium text-white/80 hover:text-white transition-colors">Soalan Lazim</a>
                 </nav>
 
                 <!-- Navigation Action Buttons -->
                 <div class="hidden md:flex items-center space-x-4">
-                    <button @click="triggerToast('Fungsi Log Masuk Portal akan dilancarkan tidak lama lagi.', 'info')" class="text-sm font-semibold hover:opacity-80 transition-opacity">Log Masuk</button>
+                    <button @click="triggerToast('Fungsi Log Masuk Portal akan dilancarkan tidak lama lagi.', 'info')" class="text-sm font-semibold text-white hover:opacity-80 transition-opacity">Log Masuk</button>
                     <button 
                         @click="demoModal = true"
                         class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-lg transform active:scale-95 transition-all"
@@ -344,7 +344,7 @@
                 <div class="md:hidden flex items-center space-x-3">
                     <button 
                         @click="mobileMenu = !mobileMenu" 
-                        class="p-2 rounded-lg text-slate-600 dark:text-slate-300 focus:outline-none"
+                        class="p-2 rounded-lg text-white focus:outline-none"
                     >
                         <i class="fa-solid text-xl" :class="mobileMenu ? 'fa-xmark' : 'fa-bars'"></i>
                     </button>
