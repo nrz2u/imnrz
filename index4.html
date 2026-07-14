@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ms" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyRELA 2.0 — Portal Premium</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>tailwind.config={theme:{extend:{colors:{navy:'#052e25',rela:'#087f5b',gold:'#f28c28'}}}}</script>
+  <style>
+    @keyframes heroCrossfade {
+      0%, 42% { opacity: 1; transform: scale(1); }
+      50%, 92% { opacity: 0; transform: scale(1.06); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes heroDrift {
+      0%, 45% { transform: scale(1.06); }
+      55%, 95% { transform: scale(1); }
+      100% { transform: scale(1.06); }
+    }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      background-position: center;
+      background-size: cover;
+      will-change: opacity, transform;
+    }
+
+    .hero-slide-primary {
+      background-image: url('../rela-hero.jpg');
+      animation: heroCrossfade 18s ease-in-out infinite;
+      z-index: 2;
+    }
+
+    .hero-slide-secondary {
+      background-image: url('../rela-members.webp');
+      animation: heroDrift 18s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    @keyframes orbitText {
+      to { transform: rotate(360deg); }
+    }
+
+    .orbit-text {
+      animation: orbitText 20s linear infinite;
+      transform-origin: center;
+      will-change: transform;
+    }
+
+    .orbit-wrap:hover .orbit-text {
+      animation-play-state: paused;
+    }
+
+    @keyframes carouselFade {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .carousel-track { transition: transform .85s cubic-bezier(.22,.61,.36,1); }
+    .carousel-slide { flex: 0 0 100%; }
+    .carousel-slide[data-active="true"] .carousel-inner > * { animation: carouselFade .9s ease both; }
+    .carousel-slide[data-active="true"] .carousel-inner > *:nth-child(2) { animation-delay: .12s; }
+    .carousel-slide[data-active="true"] .carousel-inner > *:nth-child(3) { animation-delay: .24s; }
+    .carousel-slide[data-active="true"] .carousel-inner > *:nth-child(4) { animation-delay: .36s; }
+    .carousel-dot { transition: all .45s cubic-bezier(.22,.61,.36,1); }
+    .carousel-dot.is-active { width: 2.25rem; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1);
+      will-change: opacity, transform;
+    }
+    .reveal.is-visible { opacity: 1; transform: none; }
+
+    /* Peta anggota (Leaflet) */
+    #malaysiaMap { background: #eef4f1; z-index: 0; }
+    #malaysiaMap .leaflet-tile { filter: grayscale(.35) saturate(.85); }
+    .map-pin { position: relative; display: grid; place-items: center; }
+    .map-pin .ring {
+      position: absolute; width: 22px; height: 22px; border-radius: 9999px;
+      background: var(--c); animation: mapPing 2.4s ease-out infinite;
+    }
+    @keyframes mapPing {
+      0%   { transform: scale(1); opacity: .5; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+    .map-pin .dot {
+      position: relative; z-index: 2; width: 22px; height: 22px; border-radius: 9999px;
+      display: grid; place-items: center; background: var(--c); color: #fff;
+      font-size: 9px; font-weight: 700; border: 3px solid #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    }
+    .map-pin .lbl {
+      position: absolute; top: 24px; z-index: 2; white-space: nowrap;
+      background: #052e25; color: #fff; font-size: 9px; font-weight: 700;
+      padding: 1px 6px; border-radius: 9999px; box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    }
+    .travel-mover {
+      display: block; width: 46px; height: 46px; border-radius: 9999px; overflow: hidden;
+      background: #fff; border: 3px solid #f28c28;
+      box-shadow: 0 0 16px 5px rgba(242,140,40,.6); will-change: transform, opacity;
+    }
+    .travel-mover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .map-pin .ring { animation: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-slide,
+      .orbit-text { animation: none; }
+      .carousel-track { transition: none; }
+      .carousel-slide .carousel-inner > * { animation: none !important; }
+      .reveal { opacity: 1 !important; transform: none !important; transition: none; }
+    }
+  </style>
+</head>
+<body class="overflow-x-hidden bg-white font-sans text-slate-900 antialiased">
+  <div class="bg-navy text-xs text-white/70">
+    <div class="mx-auto flex min-h-9 max-w-7xl items-center justify-between px-5"><span>Portal Rasmi Kerajaan Malaysia</span><span>BM &nbsp;•&nbsp; EN</span></div>
+  </div>
+  <header class="sticky top-0 z-50 border-b border-orange-200/70 bg-white/95 shadow-sm backdrop-blur-xl">
+    <div class="mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5">
+      <a href="#utama" class="inline-flex items-center gap-3">
+        <span class="grid size-11 place-items-center rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-800 text-white"><i data-lucide="shield-check"></i></span>
+        <span><b class="text-xl text-emerald-600">My</b><b class="text-xl">RELA</b> <small class="rounded bg-gold px-1 text-white">2.0</small><span class="block text-[10px] uppercase tracking-wider text-slate-500">Sistem Maklumat RELA</span></span>
+      </a>
+      <nav class="hidden gap-8 text-sm font-semibold text-slate-600 md:flex"><a class="text-emerald-700" href="#utama">Utama</a><a href="#perkhidmatan">Perkhidmatan</a><a href="#modul">Modul</a><a href="#tentang">Mengenai</a></nav>
+      <a class="hidden items-center gap-2 rounded-xl bg-navy px-5 py-3 text-sm font-bold text-white md:flex" href="https://myrela.rela.gov.my/login"><i class="size-4" data-lucide="log-in"></i> Log Masuk</a>
+    </div>
+  </header>
+  <section id="utama" class="relative flex min-h-[650px] items-center overflow-hidden bg-navy text-white">
+    <div class="hero-slide hero-slide-secondary" aria-hidden="true"></div>
+    <div class="hero-slide hero-slide-primary" aria-hidden="true"></div>
+    <div class="absolute inset-0 z-[3] bg-[radial-gradient(circle_at_85%_20%,rgba(242,140,40,.22),transparent_28%),linear-gradient(90deg,rgba(3,45,34,.98)_0%,rgba(4,58,43,.91)_44%,rgba(3,45,34,.30)_100%)]" aria-hidden="true"></div>
+    <div class="absolute inset-x-0 bottom-[-45px] z-20 h-20 rounded-[50%_50%_0_0] bg-white"></div>
+    <div class="relative z-10 mx-auto w-full max-w-7xl px-5 py-24">
+      <div class="max-w-3xl">
+        <span class="inline-flex items-center gap-2 rounded-full border border-orange-300/25 bg-orange-500/15 px-3 py-2 text-xs font-bold uppercase tracking-[.14em] text-orange-200"><i class="size-4" data-lucide="sparkles"></i> Transformasi Digital Perkhidmatan Sukarelawan</span>
+        <h1 class="mt-6 text-5xl font-bold leading-[1.02] tracking-[-.055em] sm:text-6xl lg:text-7xl">Berkhidmat untuk rakyat.<br><span class="text-orange-300">Bersedia untuk negara.</span></h1>
+        <p class="mt-6 max-w-xl text-lg leading-8 text-white/70">Satu platform bersepadu untuk anggota, agensi dan komuniti—lebih mudah, pantas dan selamat.</p>
+        <div class="mt-8 flex flex-wrap gap-3"><a class="inline-flex min-h-12 items-center gap-2 rounded-xl border border-orange-300/40 bg-gradient-to-br from-emerald-500 to-emerald-700 px-5 text-sm font-bold" href="https://myrela.rela.gov.my/member/register-public">Mohon Jadi Anggota <i class="size-4" data-lucide="arrow-right"></i></a><a class="inline-flex min-h-12 items-center gap-2 rounded-xl border border-orange-300/50 bg-white/10 px-5 text-sm font-bold transition hover:border-orange-300 hover:bg-orange-400/10" href="#perkhidmatan">Terokai Perkhidmatan</a></div>
+      </div>
+    </div>
+  </section>
+  <section class="border-b border-orange-100 bg-gradient-to-b from-emerald-50/60 to-white py-16" id="statistik">
+    <div class="mx-auto max-w-7xl px-5">
+      <div id="stats" class="grid grid-cols-2 gap-6 lg:grid-cols-4"></div>
+    </div>
+  </section>
+  <section class="py-24" id="perkhidmatan">
+    <div class="mx-auto max-w-7xl px-5"><span class="text-xs font-extrabold uppercase tracking-[.15em] text-emerald-700">Akses pantas</span><h2 class="mt-3 text-4xl font-semibold tracking-[-.045em] text-navy sm:text-5xl">Urusan anda, dipermudahkan</h2><div id="services" class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div></div>
+  </section>
+  <section class="bg-navy pt-24" id="sorotan">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="mx-auto mb-10 max-w-3xl text-center">
+        <span class="text-xs font-extrabold uppercase tracking-[.15em] text-emerald-300">Sorotan RELA</span>
+        <h2 class="mt-3 text-4xl font-semibold tracking-[-.045em] text-white sm:text-5xl">Detik penting perkhidmatan</h2>
+      </div>
+      <div id="carousel" class="group relative overflow-hidden rounded-[2rem] border border-orange-300/20 bg-white/5 shadow-2xl">
+        <div id="carouselTrack" class="carousel-track flex"></div>
+
+        <button id="carouselPrev" aria-label="Sebelumnya" class="absolute left-4 top-1/2 z-20 grid size-11 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-navy/50 text-white opacity-0 backdrop-blur transition hover:bg-orange-500 group-hover:opacity-100 focus:opacity-100"><i class="size-5" data-lucide="chevron-left"></i></button>
+        <button id="carouselNext" aria-label="Seterusnya" class="absolute right-4 top-1/2 z-20 grid size-11 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-navy/50 text-white opacity-0 backdrop-blur transition hover:bg-orange-500 group-hover:opacity-100 focus:opacity-100"><i class="size-5" data-lucide="chevron-right"></i></button>
+
+        <div id="carouselDots" class="absolute inset-x-0 bottom-5 z-20 flex justify-center gap-2"></div>
+      </div>
+    </div>
+  </section>
+  <section class="bg-navy py-24 text-white" id="modul">
+    <div class="mx-auto max-w-7xl px-5"><div class="mx-auto max-w-3xl text-center"><span class="text-xs font-extrabold uppercase tracking-[.15em] text-emerald-300">Ekosistem MyRELA</span><h2 class="mt-3 text-4xl font-semibold tracking-[-.045em] sm:text-5xl">Semua keperluan RELA dalam satu sistem</h2></div><div id="modules" class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div></div>
+  </section>
+  <section class="overflow-hidden py-24" id="jangkauan">
+    <div class="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-[1fr_1.15fr]">
+      <div class="reveal">
+        <span class="text-xs font-extrabold uppercase tracking-[.15em] text-emerald-700">Jangkauan nasional</span>
+        <h2 class="mt-3 text-4xl font-semibold leading-tight tracking-[-.045em] text-navy sm:text-5xl">Anggota RELA di setiap pelosok negara</h2>
+        <p class="mt-6 max-w-md leading-8 text-slate-500">Rangkaian sukarelawan yang sentiasa berhubung dan bersedia — daripada bandar hingga ke pedalaman, denyutan khidmat bakti tidak pernah berhenti.</p>
+        <div class="mt-8 flex flex-wrap gap-8">
+          <div><div class="text-3xl font-extrabold text-navy">14</div><div class="text-sm text-slate-500">Negeri &amp; Wilayah</div></div>
+          <div><div class="text-3xl font-extrabold text-navy">190+</div><div class="text-sm text-slate-500">Pejabat Daerah</div></div>
+          <div><div class="text-3xl font-extrabold text-navy">24/7</div><div class="text-sm text-slate-500">Kesiapsiagaan</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="relative overflow-hidden rounded-3xl border border-orange-100 bg-white p-2 shadow-sm">
+          <div id="malaysiaMap" class="h-[360px] w-full rounded-2xl sm:h-[440px]"></div>
+        </div>
+        <p class="mt-3 text-center text-xs text-slate-400">Lokasi penanda adalah ilustrasi taburan anggota RELA.</p>
+      </div>
+    </div>
+  </section>
+  <section class="py-24" id="tentang">
+    <div class="mx-auto grid max-w-7xl items-center gap-16 px-5 lg:grid-cols-2"><div class="orbit-wrap relative mx-auto grid size-80 place-items-center rounded-full border border-orange-300/70 bg-emerald-50"><svg class="orbit-text pointer-events-none absolute inset-0 size-full overflow-visible" viewBox="0 0 320 320" aria-hidden="true"><defs><path id="orbitPath" d="M 160,160 m -132,0 a 132,132 0 1,1 264,0 a 132,132 0 1,1 -264,0" /></defs><text class="fill-emerald-700 text-[13px] font-bold uppercase tracking-[.22em]"><textPath href="#orbitPath" startOffset="0%">Berkhidmat untuk rakyat &nbsp; • &nbsp; Bersedia untuk negara &nbsp; • &nbsp; </textPath></text></svg><span class="relative z-10 grid size-40 place-items-center rounded-full border-[10px] border-orange-100 bg-gradient-to-br from-emerald-500 to-emerald-700 text-white shadow-2xl"><i class="size-14" data-lucide="hand-heart"></i></span></div><div><span class="text-xs font-extrabold uppercase tracking-[.15em] text-emerald-700">Teknologi untuk khidmat bakti</span><h2 class="mt-3 text-4xl font-semibold leading-tight tracking-[-.05em] text-navy sm:text-5xl">Memperkasa sukarelawan, menghubungkan komuniti</h2><p class="mt-6 leading-8 text-slate-500">MyRELA menyatukan proses penting dalam satu pengalaman digital yang teratur untuk kesiapsiagaan yang lebih baik.</p></div></div>
+  </section>
+  <section class="py-24" id="testimoni">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="reveal relative overflow-visible rounded-[2rem] bg-navy px-6 py-12 sm:px-10 lg:py-16">
+        <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,360px)_1fr] lg:gap-16">
+          <div class="lg:-my-24">
+            <img src="../rela-members.webp" alt="Anggota RELA" class="mx-auto aspect-[4/5] w-full max-w-sm rounded-3xl object-cover shadow-2xl ring-1 ring-white/10 lg:max-w-none" />
+          </div>
+          <figure class="relative">
+            <svg class="absolute -left-2 -top-8 size-24 text-white/5 sm:size-32" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><path d="M30 20C18 24 10 36 10 52c0 12 8 20 18 20s16-8 16-18-7-16-15-16c-1 0-2 0-3 .3C28 32 34 26 42 24zM78 20c-12 4-20 16-20 32 0 12 8 20 18 20s16-8 16-18-7-16-15-16c-1 0-2 0-3 .3C76 32 82 26 90 24z"/></svg>
+            <blockquote class="relative text-2xl font-bold leading-snug tracking-tight text-white sm:text-3xl">
+              Sertai barisan sukarelawan yang berdisiplin dan bersedia. Bersama RELA, kami memperkasa komuniti dan mengukuhkan kesiapsiagaan negara.
+            </blockquote>
+            <figcaption class="mt-8">
+              <div class="font-bold text-white">Anggota RELA</div>
+              <div class="text-sm text-emerald-300">Jabatan Sukarelawan Malaysia</div>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer class="border-t border-orange-300/20 bg-[#03251c] py-14 text-sm text-white/60"><div class="mx-auto flex max-w-7xl flex-col justify-between gap-5 px-5 md:flex-row"><div><b class="text-xl text-white">MyRELA 2.0</b><p class="mt-3">Jabatan Sukarelawan Malaysia (RELA)<br>Kementerian Dalam Negeri</p></div><p>Aras 7, 8 & 9, Blok D9, Kompleks D, 62546 Putrajaya</p></div></footer>
+  <script>
+    const services=[['user-plus','Permohonan Online','Daftar sebagai anggota RELA dan mulakan khidmat bakti.','bg-emerald-600'],['building-2','Daftar Agensi','Permohonan perkhidmatan kawalan untuk agensi.','bg-slate-800'],['search-check','Semak Status','Semak status permohonan dan keahlian anda.','bg-orange-500'],['graduation-cap','Latihan & Kursus','Tingkatkan kemahiran dan kesiapsiagaan.','bg-emerald-600'],['shield-check','Mohon Kawalan','Permohonan kawalan bagi program komuniti.','bg-slate-800'],['medal','Pingat & Anugerah','Urus pencalonan dan rekod pengiktirafan.','bg-orange-500']];
+    document.querySelector('#services').innerHTML=services.map(([i,t,d,c])=>`<article class="min-h-56 rounded-2xl border border-orange-200/80 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-orange-400 hover:shadow-xl"><span class="grid size-12 place-items-center rounded-xl ${c} text-white"><i data-lucide="${i}"></i></span><h3 class="mt-5 text-lg font-bold">${t}</h3><p class="mt-2 text-sm leading-6 text-slate-500">${d}</p></article>`).join('');
+    const modules=[['users','Keanggotaan'],['graduation-cap','Latihan'],['clipboard-check','Penugasan'],['award','Pengiktirafan'],['calendar-days','Program'],['smartphone','Aplikasi Mudah Alih']];
+    document.querySelector('#modules').innerHTML=modules.map(([i,t])=>`<article class="group relative min-h-[170px] overflow-hidden rounded-2xl border border-orange-300/20 border-t-4 border-t-orange-400/80 bg-gradient-to-br from-white/[.09] to-white/[.035] p-6 pr-24 shadow-[0_16px_40px_rgba(0,0,0,.12)] transition duration-300 hover:-translate-y-1 hover:border-orange-300/45 hover:border-t-orange-300 hover:bg-white/[.10] hover:shadow-[0_22px_50px_rgba(0,0,0,.22)]"><span class="absolute right-6 top-6 grid size-12 place-items-center rounded-2xl border border-emerald-300/25 bg-emerald-400/15 text-emerald-300 shadow-[0_8px_24px_rgba(16,185,129,.10)] transition duration-300 group-hover:scale-105 group-hover:border-emerald-300/45 group-hover:bg-emerald-400/25 group-hover:shadow-[0_10px_30px_rgba(16,185,129,.18)]"><i class="size-6" data-lucide="${i}"></i></span><div class="flex min-h-[118px] flex-col justify-end"><h3 class="font-bold tracking-[-.01em] text-white transition group-hover:text-orange-100">${t}</h3><p class="mt-2 text-sm leading-6 text-white/55 transition group-hover:text-white/70">Pengurusan maklumat yang lebih tersusun dan pantas.</p></div><span class="pointer-events-none absolute -bottom-16 -right-12 size-32 rounded-full bg-emerald-400/5 blur-2xl transition duration-500 group-hover:bg-emerald-400/10" aria-hidden="true"></span></article>`).join('');
+    // ===== Premium auto-sliding carousel =====
+    const slides=[
+      ['sparkles','Transformasi Digital','Portal MyRELA 2.0 menyatukan setiap perkhidmatan sukarelawan dalam satu platform yang pantas dan selamat.','from-emerald-600/90 to-navy'],
+      ['users','130,000+ Anggota Aktif','Rangkaian sukarelawan seluruh negara bersedia membantu komuniti pada bila-bila masa.','from-orange-500/80 to-navy'],
+      ['graduation-cap','Latihan Berterusan','Program latihan dan kursus untuk meningkatkan kemahiran serta kesiapsiagaan anggota.','from-emerald-700/90 to-navy'],
+      ['shield-check','Kesiapsiagaan Komuniti','Sokongan kawalan keselamatan bagi program dan acara komuniti di seluruh Malaysia.','from-slate-800/90 to-navy'],
+    ];
+    const track=document.querySelector('#carouselTrack');
+    const dotsWrap=document.querySelector('#carouselDots');
+    track.innerHTML=slides.map(([i,t,d,g],idx)=>`<div class="carousel-slide" data-active="${idx===0}"><div class="carousel-inner relative flex min-h-[340px] flex-col justify-center bg-gradient-to-br ${g} p-10 sm:min-h-[420px] sm:p-16"><span class="grid size-14 place-items-center rounded-2xl border border-white/20 bg-white/10 text-white backdrop-blur"><i class="size-7" data-lucide="${i}"></i></span><h3 class="mt-6 max-w-2xl text-3xl font-bold leading-tight text-white sm:text-5xl">${t}</h3><p class="mt-4 max-w-xl text-base leading-8 text-white/75 sm:text-lg">${d}</p><a href="#perkhidmatan" class="mt-8 inline-flex w-fit items-center gap-2 rounded-xl bg-white/15 px-5 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-orange-500">Ketahui lanjut <i class="size-4" data-lucide="arrow-right"></i></a></div></div>`).join('');
+    dotsWrap.innerHTML=slides.map((_,idx)=>`<button aria-label="Slaid ${idx+1}" data-idx="${idx}" class="carousel-dot h-2 w-2 rounded-full bg-white/40 ${idx===0?'is-active':''}"></button>`).join('');
+
+    let current=0, timer;
+    const dots=[...dotsWrap.children];
+    const go=n=>{
+      current=(n+slides.length)%slides.length;
+      track.style.transform=`translateX(-${current*100}%)`;
+      [...track.children].forEach((s,i)=>s.dataset.active=(i===current));
+      dots.forEach((d,i)=>{d.classList.toggle('is-active',i===current);d.classList.toggle('bg-white/40',i!==current);});
+    };
+    const start=()=>timer=setInterval(()=>go(current+1),5000);
+    const reset=()=>{clearInterval(timer);start();};
+    document.querySelector('#carouselNext').onclick=()=>{go(current+1);reset();};
+    document.querySelector('#carouselPrev').onclick=()=>{go(current-1);reset();};
+    dots.forEach(d=>d.onclick=()=>{go(+d.dataset.idx);reset();});
+    const carousel=document.querySelector('#carousel');
+    carousel.addEventListener('mouseenter',()=>clearInterval(timer));
+    carousel.addEventListener('mouseleave',start);
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches) start();
+
+    // ===== Peta anggota RELA (Leaflet) =====
+    (function(){
+      const el=document.getElementById('malaysiaMap');
+      if(!el||typeof L==='undefined') return;
+
+      const members=[
+        [6.44,100.20,'PLS','Perlis','#087f5b'],
+        [6.12,100.37,'KDH','Kedah','#0f766e'],
+        [5.41,100.33,'PNG','Pulau Pinang','#f28c28'],
+        [6.13,102.24,'KTN','Kelantan','#c2410c'],
+        [5.33,103.14,'TRG','Terengganu','#0e7490'],
+        [4.60,101.09,'PRK','Perak','#1e293b'],
+        [3.82,103.33,'PHG','Pahang','#065f46'],
+        [3.07,101.52,'SGR','Selangor','#f28c28'],
+        [3.14,101.69,'KL','Kuala Lumpur','#b45309'],
+        [2.73,101.94,'NS','Negeri Sembilan','#0f766e'],
+        [2.20,102.25,'MLK','Melaka','#c2410c'],
+        [1.90,103.35,'JHR','Johor','#087f5b'],
+        [1.55,110.35,'SWK','Sarawak','#0e7490'],
+        [5.98,116.07,'SBH','Sabah','#1e293b'],
+      ];
+      const route=members.map(m=>[m[0],m[1]]);
+
+      const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const map=L.map(el,{zoomControl:false,scrollWheelZoom:false,attributionControl:false,zoomSnap:0,dragging:reduced})
+        .setView([4.0,109.5],5);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
+        maxZoom:19, attribution:'© OpenStreetMap, © CARTO'
+      }).addTo(map);
+      L.control.attribution({prefix:false,position:'bottomright'}).addTo(map);
+
+      // garisan penghubung antara negeri
+      L.polyline(route,{color:'#f28c28',weight:2,opacity:.5,dashArray:'4 6'}).addTo(map);
+
+      // penanda negeri (tetap) + kiraan penyertaan anggota
+      const nf=n=>n.toLocaleString('en-US');
+      const counts=members.map(()=>800+Math.floor(Math.random()*2600));
+      const markers=members.map(([lat,lng,init,state,c],idx)=>
+        L.marker([lat,lng],{icon:L.divIcon({
+          className:'', iconSize:[20,20], iconAnchor:[10,10],
+          html:`<div class="map-pin" style="--c:${c}"><span class="ring" style="animation-delay:${(idx%6)*.38}s"></span><span class="dot">${init}</span><span class="lbl">${state} · <b class="cnt">${nf(counts[idx])}</b></span></div>`
+        })}).addTo(map)
+      );
+
+      setTimeout(()=>map.invalidateSize(),250);
+
+      if(reduced){ map.fitBounds(route,{padding:[50,50]}); return; }
+
+      const pinEl=idx=>{ const e=markers[idx].getElement(); return e&&e.firstElementChild; };
+      const setCnt=(idx,v)=>{ const el=pinEl(idx); const c=el&&el.querySelector('.cnt'); if(c) c.textContent=nf(v); };
+      const setActive=(idx,on)=>{ const el=pinEl(idx); if(el) el.classList.toggle('active',on); };
+
+      // kira naik penyertaan bertambah-tambah
+      const bump=(idx,delta,dur)=>new Promise(res=>{
+        const from=counts[idx], to=from+delta, t0=performance.now();
+        const tick=now=>{ const p=Math.min((now-t0)/dur,1);
+          setCnt(idx, Math.round(from+(to-from)*(1-Math.pow(1-p,3))));
+          if(p<1) requestAnimationFrame(tick); else { counts[idx]=to; res(); } };
+        requestAnimationFrame(tick);
+      });
+
+      // zoom perlahan ke negeri yang sedang bertambah
+      const flyToIdx=idx=>new Promise(res=>{
+        map.flyTo([members[idx][0],members[idx][1]], 8, {duration:2.6});
+        map.once('moveend',res);
+      });
+
+      map.setView(route[0], 6.2, {animate:false});
+      let idx=0;
+      (async function tour(){
+        while(true){
+          setActive(idx,true);
+          await flyToIdx(idx);
+          await bump(idx, 40+Math.floor(Math.random()*180), 1600); // penyertaan bertambah
+          await new Promise(r=>setTimeout(r,800));
+          setActive(idx,false);
+          idx=(idx+1)%members.length;
+        }
+      })();
+    })();
+
+    // ===== Statistik count-up =====
+    const stats=[
+      ['users','anggota berdaftar',130000,'+'],
+      ['map-pin','negeri seluruh negara',14,''],
+      ['calendar-check','tahun khidmat bakti',50,'+'],
+      ['clock','kesiapsiagaan',24,'/7'],
+    ];
+    document.querySelector('#stats').innerHTML=stats.map(([i,label,val,suffix])=>`<div class="reveal rounded-2xl border border-orange-100 bg-white p-6 text-center shadow-sm"><span class="mx-auto grid size-12 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><i data-lucide="${i}"></i></span><div class="mt-4 text-4xl font-extrabold tracking-tight text-navy sm:text-5xl"><span class="stat-num" data-target="${val}" data-suffix="${suffix}">0${suffix}</span></div><p class="mt-2 text-sm font-medium text-slate-500">${label}</p></div>`).join('');
+
+    const fmt=n=>n.toLocaleString('en-US');
+    const countUp=el=>{
+      const target=+el.dataset.target, suffix=el.dataset.suffix||'', dur=1600, t0=performance.now();
+      const tick=now=>{
+        const p=Math.min((now-t0)/dur,1);
+        const eased=1-Math.pow(1-p,3);
+        el.textContent=fmt(Math.round(target*eased))+suffix;
+        if(p<1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    // ===== Scroll reveal (+ trigger count-up) =====
+    document.querySelectorAll('#services article, #modules article, #tentang > div > div').forEach(el=>el.classList.add('reveal'));
+
+    const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduceMotion){
+      document.querySelectorAll('.stat-num').forEach(el=>el.textContent=fmt(+el.dataset.target)+(el.dataset.suffix||''));
+    } else {
+      const io=new IntersectionObserver((entries,obs)=>{
+        entries.forEach((e,idx)=>{
+          if(!e.isIntersecting) return;
+          const el=e.target;
+          setTimeout(()=>el.classList.add('is-visible'), (idx%4)*90);
+          el.querySelectorAll?.('.stat-num').forEach(countUp);
+          obs.unobserve(el);
+        });
+      },{threshold:.2});
+      document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+    }
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
