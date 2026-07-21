@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Kreatif & Animasi Ahmad Wazif</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Kalam:wght@400;700&family=Playpen+Sans:wght@400;700;800&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Playpen Sans', cursive;
+            background-color: #f5f2eb;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Penapis dakwat hand-drawn */
+        .ink-handdrawn {
+            filter: url(#ink-bleed-filter);
+        }
+
+        /* Animasi rambut ponytail melantun */
+        @keyframes hair-bounce {
+            0%, 100% { transform: rotate(0deg) translateY(0); }
+            50% { transform: rotate(-8deg) translateY(-2px); }
+        }
+        .animate-hair {
+            animation: hair-bounce 0.3s infinite ease-in-out;
+            transform-origin: 32px 35px;
+        }
+
+        /* Kaki berlari */
+        @keyframes leg-front-swing {
+            0%, 100% { transform: rotate(-35deg) translate(-3px, -2px); }
+            50% { transform: rotate(40deg) translate(3px, 2px); }
+        }
+        @keyframes leg-back-swing {
+            0%, 100% { transform: rotate(45deg) translate(3px, 2px); }
+            50% { transform: rotate(-30deg) translate(-3px, -2px); }
+        }
+        .leg-front {
+            animation: leg-front-swing 0.32s infinite ease-in-out;
+            transform-origin: 40px 105px;
+        }
+        .leg-back {
+            animation: leg-back-swing 0.32s infinite ease-in-out;
+            transform-origin: 48px 105px;
+        }
+
+        /* Lonjakan badan (Bobbing) */
+        @keyframes body-bob {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-bob {
+            animation: body-bob 0.16s infinite ease-in-out;
+        }
+
+        /* Selendang ditiup angin */
+        @keyframes scarf-flutter {
+            0%, 100% { transform: rotate(0deg) scaleY(1); }
+            50% { transform: rotate(12deg) scaleY(0.96); }
+        }
+        .animate-scarf {
+            animation: scarf-flutter 0.35s infinite ease-in-out;
+            transform-origin: 32px 68px;
+        }
+
+        /* Sempadan Komik Klasik */
+        .comic-card {
+            border: 4px solid #1c1917;
+            box-shadow: 8px 8px 0px #1c1917;
+        }
+
+        /* Jawi Text Support */
+        .jawi-text {
+            font-family: 'Noto Naskh Arabic', serif;
+            direction: rtl;
+        }
+
+        /* Kesan tumpahan hujan atau daun gugur */
+        @keyframes fall-effect {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(420px) rotate(360deg); opacity: 0; }
+        }
+        .falling-particle {
+            position: absolute;
+            pointer-events: none;
+            animation: fall-effect 3s infinite linear;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-3 md:p-6 text-stone-900">
+
+    <!-- Filter SVG Ink Bleed untuk memberikan tekstur dakwat basah tradisional -->
+    <svg class="hidden" width="0" height="0">
+        <defs>
+            <filter id="ink-bleed-filter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+
+            <!-- Corak Bumbung Clay Orange -->
+            <pattern id="clay-roof" width="16" height="12" patternUnits="userSpaceOnUse">
+                <path d="M0,12 C4,4 12,4 16,12" fill="none" stroke="#7c2d12" stroke-width="1.8" />
+                <rect width="16" height="12" fill="#ea580c" opacity="0.15" />
+            </pattern>
+
+            <!-- Corak Plaid Selendang Ahmad -->
+            <pattern id="plaid-scarf" width="10" height="10" patternUnits="userSpaceOnUse">
+                <rect width="10" height="10" fill="#b91c1c" />
+                <rect width="3" height="10" fill="#15803d" opacity="0.8" />
+                <rect width="10" height="3" fill="#15803d" opacity="0.8" />
+            </pattern>
+        </defs>
+    </svg>
+
+    <!-- HEADER UTAMA -->
+    <header class="w-full max-w-6xl mx-auto text-center mb-4 z-10">
+        <div class="inline-block bg-white border-4 border-stone-900 px-6 py-3 rotate-[-0.5deg] shadow-[5px_5px_0px_#1c1917] ink-handdrawn">
+            <h1 class="text-3xl md:text-5xl font-black tracking-tight text-stone-900 uppercase">STUDIO ANIMASI & KREATIF WAZIF</h1>
+            <p class="text-xs md:text-sm text-stone-600 font-bold mt-1 uppercase tracking-widest">Nafas Baharu Digital Untuk Seni Komik Tradisional Jawi</p>
+        </div>
+    </header>
+
+    <!-- TEMPAT KERJA UTAMA (DASHBOARD STUDIO) -->
+    <main class="w-full max-w-6xl mx-auto flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        
+        <!-- SIDEBAR KAWALAN (3 COLS) -->
+        <section class="lg:col-span-3 flex flex-col space-y-4">
+            
+            <!-- PANEL 1: SUASANA & CUACA -->
+            <div class="bg-white p-4 rounded-xl border-3 border-stone-900 shadow-[4px_4px_0px_#1c1917] flex flex-col space-y-3">
+                <h2 class="text-sm font-black uppercase tracking-wider text-stone-500 border-b-2 border-stone-100 pb-1 flex items-center gap-1.5">
+                    <span>🌍</span> Suasana & Cuaca
+                </h2>
+                
+                <!-- Pilihan Tema Suasana -->
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="setSuasana('siang')" id="btn-siang" class="btn-theme border-2 border-stone-900 bg-amber-100/50 font-bold p-2 text-xs rounded hover:bg-amber-100 transition shadow-[2px_2px_0px_#1c1917]">
+                        ☀️ Siang Klasik
+                    </button>
+                    <button onclick="setSuasana('senja')" id="btn-senja" class="btn-theme border-2 border-stone-900 bg-white font-bold p-2 text-xs rounded hover:bg-amber-100 transition shadow-[2px_2px_0px_#1c1917]">
+                        🌅 Senja Syahdu
+                    </button>
+                    <button onclick="setSuasana('malam')" id="btn-malam" class="btn-theme border-2 border-stone-900 bg-white font-bold p-2 text-xs rounded hover:bg-amber-100 transition shadow-[2px_2px_0px_#1c1917]">
+                        🌌 Malam Neon
+                    </button>
+                    <button onclick="setSuasana('hujan')" id="btn-hujan" class="btn-theme border-2 border-stone-900 bg-white font-bold p-2 text-xs rounded hover:bg-amber-100 transition shadow-[2px_2px_0px_#1c1917]">
+                        🌧️ Hari Hujan
+                    </button>
+                </div>
+
+                <!-- Kelajuan Angin / Kesan Zarah -->
+                <div class="pt-2">
+                    <label class="text-[10px] font-black uppercase text-stone-500 block mb-1">Kesan Zarah Latar</label>
+                    <select id="particle-effect-select" onchange="toggleParticles()" class="w-full p-2 border-2 border-stone-900 rounded text-xs font-bold bg-stone-50">
+                        <option value="daun">🍂 Daun Berguguran</option>
+                        <option value="dakwat">✒️ Hujan Titik Dakwat</option>
+                        <option value="tiada">❌ Tiada Kesan Zarah</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- PANEL 2: STUDIO BELON KATA (COMIC CREATOR) -->
+            <div class="bg-white p-4 rounded-xl border-3 border-stone-900 shadow-[4px_4px_0px_#1c1917] flex flex-col space-y-3">
+                <h2 class="text-sm font-black uppercase tracking-wider text-stone-500 border-b-2 border-stone-100 pb-1 flex items-center gap-1.5">
+                    <span>💬</span> Speech Bubble Studio
+                </h2>
+                
+                <div class="flex flex-col space-y-2">
+                    <label class="text-[10px] font-black uppercase text-stone-500">Teks Dialog Rumi/Jawi</label>
+                    <input type="text" id="bubble-input-text" placeholder="Tulis sesuatu..." value="Cepat, sebelum tutup! 📚" class="w-full p-2 border-2 border-stone-900 rounded text-xs font-bold bg-stone-50">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="updateSpeechBubble('ahmad')" class="border-2 border-stone-900 bg-stone-900 text-white text-[10px] font-black py-1.5 px-2 rounded hover:bg-stone-800 transition shadow-[1.5px_1.5px_0px_#000]">
+                        Khas Untuk Ahmad
+                    </button>
+                    <button onclick="updateSpeechBubble('library')" class="border-2 border-stone-900 bg-stone-900 text-white text-[10px] font-black py-1.5 px-2 rounded hover:bg-stone-800 transition shadow-[1.5px_1.5px_0px_#000]">
+                        Khas Untuk Rumah
+                    </button>
+                </div>
+
+                <div class="pt-1">
+                    <button onclick="revealJawiWritingGuide()" class="w-full border-2 border-dashed border-amber-600 bg-amber-50 hover:bg-amber-100 text-[10px] font-black p-2 rounded text-amber-900 transition">
+                        📖 Lihat Terjemahan Jawi Asal
+                    </button>
+                </div>
+            </div>
+
+            <!-- PANEL 3: SOUNDBOARD KAMPUNG SINTETIK -->
+            <div class="bg-white p-4 rounded-xl border-3 border-stone-900 shadow-[4px_4px_0px_#1c1917] flex flex-col space-y-3">
+                <h2 class="text-sm font-black uppercase tracking-wider text-stone-500 border-b-2 border-stone-100 pb-1 flex items-center gap-1.5">
+                    <span>🔊</span> Soundboard Kampung
+                </h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="triggerSound('meow')" class="border-2 border-stone-900 bg-white hover:bg-stone-50 p-1.5 text-[10px] font-bold rounded flex items-center justify-center gap-1">
+                        🐱 Meow!
+                    </button>
+                    <button onclick="triggerSound('pintu')" class="border-2 border-stone-900 bg-white hover:bg-stone-50 p-1.5 text-[10px] font-bold rounded flex items-center justify-center gap-1">
+                        🚪 Pintu Kayu
+                    </button>
+                    <button onclick="triggerSound('footstep')" class="border-2 border-stone-900 bg-white hover:bg-stone-50 p-1.5 text-[10px] font-bold rounded flex items-center justify-center gap-1">
+                        🏃‍♂️ Langkah Kaki
+                    </button>
+                    <button onclick="triggerSound('victory')" class="border-2 border-stone-900 bg-white hover:bg-stone-50 p-1.5 text-[10px] font-bold rounded flex items-center justify-center gap-1">
+                        🎶 Melodi Klasik
+                    </button>
+                </div>
+                <div class="flex items-center justify-between pt-1 border-t border-stone-100">
+                    <span class="text-[10px] font-black uppercase text-stone-500">Muzik Latar Angin</span>
+                    <button onclick="toggleAmbientMusic()" id="ambient-btn" class="border-2 border-stone-900 bg-emerald-500 text-white font-black px-2 py-1 text-[10px] rounded shadow-[1.5px_1.5px_0px_#000]">
+                        AKTIF
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- VIEWPORT UTAMA KOMIK & PERMAINAN (9 COLS) -->
+        <section class="lg:col-span-9 flex flex-col space-y-4">
+            
+            <!-- TAB BAR UNTUK MOD PERMAINAN / ANIMASI -->
+            <div class="w-full flex space-x-2 border-b-4 border-stone-900 pb-1">
+                <button onclick="switchTab('animasi')" id="tab-animasi" class="tab-btn border-3 border-stone-900 bg-stone-900 text-white font-black px-5 py-2 text-xs md:text-sm rounded-t-xl transition-all">
+                    🎨 Meja Animasi Komik
+                </button>
+                <button onclick="switchTab('permainan')" id="tab-permainan" class="tab-btn border-3 border-stone-900 bg-white text-stone-900 font-black px-5 py-2 text-xs md:text-sm rounded-t-xl transition-all">
+                    🎮 Game: Misi Selamatkan Buku
+                </button>
+                <button onclick="switchTab('restorasi')" id="tab-restorasi" class="tab-btn border-3 border-stone-900 bg-white text-stone-900 font-black px-5 py-2 text-xs md:text-sm rounded-t-xl transition-all">
+                    🎚️ Slider Restorasi Digital
+                </button>
+            </div>
+
+            <!-- BOX VIEWPORT AKTIF -->
+            <div id="viewport-container" class="w-full aspect-[4/3] md:aspect-[16/10] max-h-[500px] bg-white comic-card ink-handdrawn relative overflow-hidden flex flex-col justify-between p-4 transition-all duration-300">
+                
+                <!-- KESAN ZARAH KAMPUNG (PARTICLES LAYER) -->
+                <div id="particles-overlay" class="absolute inset-0 pointer-events-none z-10"></div>
+
+                <!-- TEMA FILTER WARNA OVERLAY (Siang/Senja/Malam) -->
+                <div id="color-overlay-layer" class="absolute inset-0 pointer-events-none transition-all duration-500 mix-blend-multiply z-20 opacity-0 bg-amber-500/10"></div>
+
+                <!-- ================= TAB 1: MEJA ANIMASI KOMIK ================= -->
+                <div id="content-animasi" class="tab-content h-full w-full flex flex-col justify-between relative">
+                    
+                    <!-- Jawi Tulisan Asal Langit -->
+                    <div id="jawi-header" class="absolute top-4 left-6 flex flex-col items-start select-none z-10 filter drop-shadow">
+                        <span class="text-4xl text-stone-900 font-bold jawi-text leading-none transition-colors duration-500" id="jawi-word-1">ڤرڤوستاكان</span>
+                        <span class="text-2xl text-stone-800 font-bold jawi-text leading-none mt-1 transition-colors duration-500" id="jawi-word-2">اينتن ڤايوڠ</span>
+                    </div>
+
+                    <!-- Paralaks Layer -->
+                    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+                        <!-- Arked batu lama belakang (Paralaks Jauh) -->
+                        <div id="parallax-far" class="absolute bottom-16 left-0 right-0 h-44 flex justify-start items-end opacity-20 transition-transform duration-75">
+                            <svg class="w-64 h-40 text-stone-900 fill-none stroke-current stroke-2 ml-20" viewBox="0 0 200 150">
+                                <rect x="10" y="60" width="180" height="80" fill="#e7e5e4" />
+                                <path d="M25,140 C25,100 65,100 65,140" />
+                                <path d="M85,140 C85,100 125,100 125,140" />
+                                <path d="M145,140 C145,100 185,100 185,140" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Jalan Raya Bebenandur (Kitaran Larian) -->
+                    <div class="absolute bottom-0 left-0 right-0 h-16 border-t-4 border-stone-900 bg-stone-100 overflow-hidden">
+                        <div id="road-scroller" class="w-[200%] h-full flex items-center justify-start">
+                            <div class="flex space-x-24 w-full pl-6">
+                                <div class="w-24 h-6 bg-stone-900 rotate-[-4deg]"></div>
+                                <div class="w-24 h-6 bg-stone-900 rotate-[-4deg]"></div>
+                                <div class="w-24 h-6 bg-stone-900 rotate-[-4deg]"></div>
+                                <div class="w-24 h-6 bg-stone-900 rotate-[-4deg]"></div>
+                                <div class="w-24 h-6 bg-stone-900 rotate-[-4deg]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WATAK UTAMA AHMAD BERWARNA PENUH & ANIME (SVG) -->
+                    <div id="ahmad-character-anim" class="absolute bottom-10 left-16 md:left-24 w-44 h-60 flex flex-col items-center z-20 animate-bob">
+                        
+                        <!-- Speech Bubble Ahmad Dinamik -->
+                        <div id="bubble-ahmad-el" class="absolute -top-12 left-10 border-2 border-stone-900 bg-white px-3 py-1.5 text-xs font-black rounded-full rotate-[4deg] shadow-[2.5px_2.5px_0px_#1c1917] max-w-xs transition-all">
+                            Cepat, sebelum tutup! 📚
+                        </div>
+
+                        <svg class="w-full h-full text-stone-900 fill-none stroke-current stroke-[3.5]" viewBox="0 0 100 140">
+                            <!-- Kepala Beige Ceria -->
+                            <circle cx="48" cy="48" r="22" fill="#ffdcb4" class="stroke-3" />
+                            
+                            <!-- Rambut Ponytail Berkembar Krim Ceria -->
+                            <g class="animate-hair">
+                                <path d="M30,35 Q12,14 18,2" fill="#f6e3c5" />
+                                <path d="M26,38 Q5,18 10,6" fill="#f6e3c5" />
+                                <path d="M28,45 Q6,35 12,20" fill="#f6e3c5" />
+                            </g>
+
+                            <!-- Muka -->
+                            <circle cx="56" cy="45" r="2.8" fill="#1c1917" />
+                            <path d="M52,38 Q57,40 61,38" stroke-width="2.5" />
+                            <path d="M60,54 Q54,58 52,53 Z" fill="#f43f5e" />
+
+                            <!-- Selendang Plaid -->
+                            <g class="animate-scarf">
+                                <rect x="36" y="68" width="23" height="12" rx="4" fill="url(#plaid-scarf)" class="stroke-3" />
+                                <path d="M36,74 Q10,70 4,82 Q8,96 26,87 Q16,82 36,80" fill="url(#plaid-scarf)" class="stroke-3" />
+                                <path d="M3,81 L1,84 M5,82 L3,85 M7,83 L5,86" />
+                            </g>
+
+                            <!-- Baju Putih -->
+                            <path d="M39,80 L36,110 L58,110 L52,80 Z" fill="#fafaf9" />
+
+                            <!-- Buku Sejarah -->
+                            <g>
+                                <path d="M38,88 Q20,93 30,105" stroke-width="3" />
+                                <rect x="18" y="94" width="22" height="28" rx="2" fill="#b45309" class="stroke-3" transform="rotate(-6 20 94)" />
+                                <text x="17" y="112" font-size="6" font-family="sans-serif" font-weight="black" fill="#fef08a" transform="rotate(-6 20 94)">SEJ</text>
+                            </g>
+
+                            <path d="M50,88 Q70,81 80,78 M80,78 L74,82" />
+
+                            <!-- Kaki berlari -->
+                            <g class="leg-front"><path d="M42,110 L34,134 L18,136" fill="#1c1917" /></g>
+                            <g class="leg-back"><path d="M50,110 L58,134 L46,138" fill="#1c1917" /></g>
+                        </svg>
+                    </div>
+
+                    <!-- PERPUSTAKAAN INTAN PAYUNG (TRADISIONAL WARNA PREMIUM) -->
+                    <div id="library-building-interactive" class="absolute bottom-10 right-4 w-72 h-80 z-20 pointer-events-auto">
+                        <!-- Rumah Panggung Kayu (Warna Coklat Terracotta Bumbung) -->
+                        <svg class="w-full h-full text-stone-900 fill-none stroke-current stroke-2" viewBox="0 0 200 220">
+                            <!-- Bumbung Clay Orange -->
+                            <path d="M10,100 L100,20 L190,100 Z" fill="url(#clay-roof)" class="stroke-2" />
+                            <path d="M2,105 L100,12 L198,105" stroke-width="4" stroke="#ea580c" />
+                            
+                            <!-- Tingkat 2 Rumah Kayu Mahogany -->
+                            <rect x="25" y="100" width="150" height="75" fill="#78350f" class="stroke-2" />
+
+                            <!-- Tingkap-tingkap -->
+                            <g class="stroke-2">
+                                <rect x="40" y="115" width="22" height="35" fill="#a16207" />
+                                <rect x="89" y="115" width="22" height="35" fill="#a16207" />
+                                <rect x="138" y="115" width="22" height="35" fill="#a16207" />
+                            </g>
+
+                            <!-- Tiang bawah -->
+                            <line x1="35" y1="175" x2="35" y2="220" stroke-width="4.5" stroke="#451a03" />
+                            <line x1="100" y1="175" x2="100" y2="220" stroke-width="4.5" stroke="#451a03" />
+                            <line x1="165" y1="175" x2="165" y2="220" stroke-width="4.5" stroke="#451a03" />
+
+                            <!-- Papan tanda -->
+                            <rect x="35" y="155" width="130" height="20" fill="#fef08a" class="stroke-2" />
+                            <text x="100" y="168" font-family="'Kalam', cursive" font-size="7.5" font-weight="black" text-anchor="middle" fill="#451a03">PERPUSTAKAAN INTAN PAYUNG</text>
+
+                            <!-- Tangga -->
+                            <line x1="5" y1="220" x2="30" y2="175" stroke-width="3" stroke="#451a03" />
+                            <line x1="15" y1="220" x2="40" y2="175" stroke-width="3" stroke="#451a03" />
+                        </svg>
+
+                        <!-- Belon Kata Atas Perpustakaan -->
+                        <div id="bubble-library-el" class="absolute -top-6 right-10 border-2 border-stone-900 bg-amber-50 px-3 py-1 text-[10px] font-black rounded shadow-[1.5px_1.5px_0px_#000] hidden">
+                            Rumah Warisan Jawi 🏡
+                        </div>
+                    </div>
+
+                    <!-- Pemilih Kelajuan Animasi Larian -->
+                    <div class="absolute bottom-16 left-4 bg-white/90 border-2 border-stone-900 rounded p-1.5 flex items-center space-x-2 z-30 shadow-[2px_2px_0px_#1c1917]">
+                        <span class="text-[9px] font-black uppercase text-stone-600">Larian:</span>
+                        <input type="range" id="tempo-slider-interactive" min="1" max="5" value="3" class="w-16 accent-stone-900 cursor-pointer" oninput="changeLarianTempo(this.value)">
+                    </div>
+
+                </div>
+
+                <!-- ================= TAB 2: GAME MISI SELAMATKAN BUKU ================= -->
+                <div id="content-permainan" class="tab-content h-full w-full hidden flex-col justify-between relative">
+                    <div class="absolute top-2 left-2 right-2 flex justify-between items-center z-30">
+                        <div class="bg-stone-900 text-white px-3 py-1 rounded text-xs font-black shadow-[2px_2px_0px_#000] flex items-center gap-1.5">
+                            <span>📖</span> Buku Dikumpul: <span id="game-score" class="text-amber-400">0</span>
+                        </div>
+                        <div class="bg-red-500 text-white px-3 py-1 rounded text-xs font-black shadow-[2px_2px_0px_#000]" id="game-lives">
+                            Nyawa: ❤️❤️❤️
+                        </div>
+                    </div>
+
+                    <!-- Tempat Permainan Canvas -->
+                    <div class="w-full h-full bg-gradient-to-b from-sky-100 to-amber-50 relative overflow-hidden rounded-lg border-2 border-stone-900">
+                        <canvas id="game-canvas" class="w-full h-full block cursor-pointer"></canvas>
+                        
+                        <!-- Panel Permulaan Game / Game Over -->
+                        <div id="game-screen-overlay" class="absolute inset-0 bg-stone-900/90 flex flex-col items-center justify-center text-center p-4 z-40">
+                            <h3 id="game-status-title" class="text-2xl md:text-3xl font-black text-amber-400">LARI & LOMPAT AHMAD!</h3>
+                            <p id="game-status-desc" class="text-xs text-stone-300 max-w-sm mt-2 leading-relaxed">
+                                Ketik pada skrin atau tekan <strong>Spacebar</strong> untuk membantu Ahmad melompat mengumpul buku sejarah terapung dan mengelak tumpahan dakwat berbahaya!
+                            </p>
+                            <button onclick="startGame()" class="mt-6 border-3 border-stone-900 bg-amber-500 text-stone-950 font-black px-6 py-2.5 rounded hover:bg-amber-400 transition shadow-[4px_4px_0px_#fff]">
+                                Mula Bermain 🎮
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= TAB 3: SLIDER RESTORASI DIGITAL ================= -->
+                <div id="content-restorasi" class="tab-content h-full w-full hidden flex-col justify-between relative">
+                    
+                    <div class="absolute top-2 left-1/2 -translate-x-1/2 bg-stone-900 text-white px-4 py-1 rounded-full text-xs font-black shadow-[2px_2px_0px_#000] z-30">
+                        Gerakkan slider kiri-kanan untuk melihat pemulihan warna!
+                    </div>
+
+                    <!-- Bekas Perbandingan Pembahagi Slider (Split-Screen Restoration) -->
+                    <div class="relative w-full h-full border-2 border-stone-900 rounded-lg overflow-hidden bg-white select-none">
+                        
+                        <!-- Latar belakang Lakaran Hitam Putih Asli (Paling Bawah) -->
+                        <div class="absolute inset-0 flex items-center justify-center opacity-95">
+                            <img src="image.png" alt="Lakaran Hitam Putih Asli" class="w-full h-full object-contain filter grayscale" />
+                        </div>
+
+                        <!-- Latar belakang Berwarna Premium (Di atas, dilaraskan lebar) -->
+                        <div id="restoration-color-layer" class="absolute inset-y-0 left-0 overflow-hidden" style="width: 50%;">
+                            <div class="absolute inset-0 w-[480px] md:w-[760px] h-full flex items-center justify-center">
+                                <!-- Ilustrasi Komik Berwarna Sempurna -->
+                                <img src="image.png" alt="Restorasi Komik Berwarna Premium" class="w-full h-full object-contain" />
+                            </div>
+                        </div>
+
+                        <!-- Palang Pemisah Dinamik Slider -->
+                        <div id="restoration-slider-handle" class="absolute inset-y-0 w-1 bg-stone-900 cursor-ew-resize z-20 flex items-center justify-center" style="left: 50%;">
+                            <div class="w-8 h-8 rounded-full bg-stone-900 text-white font-black text-xs border-2 border-white flex items-center justify-center shadow">
+                                ↔️
+                            </div>
+                        </div>
+
+                        <!-- Pengesan Input Tetikus/Touch atas kanvas restorasi -->
+                        <div id="slider-touch-area" class="absolute inset-0 z-30 cursor-ew-resize"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- BUTANG UNTUK MELANCARKAN PERMAINAN / INTERAKSI TERUS -->
+            <div class="w-full flex justify-between items-center bg-white border-3 border-stone-900 p-3 rounded-xl shadow-[4px_4px_0px_#1c1917] ink-handdrawn">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs font-black uppercase text-stone-500">Tema Studio:</span>
+                    <button onclick="switchAppTheme()" class="border-2 border-stone-900 bg-white hover:bg-stone-50 text-xs font-bold px-3 py-1 rounded shadow-[2px_2px_0px_#000]">
+                        Sukar Kertas / Klasik
+                    </button>
+                </div>
+                <div class="text-right">
+                    <span class="text-[10px] font-black uppercase text-stone-500 block leading-none">Direka Khas Oleh</span>
+                    <span class="text-xs font-extrabold text-stone-950 uppercase tracking-wider">Komuniti Seni Tempatan Ahmad Wazif</span>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- POPUP PANDUAN TERJEMAHAN JAWI ASAL -->
+    <div id="jawi-translation-modal" class="fixed inset-0 bg-stone-950/80 items-center justify-center p-4 z-50 hidden flex">
+        <div class="bg-white border-4 border-stone-900 p-6 rounded-2xl max-w-md w-full shadow-[8px_8px_0px_#1c1917] flex flex-col space-y-4 text-center ink-handdrawn">
+            <h3 class="text-xl font-black text-stone-900">Panduan Jawi Asal Wazif</h3>
+            
+            <div class="border-2 border-dashed border-stone-300 p-4 rounded-xl flex flex-col space-y-3 bg-stone-50">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-black text-stone-500">Rumi:</span>
+                    <span class="text-sm font-bold">Perpustakaan</span>
+                </div>
+                <div class="flex justify-between items-center border-t border-stone-200 pt-2">
+                    <span class="text-xs font-black text-stone-500">Jawi:</span>
+                    <span class="text-2xl text-stone-900 font-bold jawi-text">ڤرڤوستاكان</span>
+                </div>
+                <div class="flex justify-between items-center border-t border-stone-200 pt-2">
+                    <span class="text-xs font-black text-stone-500">Rumi:</span>
+                    <span class="text-sm font-bold">Intan Payung</span>
+                </div>
+                <div class="flex justify-between items-center border-t border-stone-200 pt-2">
+                    <span class="text-xs font-black text-stone-500">Jawi:</span>
+                    <span class="text-2xl text-stone-900 font-bold jawi-text">اينتن ڤايوڠ</span>
+                </div>
+            </div>
+
+            <p class="text-xs text-stone-500 leading-relaxed">
+                Tulisan tangan Jawi di dalam lukisan asal Ahmad Wazif digambarkan dengan penuh teliti di sudut atas kiri dan di bahagian bumbung perpustakaan tradisional.
+            </p>
+
+            <button onclick="closeJawiWritingGuide()" class="border-3 border-stone-900 bg-stone-900 text-white font-extrabold py-2 px-4 rounded hover:bg-stone-800 transition shadow-[3px_3px_0px_#fff]">
+                Faham & Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- AUDIO ENGINE & LOGIK KAWALAN -->
+    <script>
+        // --- KEADAAN GLOBAL (STATE) ---
+        let audioContext = null;
+        let windNoiseNode = null;
+        let windNoiseGain = null;
+        let ambientMusicActive = true;
+        let currentSuasana = 'siang';
+        let currentLarianTempo = 3;
+        let currentActiveTab = 'animasi';
+
+        // --- ENJIN SINTETIK AUDIO KAMPUNG (WEB AUDIO API) ---
+        function getOrCreateAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                igniteKampungAtmosphere();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        // Sintesis Bunyi Angin Selaras yang Dinamik
+        function igniteKampungAtmosphere() {
+            if (!ambientMusicActive) return;
+
+            const bufferDuration = audioContext.sampleRate * 2;
+            const noiseBuffer = audioContext.createBuffer(1, bufferDuration, audioContext.sampleRate);
+            const outputChannel = noiseBuffer.getChannelData(0);
+            
+            for (let i = 0; i < bufferDuration; i++) {
+                outputChannel[i] = Math.random() * 2 - 1;
+            }
+
+            const noiseSource = audioContext.createBufferSource();
+            noiseSource.buffer = noiseBuffer;
+            noiseSource.loop = true;
+
+            const bandpassFilter = audioContext.createBiquadFilter();
+            bandpassFilter.type = 'bandpass';
+            bandpassFilter.frequency.setValueAtTime(380, audioContext.currentTime);
+            bandpassFilter.Q.setValueAtTime(2.0, audioContext.currentTime);
+
+            windNoiseGain = audioContext.createGain();
+            windNoiseGain.gain.setValueAtTime(0.04, audioContext.currentTime);
+
+            noiseSource.connect(bandpassFilter);
+            bandpassFilter.connect(windNoiseGain);
+            windNoiseGain.connect(audioContext.destination);
+
+            noiseSource.start();
+            windNoiseNode = noiseSource;
+
+            // Kesan siulan angin bergelombang organik
+            setInterval(() => {
+                if (audioContext && ambientMusicActive) {
+                    const time = audioContext.currentTime;
+                    const lfo = Math.sin(time * 1.5) * 100 + 400 + (currentLarianTempo * 15);
+                    bandpassFilter.frequency.exponentialRampToValueAtTime(lfo, time + 0.3);
+                }
+            }, 300);
+        }
+
+        // Pemicu Kesan Bunyi (Soundboard)
+        function triggerSound(type) {
+            getOrCreateAudioContext();
+            
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+
+            if (type === 'meow') {
+                // Bunyi kucing meow sintetik
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(450, audioContext.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(850, audioContext.currentTime + 0.15);
+                osc.frequency.exponentialRampToValueAtTime(650, audioContext.currentTime + 0.4);
+
+                gain.gain.setValueAtTime(0.12, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.005, audioContext.currentTime + 0.4);
+
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.start();
+                osc.stop(audioContext.currentTime + 0.4);
+
+            } else if (type === 'pintu') {
+                // Bunyi keriut kayu pintu panggung
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(110, audioContext.currentTime);
+                osc.frequency.linearRampToValueAtTime(190, audioContext.currentTime + 0.5);
+                osc.frequency.linearRampToValueAtTime(130, audioContext.currentTime + 0.8);
+
+                gain.gain.setValueAtTime(0.04, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.8);
+
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.start();
+                osc.stop(audioContext.currentTime + 0.8);
+
+            } else if (type === 'footstep') {
+                // Bunyi langkah berlari cemas ahmad
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(140, audioContext.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(30, audioContext.currentTime + 0.08);
+
+                gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.08);
+
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.start();
+                osc.stop(audioContext.currentTime + 0.08);
+
+            } else if (type === 'victory') {
+                // Melodi pentatonik klasik
+                const notes = [293.66, 329.63, 392.00, 440.00, 587.33];
+                notes.forEach((freq, idx) => {
+                    setTimeout(() => {
+                        const noteOsc = audioContext.createOscillator();
+                        const noteGain = audioContext.createGain();
+                        noteOsc.type = 'sine';
+                        noteOsc.frequency.setValueAtTime(freq, audioContext.currentTime);
+                        noteGain.gain.setValueAtTime(0.08, audioContext.currentTime);
+                        noteGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.35);
+                        noteOsc.connect(noteGain);
+                        noteGain.connect(audioContext.destination);
+                        noteOsc.start();
+                        noteOsc.stop(audioContext.currentTime + 0.35);
+                    }, idx * 120);
+                });
+            }
+        }
+
+        // Buka / Tutup Muzik Angin
+        function toggleAmbientMusic() {
+            ambientMusicActive = !ambientMusicActive;
+            const btn = document.getElementById('ambient-btn');
+            if (ambientMusicActive) {
+                btn.innerText = "AKTIF";
+                btn.className = "border-2 border-stone-900 bg-emerald-500 text-white font-black px-2 py-1 text-[10px] rounded shadow-[1.5px_1.5px_0px_#000]";
+                getOrCreateAudioContext();
+                if (windNoiseGain) windNoiseGain.gain.setValueAtTime(0.04, audioContext.currentTime);
+            } else {
+                btn.innerText = "BISU";
+                btn.className = "border-2 border-stone-900 bg-red-500 text-white font-black px-2 py-1 text-[10px] rounded shadow-[1.5px_1.5px_0px_#000]";
+                if (windNoiseGain) windNoiseGain.gain.setValueAtTime(0, audioContext.currentTime);
+            }
+        }
+
+
+        // --- MEJA ANIMASI & SUASANA CUACA ---
+        function setSuasana(tema) {
+            getOrCreateAudioContext();
+            currentSuasana = tema;
+
+            const overlay = document.getElementById('color-overlay-layer');
+            const jawi1 = document.getElementById('jawi-word-1');
+            const jawi2 = document.getElementById('jawi-word-2');
+            
+            // Set semula kelas butang
+            document.querySelectorAll('.btn-theme').forEach(btn => {
+                btn.classList.remove('bg-amber-100/50');
+                btn.classList.add('bg-white');
+            });
+
+            const activeBtn = document.getElementById(`btn-${tema}`);
+            if (activeBtn) activeBtn.classList.add('bg-amber-100/50');
+
+            // Tetapkan pencahayaan warna sepadan
+            if (tema === 'siang') {
+                overlay.style.opacity = '0';
+                jawi1.style.color = '#1c1917';
+                jawi2.style.color = '#292524';
+                document.getElementById('particles-overlay').innerHTML = '';
+            } else if (tema === 'senja') {
+                overlay.style.opacity = '0.35';
+                overlay.style.backgroundColor = '#f59e0b'; // Jingga hangat senja
+                jawi1.style.color = '#7c2d12';
+                jawi2.style.color = '#9a3412';
+            } else if (tema === 'malam') {
+                overlay.style.opacity = '0.65';
+                overlay.style.backgroundColor = '#1e1b4b'; // Biru malam indigo neon
+                jawi1.style.color = '#ec4899'; // Neon pink
+                jawi2.style.color = '#3b82f6'; // Neon blue
+            } else if (tema === 'hujan') {
+                overlay.style.opacity = '0.45';
+                overlay.style.backgroundColor = '#64748b'; // Kelabu hujan mendung
+                jawi1.style.color = '#475569';
+                jawi2.style.color = '#334155';
+                startRainParticles();
+            }
+        }
+
+        // Penjana Kesan Zarah Cuaca Dinamik (Rain/Leaf particles)
+        function toggleParticles() {
+            const effect = document.getElementById('particle-effect-select').value;
+            const container = document.getElementById('particles-overlay');
+            container.innerHTML = '';
+
+            if (effect === 'daun') {
+                for (let i = 0; i < 15; i++) {
+                    const leaf = document.createElement('div');
+                    leaf.className = 'falling-particle text-sm';
+                    leaf.innerHTML = '🍂';
+                    leaf.style.left = `${Math.random() * 100}%`;
+                    leaf.style.animationDelay = `${Math.random() * 3}s`;
+                    leaf.style.animationDuration = `${3 + Math.random() * 2}s`;
+                    container.appendChild(leaf);
+                }
+            } else if (effect === 'dakwat') {
+                for (let i = 0; i < 20; i++) {
+                    const drop = document.createElement('div');
+                    drop.className = 'falling-particle text-stone-900 font-bold';
+                    drop.innerText = '💧';
+                    drop.style.left = `${Math.random() * 100}%`;
+                    drop.style.animationDelay = `${Math.random() * 2}s`;
+                    drop.style.animationDuration = `${1.5 + Math.random() * 1}s`;
+                    container.appendChild(drop);
+                }
+            }
+        }
+
+        function startRainParticles() {
+            document.getElementById('particle-effect-select').value = 'dakwat';
+            toggleParticles();
+        }
+
+
+        // --- STUDIO BELON KATA DINAMIK (SPEECH BUBBLES) ---
+        function updateSpeechBubble(target) {
+            getOrCreateAudioContext();
+            const text = document.getElementById('bubble-input-text').value;
+            
+            if (target === 'ahmad') {
+                const bubble = document.getElementById('bubble-ahmad-el');
+                bubble.innerText = text;
+                bubble.classList.remove('hidden');
+                triggerSound('footstep');
+            } else if (target === 'library') {
+                const bubble = document.getElementById('bubble-library-el');
+                bubble.innerText = text;
+                bubble.classList.remove('hidden');
+                triggerSound('pintu');
+            }
+        }
+
+        function revealJawiWritingGuide() {
+            document.getElementById('jawi-translation-modal').classList.remove('hidden');
+        }
+
+        function closeJawiWritingGuide() {
+            document.getElementById('jawi-translation-modal').classList.add('hidden');
+        }
+
+
+        // --- KAWALAN LARIAN ANIMASI INTERAKTIF ---
+        let runningInterval = null;
+        function changeLarianTempo(val) {
+            currentLarianTempo = parseInt(val);
+            if (runningInterval) clearInterval(runningInterval);
+            
+            const road = document.getElementById('road-scroller');
+            let offset = 0;
+            let counter = 0;
+
+            runningInterval = setInterval(() => {
+                if (currentActiveTab !== 'animasi') return;
+                offset -= currentLarianTempo * 5;
+                if (offset <= -200) offset = 0;
+
+                road.style.transform = `translateX(${offset}px)`;
+
+                counter++;
+                if (counter % (6 - currentLarianTempo) === 0) {
+                    triggerSound('footstep');
+                }
+            }, 90);
+        }
+
+        function haltRunningAnimation() {
+            if (runningInterval) {
+                clearInterval(runningInterval);
+                runningInterval = null;
+            }
+        }
+
+
+        // --- PERALIHAN TABS (VIEWPORT SWITCHER) ---
+        function switchTab(tabId) {
+            getOrCreateAudioContext();
+            currentActiveTab = tabId;
+
+            // Sembunyikan semua tab kandungan
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('flex');
+            });
+
+            // Tunjukkan tab yang dipilih
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            if (tabId === 'animasi') {
+                document.getElementById(`content-${tabId}`).classList.add('flex');
+                changeLarianTempo(currentLarianTempo);
+            } else {
+                haltRunningAnimation();
+            }
+
+            // Kemas kini gaya butang tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.add('bg-white', 'text-stone-900');
+                btn.classList.remove('bg-stone-900', 'text-white');
+            });
+
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.remove('bg-white', 'text-stone-900');
+            activeBtn.classList.add('bg-stone-900', 'text-white');
+
+            if (tabId === 'permainan') {
+                initGameEngine();
+            } else if (tabId === 'restorasi') {
+                initRestorationSlider();
+            }
+        }
+
+
+        // --- ================= ENJIN GAME ARCADES "MISI BUKU" ================= ---
+        let gameCanvas, gameCtx;
+        let isGameRunning = false;
+        let gameScore = 0;
+        let gameLives = 3;
+        let ahmadY = 150;
+        let ahmadVelocityY = 0;
+        let isJumping = false;
+        let gameObstacles = [];
+        let gameBooks = [];
+        let gameFrameId = null;
+
+        function initGameEngine() {
+            gameCanvas = document.getElementById('game-canvas');
+            gameCtx = gameCanvas.getContext('2d');
+
+            gameCanvas.width = gameCanvas.parentElement.clientWidth;
+            gameCanvas.height = gameCanvas.parentElement.clientHeight || 280;
+
+            // Sokongan Klik Skrin untuk melompat (Mobile-friendly)
+            gameCanvas.addEventListener('mousedown', triggerJump);
+            gameCanvas.addEventListener('touchstart', (e) => {
+                triggerJump();
+                e.preventDefault();
+            });
+
+            // Sokongan Spacebar untuk melompat (Desktop-friendly)
+            window.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && currentActiveTab === 'permainan') {
+                    triggerJump();
+                    e.preventDefault();
+                }
+            });
+        }
+
+        function startGame() {
+            getOrCreateAudioContext();
+            document.getElementById('game-screen-overlay').classList.add('hidden');
+            
+            gameScore = 0;
+            gameLives = 3;
+            ahmadY = gameCanvas.height - 85;
+            ahmadVelocityY = 0;
+            isJumping = false;
+            gameObstacles = [];
+            gameBooks = [];
+            isGameRunning = true;
+
+            document.getElementById('game-score').innerText = gameScore;
+            document.getElementById('game-lives').innerText = "❤️".repeat(gameLives);
+
+            if (gameFrameId) cancelAnimationFrame(gameFrameId);
+            gameLoop();
+        }
+
+        function triggerJump() {
+            if (!isGameRunning) return;
+            if (!isJumping) {
+                ahmadVelocityY = -12; // Kekuatan lompatan
+                isJumping = true;
+                triggerSound('meow'); // Menggunakan meow sebagai letupan lompatan lucu
+            }
+        }
+
+        function gameLoop() {
+            if (!isGameRunning) return;
+
+            // Padam skrin terdahulu
+            gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+            // Lukis Latar Belakang Jalan & Garisan
+            gameCtx.fillStyle = '#e2e8f0';
+            gameCtx.fillRect(0, gameCanvas.height - 35, gameCanvas.width, 35);
+            gameCtx.strokeStyle = '#1c1917';
+            gameCtx.lineWidth = 3;
+            gameCtx.beginPath();
+            gameCtx.moveTo(0, gameCanvas.height - 35);
+            gameCtx.lineTo(gameCanvas.width, gameCanvas.height - 35);
+            gameCtx.stroke();
+
+            // Fizik Tarikan Graviti ke atas Ahmad
+            ahmadVelocityY += 0.65; // Tarikan graviti
+            ahmadY += ahmadVelocityY;
+
+            // Had lantai jalan raya
+            const floorLimit = gameCanvas.height - 90;
+            if (ahmadY >= floorLimit) {
+                ahmadY = floorLimit;
+                ahmadVelocityY = 0;
+                isJumping = false;
+            }
+
+            // --- LUKIS WATAK AHMAD CARTOON DI ATAS CANVAS ---
+            gameCtx.save();
+            gameCtx.translate(60, ahmadY);
+            
+            // Bulat Kepala
+            gameCtx.fillStyle = '#ffdcb4';
+            gameCtx.strokeStyle = '#1c1917';
+            gameCtx.lineWidth = 2.5;
+            gameCtx.beginPath();
+            gameCtx.arc(20, 20, 15, 0, Math.PI * 2);
+            gameCtx.fill();
+            gameCtx.stroke();
+
+            // Rambut Tocang Ponytail
+            gameCtx.fillStyle = '#f6e3c5';
+            gameCtx.beginPath();
+            gameCtx.arc(5, 12, 6, 0, Math.PI * 2);
+            gameCtx.arc(2, 22, 6, 0, Math.PI * 2);
+            gameCtx.fill();
+            gameCtx.stroke();
+
+            // Selendang Plaid Merah
+            gameCtx.fillStyle = '#b91c1c';
+            gameCtx.fillRect(10, 32, 18, 8);
+            gameCtx.strokeRect(10, 32, 18, 8);
+
+            // Tubuh / Baju Cream
+            gameCtx.fillStyle = '#fafaf9';
+            gameCtx.beginPath();
+            gameCtx.moveTo(10, 40);
+            gameCtx.lineTo(6, 65);
+            gameCtx.lineTo(28, 65);
+            gameCtx.lineTo(24, 40);
+            gameCtx.closePath();
+            gameCtx.fill();
+            gameCtx.stroke();
+
+            // Buku coklat dipeluk
+            gameCtx.fillStyle = '#b45309';
+            gameCtx.fillRect(2, 46, 12, 16);
+            gameCtx.strokeRect(2, 46, 12, 16);
+
+            gameCtx.restore();
+
+            // --- JANA & URUS HALANGAN (BOTOL DAKWAT) ---
+            if (Math.random() < 0.015 && gameObstacles.length < 2) {
+                gameObstacles.push({
+                    x: gameCanvas.width + 20,
+                    y: gameCanvas.height - 55,
+                    width: 18,
+                    height: 20
+                });
+            }
+
+            gameObstacles.forEach((obs, index) => {
+                obs.x -= 4.5; // Kelajuan rintangan menghala ke kiri
+
+                // Lukis tumpahan botol dakwat hitam klasik
+                gameCtx.fillStyle = '#1c1917';
+                gameCtx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                gameCtx.strokeRect(obs.x, obs.y, obs.width, obs.height);
+
+                // Kepala botol dakwat
+                gameCtx.fillRect(obs.x + 4, obs.y - 4, 10, 4);
+
+                // Padam jika luar skrin
+                if (obs.x < -30) {
+                    gameObstacles.splice(index, 1);
+                }
+
+                // Sistem Pelanggaran Ahmad & Halangan
+                if (
+                    obs.x < 60 + 25 &&
+                    obs.x + obs.width > 60 &&
+                    obs.y < ahmadY + 65 &&
+                    obs.y + obs.height > ahmadY
+                ) {
+                    gameObstacles.splice(index, 1);
+                    gameLives--;
+                    document.getElementById('game-lives').innerText = "❤️".repeat(gameLives);
+                    triggerSound('footstep');
+
+                    if (gameLives <= 0) {
+                        endGame();
+                    }
+                }
+            });
+
+            // --- JANA & URUS BUKU SEJARAH TERAPUNG ---
+            if (Math.random() < 0.02 && gameBooks.length < 3) {
+                gameBooks.push({
+                    x: gameCanvas.width + 20,
+                    y: gameCanvas.height - 120 - Math.random() * 40,
+                    width: 18,
+                    height: 18,
+                    collected: false
+                });
+            }
+
+            gameBooks.forEach((book, index) => {
+                book.x -= 3.8;
+
+                // Lukis buku berwarna emas terapung
+                gameCtx.fillStyle = '#fbbf24';
+                gameCtx.fillRect(book.x, book.y, book.width, book.height);
+                gameCtx.strokeRect(book.x, book.y, book.width, book.height);
+                
+                // Riben penunjuk buku berwarna merah
+                gameCtx.fillStyle = '#dc2626';
+                gameCtx.fillRect(book.x + 8, book.y, 2, book.height);
+
+                if (book.x < -30) {
+                    gameBooks.splice(index, 1);
+                }
+
+                // Ahmad berjaya mengumpul buku
+                if (
+                    book.x < 60 + 25 &&
+                    book.x + book.width > 60 &&
+                    book.y < ahmadY + 65 &&
+                    book.y + book.height > ahmadY
+                ) {
+                    gameBooks.splice(index, 1);
+                    gameScore++;
+                    document.getElementById('game-score').innerText = gameScore;
+                    triggerSound('victory');
+                }
+            });
+
+            gameFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function endGame() {
+            isGameRunning = false;
+            if (gameFrameId) cancelAnimationFrame(gameFrameId);
+
+            document.getElementById('game-status-title').innerText = "KEMBARA TERHENTI!";
+            document.getElementById('game-status-desc').innerHTML = `Ahmad terlanggar botol tumpahan dakwat! Syabas, anda mengumpul <strong class="text-amber-400 text-lg">${gameScore}</strong> buah buku sejarah. Mari cuba lagi!`;
+            document.getElementById('game-screen-overlay').classList.remove('hidden');
+        }
+
+
+        // --- ================= RESTORASI SPLIT-SCREEN SLIDER ================= ---
+        let isSliding = false;
+
+        function initRestorationSlider() {
+            const area = document.getElementById('slider-touch-area');
+            const handle = document.getElementById('restoration-slider-handle');
+            const colorLayer = document.getElementById('restoration-color-layer');
+
+            // Tetapkan saiz kandungan imej pemulihan
+            const containerWidth = area.parentElement.clientWidth;
+
+            // Pengesan heretan tetikus
+            area.addEventListener('mousedown', () => { isSliding = true; });
+            window.addEventListener('mouseup', () => { isSliding = false; });
+            
+            area.addEventListener('mousemove', (e) => {
+                if (!isSliding) return;
+                adjustRestorationSplit(e, containerWidth, handle, colorLayer);
+            });
+
+            // Pengesan sentuhan telefon pintar (Touch)
+            area.addEventListener('touchstart', () => { isSliding = true; });
+            window.addEventListener('touchend', () => { isSliding = false; });
+
+            area.addEventListener('touchmove', (e) => {
+                if (!isSliding) return;
+                const rect = area.getBoundingClientRect();
+                const touchX = e.touches[0].clientX - rect.left;
+                
+                let percentage = (touchX / containerWidth) * 100;
+                percentage = Math.max(0, Math.min(100, percentage));
+
+                handle.style.left = `${percentage}%`;
+                colorLayer.style.width = `${percentage}%`;
+            });
+        }
+
+        function adjustRestorationSplit(e, containerWidth, handle, colorLayer) {
+            const rect = e.target.getBoundingClientRect();
+            const posX = e.clientX - rect.left;
+            
+            let percentage = (posX / containerWidth) * 100;
+            percentage = Math.max(0, Math.min(100, percentage));
+
+            handle.style.left = `${percentage}%`;
+            colorLayer.style.width = `${percentage}%`;
+        }
+
+
+        // --- TUKAR GAYA TEMA SKRIN LUKISAN ---
+        let paperThemeActive = false;
+        function switchAppTheme() {
+            paperThemeActive = !paperThemeActive;
+            const container = document.getElementById('viewport-container');
+            
+            if (paperThemeActive) {
+                container.style.backgroundColor = '#fbf0d9'; // Tona kertas purba
+                container.style.backgroundImage = 'radial-gradient(rgba(0,0,0,0.08) 1.5px, transparent 1.5px)';
+                container.style.backgroundSize = '16px 16px';
+            } else {
+                container.style.backgroundColor = '#ffffff';
+                container.style.backgroundImage = 'none';
+            }
+            triggerSound('victory');
+        }
+
+
+        // Mula secara automatik di Tab Meja Animasi Komik
+        window.onload = function() {
+            switchTab('animasi');
+        };
+    </script>
+</body>
+</html>
