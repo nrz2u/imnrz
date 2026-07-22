@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honda Live Showroom - Olive</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+        }
+    </script>
+
+    <style>
+        body { background-color: #080c14; color: #f3f4f6; font-family: 'Inter', sans-serif; user-select: none; filter: hue-rotate(var(--hue, 0deg)); transition: filter .5s ease; }
+        /* Elements that must keep their TRUE colours (car photo, paint swatches, WhatsApp green) counter-rotate. */
+        .no-theme { filter: hue-rotate(calc(-1 * var(--hue, 0deg))); }
+        @keyframes bounce-slow { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-6px);} }
+        .bounce-slow { animation: bounce-slow 2.4s ease-in-out infinite; }
+        .glass-panel { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-panel-glow { background: rgba(17, 24, 39, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(239, 68, 68, 0.3); box-shadow: 0 0 20px rgba(239, 68, 68, 0.15); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ef4444; }
+        @keyframes pulse-slow { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.05); } }
+        .live-dot { animation: pulse-slow 2s infinite ease-in-out; }
+        .car-glow-shadow { filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.8)); }
+
+        /* Glossy gradient colour chip */
+        .swatch-chip { position: relative; border-radius: 9999px; box-shadow: inset 0 1px 1px rgba(255,255,255,.55), inset 0 -2px 3px rgba(0,0,0,.45), 0 1px 2px rgba(0,0,0,.5); }
+        .swatch-chip::after { content:''; position:absolute; top:14%; left:18%; width:40%; height:32%; border-radius:9999px; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,0) 70%); }
+
+        /* Premium gradient colour preview panel */
+        .color-preview { position: relative; transition: background .45s ease; box-shadow: inset 0 1px 2px rgba(255,255,255,.25), inset 0 -10px 20px rgba(0,0,0,.35); }
+        .color-preview::before { content:''; position:absolute; inset:0; border-radius:inherit; background: linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,0) 40%); pointer-events:none; }
+
+        /* Live car tint — masked to the car silhouette so only the body recolours */
+        #car-color-tint { mix-blend-mode: color; -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; -webkit-mask-position:center; mask-position:center; -webkit-mask-size:contain; mask-size:contain; transition: background .35s ease, opacity .35s ease; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden antialiased text-slate-100">
+
+    <header class="glass-panel sticky top-0 z-50 px-4 py-3 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-red-600 to-rose-400 flex items-center justify-center p-1.5 shadow-lg shadow-red-900/40">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-full h-full text-white fill-current">
+                        <path d="M5.5 4H9v5.6h6V4h3.5v16H15v-6.4H9V20H5.5z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black tracking-wider uppercase bg-gradient-to-r from-white via-slate-200 to-red-400 bg-clip-text text-transparent">HONDA LIVE SHOWROOM</h1>
+                    <p class="text-xs text-gray-400 font-medium">YOUR TRUSTED SALES ADVISOR : <span class="text-red-400 font-bold tracking-wide">OLIVE</span></p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 bg-red-950/60 border border-red-800/60 px-3 py-1 rounded-full text-xs font-semibold text-red-400 shadow-inner">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 live-dot"></span><span>LIVE</span>
+                    <span class="text-slate-400 border-l border-red-800/80 pl-2 ml-1"><i class="fa-solid fa-eye text-red-400 mr-1"></i><span id="viewer-count">1.2K</span></span>
+                </div>
+                <a id="top-whatsapp-link" href="#" target="_blank" class="flex items-center space-x-2 bg-red-600 hover:bg-red-500 transition-all text-white font-bold px-4 py-1.5 rounded-lg text-sm shadow-md shadow-red-900/30">
+                    <span class="hidden sm:inline">OLIVE | 013-938 3476</span><i class="no-theme fa-brands fa-whatsapp text-lg text-green-200"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto w-full p-2 md:p-4 grid grid-cols-1 lg:grid-cols-12 gap-4 flex-grow">
+        <aside class="lg:col-span-3 glass-panel rounded-2xl p-3 flex flex-col justify-between">
+            <div>
+                <div class="bg-red-950/40 border-l-4 border-red-500 px-3 py-2 rounded-r-lg mb-3">
+                    <h2 class="text-xs font-bold text-red-400 uppercase tracking-wider flex items-center"><i class="fa-solid fa-car-side mr-2"></i> PILIH MODEL</h2>
+                </div>
+                <div class="space-y-1.5" id="model-list"></div>
+            </div>
+            <div class="mt-3">
+                <span class="text-[11px] font-semibold text-red-400/90 tracking-wider uppercase block text-center bg-red-950/50 py-1.5 rounded-lg border border-red-900/50 mb-3"><i class="fa-solid fa-hand-pointer mr-1 animate-bounce"></i> KLIK MODEL UNTUK LIHAT INFO</span>
+                <!-- Kelebihan (dipindah dari footer untuk jimatkan ruang) -->
+                <div class="pt-3 border-t border-gray-800 space-y-1.5 text-slate-300 text-[11px] font-bold">
+                    <div class="flex items-center gap-2 bg-slate-900/70 px-2.5 py-1.5 rounded-lg border border-slate-800"><i class="fa-solid fa-circle-check text-red-400 w-4 text-center"></i><span>FAST LOAN APPROVAL</span></div>
+                    <div class="flex items-center gap-2 bg-slate-900/70 px-2.5 py-1.5 rounded-lg border border-slate-800"><i class="fa-solid fa-car text-red-400 w-4 text-center"></i><span>TRADE IN WELCOME</span></div>
+                    <div class="flex items-center gap-2 bg-slate-900/70 px-2.5 py-1.5 rounded-lg border border-slate-800"><i class="fa-solid fa-truck-ramp-box text-red-400 w-4 text-center"></i><span>DOORSTEP DELIVERY</span></div>
+                    <div class="flex items-center gap-2 bg-slate-900/70 px-2.5 py-1.5 rounded-lg border border-slate-800"><i class="fa-solid fa-building-columns text-red-400 w-4 text-center"></i><span>ALL BANKS AVAILABLE</span></div>
+                    <div class="flex items-center gap-2 bg-slate-900/70 px-2.5 py-1.5 rounded-lg border border-slate-800"><i class="fa-solid fa-shield-cat text-red-400 w-4 text-center"></i><span>HONDA 5 TAHUN WARRANTY</span></div>
+                </div>
+            </div>
+        </aside>
+
+        <section class="lg:col-span-6 flex flex-col justify-between space-y-4">
+            <div class="glass-panel rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden min-h-[460px]">
+                <div class="flex items-center justify-between z-10 mb-2">
+                    <div class="flex items-center space-x-2">
+                        <h2 class="text-2xl md:text-3xl font-black tracking-tight text-white uppercase" id="current-model-title">HONDA X50</h2>
+                        <span class="bg-red-500 text-slate-950 font-extrabold text-xs px-2.5 py-1 rounded-md tracking-wider shadow-md" id="current-trim-tag">PREMIUM</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-xs text-gray-400 space-x-2 z-10">
+                    <i class="fa-solid fa-rotate text-red-400 text-sm"></i>
+                    <span class="font-medium tracking-wide"><span class="text-red-400 font-bold">360° VIEW</span> - DRAG / SWIPE UNTUK PUTAR KERETA</span>
+                </div>
+                <div class="relative my-auto py-6 flex items-center justify-center group cursor-grab active:cursor-grabbing" id="car-interactive-stage">
+                    <button id="btn-prev-angle" class="absolute left-1 md:left-2 z-20 w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 text-slate-200 hover:text-red-400 hover:border-red-500 flex items-center justify-center transition-all shadow-lg active:scale-90"><i class="fa-solid fa-chevron-left text-sm"></i></button>
+                    <div class="absolute inset-x-4 bottom-2 h-20 bg-gradient-to-t from-red-500/10 to-transparent rounded-full blur-xl pointer-events-none"></div>
+                    <div class="absolute bottom-4 w-64 md:w-80 h-16 border-2 border-dashed border-red-500/30 rounded-[100%] flex items-center justify-center pointer-events-none"><span class="text-[10px] font-bold text-red-400/60 uppercase tracking-widest bg-slate-950/80 px-2 rounded-full">360°</span></div>
+                    <div class="no-theme relative z-10 inline-block">
+                        <img id="main-car-image" src="https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=800&q=80" alt="Car Display" class="max-h-56 md:max-h-64 object-contain transition-all duration-300 car-glow-shadow hover:scale-105">
+                        <div id="car-color-tint" class="absolute inset-0 pointer-events-none" style="opacity:0;"></div>
+                    </div>
+                    <button id="btn-next-angle" class="absolute right-1 md:right-2 z-20 w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 text-slate-200 hover:text-red-400 hover:border-red-500 flex items-center justify-center transition-all shadow-lg active:scale-90"><i class="fa-solid fa-chevron-right text-sm"></i></button>
+                </div>
+                <div class="grid grid-cols-5 gap-1.5 md:gap-2 z-10 mt-2" id="angle-gallery"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-3 border border-slate-800">
+                <div class="text-xs font-bold text-red-400 uppercase tracking-wider mb-2.5 flex items-center"><i class="fa-solid fa-gift mr-2 text-red-400"></i> PROMOSI BULAN INI</div>
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2 text-center hover:border-red-500/40 transition-colors"><i class="fa-solid fa-shield-halved text-red-400 text-lg mb-1 block"></i><span class="text-[10px] font-bold text-slate-200 uppercase leading-tight block">FREE TINT</span></div>
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2 text-center hover:border-red-500/40 transition-colors"><i class="fa-solid fa-wand-magic-sparkles text-red-400 text-lg mb-1 block"></i><span class="text-[10px] font-bold text-slate-200 uppercase leading-tight block">FREE COATING</span></div>
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2 text-center hover:border-red-500/40 transition-colors"><i class="fa-solid fa-rug text-red-400 text-lg mb-1 block"></i><span class="text-[10px] font-bold text-slate-200 uppercase leading-tight block">FREE CARPET</span></div>
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2 text-center hover:border-red-500/40 transition-colors"><i class="fa-solid fa-car-side text-red-400 text-lg mb-1 block"></i><span class="text-[10px] font-bold text-slate-200 uppercase leading-tight block">FREE DOOR VISOR</span></div>
+                    <div class="col-span-2 sm:col-span-1 bg-slate-900/80 border border-slate-800 rounded-xl p-2 text-center hover:border-red-500/40 transition-colors"><i class="fa-solid fa-gas-pump text-red-400 text-lg mb-1 block"></i><span class="text-[10px] font-bold text-slate-200 uppercase leading-tight block">FULL TANK PETROL</span></div>
+                </div>
+                <div class="text-right mt-2"><span class="text-[9px] text-gray-500 italic">* TERTAKLUK KEPADA TERMA & SYARAT</span></div>
+            </div>
+        </section>
+
+        <aside class="lg:col-span-3 space-y-3 flex flex-col justify-between">
+            <div class="glass-panel rounded-2xl p-3 border-l-4 border-l-red-500">
+                <div class="flex justify-between items-start">
+                    <div><span class="text-[11px] font-bold text-gray-400 tracking-wider uppercase block">HARGA OTR</span>
+                        <div class="text-2xl md:text-3xl font-black text-white tracking-tight" id="disp-otr-price">RM 89,300</div></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-slate-800/80">
+                    <div><span class="text-[10px] font-bold text-gray-400 uppercase block">BOOKING</span><span class="text-sm font-black text-red-400" id="disp-booking-fee">RM 500</span></div>
+                    <div><span class="text-[10px] font-bold text-gray-400 uppercase block">GAJI DISARANKAN</span><span class="text-xs font-black text-red-400" id="disp-salary">RM 3,000 KE ATAS</span></div>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-3">
+                <div class="text-xs font-bold text-gray-300 uppercase tracking-wider mb-2 flex items-center justify-between"><span>WARNA TERSEDIA</span><span class="text-[10px] bg-red-950 text-red-400 px-1.5 py-0.5 rounded border border-red-800 font-semibold">(READY STOCK)</span></div>
+                <div id="color-preview" class="no-theme color-preview rounded-xl h-14 mb-2.5 flex items-end justify-between p-2.5 border border-white/10 overflow-hidden">
+                    <span id="color-preview-name" class="text-xs font-black drop-shadow-md z-10">—</span>
+                    <span id="color-preview-hex" class="text-[10px] font-mono opacity-80 z-10">#—</span>
+                </div>
+                <div class="space-y-1.5" id="color-swatches-container"></div>
+            </div>
+
+            <div class="glass-panel-glow rounded-2xl p-3">
+                <div class="text-xs font-extrabold text-red-400 uppercase tracking-wider mb-2.5 flex items-center"><i class="fa-solid fa-calculator mr-2"></i> KALKULATOR LOAN</div>
+                <div class="space-y-2 text-xs">
+                    <div class="flex items-center justify-between bg-slate-900/90 p-2 rounded-lg border border-slate-800"><span class="text-gray-400 font-medium">HARGA KERETA (OTR)</span><span class="font-bold text-white" id="calc-otr-display">RM 89,300</span></div>
+                    <div class="flex items-center justify-between bg-slate-900/90 p-1.5 rounded-lg border border-slate-800">
+                        <label for="deposit-input" class="text-gray-400 font-medium pl-1">DEPOSIT</label>
+                        <div class="flex items-center bg-slate-950 px-2 py-1 rounded border border-slate-700"><span class="text-slate-400 text-xs mr-1">RM</span><input type="number" id="deposit-input" value="0" step="500" class="w-20 bg-transparent text-right font-bold text-red-400 focus:outline-none"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-slate-900/90 p-1.5 rounded-lg border border-slate-800"><label class="text-[10px] text-gray-400 uppercase font-medium block mb-1">LOAN %</label>
+                            <select id="loan-percent-select" class="w-full bg-slate-950 text-slate-100 rounded px-2 py-1 font-bold text-xs border border-slate-700 focus:outline-none"><option value="100">100% (Full Loan)</option><option value="90" selected>90% Loan</option><option value="85">85% Loan</option><option value="80">80% Loan</option><option value="70">70% Loan</option></select></div>
+                        <div class="bg-slate-900/90 p-1.5 rounded-lg border border-slate-800"><label class="text-[10px] text-gray-400 uppercase font-medium block mb-1">TEMPOH</label>
+                            <select id="loan-tenure-select" class="w-full bg-slate-950 text-slate-100 rounded px-2 py-1 font-bold text-xs border border-slate-700 focus:outline-none"><option value="9" selected>9 TAHUN</option><option value="7">7 TAHUN</option><option value="5">5 TAHUN</option></select></div>
+                    </div>
+                    <div class="bg-red-950/80 border border-red-500/40 rounded-xl p-2.5 text-center mt-2">
+                        <span class="text-[10px] font-bold text-gray-300 uppercase tracking-wider block">ANGGARAN ANSURAN BULANAN</span>
+                        <div class="text-2xl font-black text-red-400 tracking-tight my-0.5" id="calc-monthly-result">RM 9XX</div>
+                        <span class="text-[9px] text-red-300/80 block font-medium">* Kadar faedah anggaran ~3.2%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-3">
+                <div class="text-xs font-extrabold text-gray-300 uppercase tracking-wider mb-2 flex items-center"><i class="fa-solid fa-right-left mr-2 text-red-400"></i> KALKULATOR TRADE IN</div>
+                <div class="space-y-2 text-xs">
+                    <div class="flex items-center justify-between bg-slate-900/90 p-1.5 rounded-lg border border-slate-800"><span class="text-gray-400 font-medium pl-1">NILAI TRADE IN</span><div class="flex items-center bg-slate-950 px-2 py-1 rounded border border-slate-700"><span class="text-slate-400 text-xs mr-1">RM</span><input type="number" id="tradein-value-input" value="25000" step="1000" class="w-20 bg-transparent text-right font-bold text-red-400 focus:outline-none"></div></div>
+                    <div class="flex items-center justify-between bg-slate-900/90 p-1.5 rounded-lg border border-slate-800"><span class="text-gray-400 font-medium pl-1">SETTLEMENT (JIKA ADA)</span><div class="flex items-center bg-slate-950 px-2 py-1 rounded border border-slate-700"><span class="text-slate-400 text-xs mr-1">RM</span><input type="number" id="tradein-settlement-input" value="18000" step="1000" class="w-20 bg-transparent text-right font-bold text-red-400 focus:outline-none"></div></div>
+                    <div class="flex items-center justify-between bg-red-950/50 p-2 rounded-lg border border-red-900"><span class="text-xs font-bold text-red-300">BAKI / BALANCE</span><span class="text-sm font-black text-red-400" id="tradein-balance-result">RM 7,000</span></div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Floating WhatsApp icon (kekal hijau — no-theme) -->
+    <a id="main-whatsapp-btn" href="#" target="_blank" title="Chat Olive di WhatsApp"
+       class="no-theme bounce-slow fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full bg-[#25D366] shadow-xl shadow-black/40 flex items-center justify-center hover:scale-110 transition-transform">
+        <i class="fa-brands fa-whatsapp text-3xl text-white"></i>
+        <span class="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-green-500 border-2 border-[#0b0f19]"></span></span>
+    </a>
+
+    <!-- Theme / template colour picker (no-theme so swatches show true colours) -->
+    <div class="no-theme fixed bottom-5 left-5 z-50 glass-panel rounded-2xl px-3 py-2 flex items-center gap-2 border border-white/10 shadow-xl">
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider hidden sm:flex items-center"><i class="fa-solid fa-palette mr-1.5 text-slate-300"></i>Tema</span>
+        <div id="theme-chips" class="flex items-center gap-1.5"></div>
+        <label class="relative w-7 h-7 rounded-full overflow-hidden ring-1 ring-white/25 cursor-pointer shrink-0" title="Warna tersuai"
+               style="background:conic-gradient(from 0deg,#ef4444,#f59e0b,#22c55e,#0ea5e9,#8b5cf6,#ec4899,#ef4444)">
+            <input type="color" id="theme-custom" value="#ef4444" class="absolute -inset-2 w-12 h-12 cursor-pointer opacity-0">
+        </label>
+    </div>
+
+    <script>
+        const hondaModels = [
+    {
+        "id": "city",
+        "name": "CITY",
+        "trim": "1.5 V i-VTEC",
+        "price": 86000,
+        "booking": 1000,
+        "recommendedSalary": "RM 3,000 KE ATAS",
+        "image": "https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=800&q=80",
+        "thumb": "https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=150&q=80",
+        "colors": [
+            {
+                "name": "Platinum White Pearl",
+                "colorHex": "#f8fafc",
+                "stock": "READY"
+            },
+            {
+                "name": "Crystal Black Pearl",
+                "colorHex": "#0f172a",
+                "stock": "READY"
+            },
+            {
+                "name": "Lunar Silver Metallic",
+                "colorHex": "#cbd5e1",
+                "stock": "READY"
+            },
+            {
+                "name": "Meteoroid Gray Metallic",
+                "colorHex": "#475569",
+                "stock": "READY"
+            },
+            {
+                "name": "Ignite Red Metallic",
+                "colorHex": "#dc2626",
+                "stock": "READY"
+            }
+        ],
+        "angles": [
+            "https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80"
+        ]
+    },
+    {
+        "id": "wrv",
+        "name": "WR-V",
+        "trim": "1.5 RS",
+        "price": 107900,
+        "booking": 1000,
+        "recommendedSalary": "RM 3,500 KE ATAS",
+        "image": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80",
+        "thumb": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=150&q=80",
+        "colors": [
+            {
+                "name": "Ignite Red Metallic",
+                "colorHex": "#dc2626",
+                "stock": "READY"
+            },
+            {
+                "name": "Platinum White Pearl",
+                "colorHex": "#f8fafc",
+                "stock": "READY"
+            },
+            {
+                "name": "Meteoroid Gray Metallic",
+                "colorHex": "#475569",
+                "stock": "READY"
+            },
+            {
+                "name": "Obsidian Blue Pearl",
+                "colorHex": "#1e3a8a",
+                "stock": "READY"
+            }
+        ],
+        "angles": [
+            "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=800&q=80"
+        ]
+    },
+    {
+        "id": "brv",
+        "name": "BR-V",
+        "trim": "1.5 V",
+        "price": 109900,
+        "booking": 1000,
+        "recommendedSalary": "RM 3,500 KE ATAS",
+        "image": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+        "thumb": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=150&q=80",
+        "colors": [
+            {
+                "name": "Platinum White Pearl",
+                "colorHex": "#f8fafc",
+                "stock": "READY"
+            },
+            {
+                "name": "Lunar Silver Metallic",
+                "colorHex": "#cbd5e1",
+                "stock": "READY"
+            },
+            {
+                "name": "Meteoroid Gray Metallic",
+                "colorHex": "#475569",
+                "stock": "READY"
+            },
+            {
+                "name": "Premium Crystal Red Metallic",
+                "colorHex": "#b91c1c",
+                "stock": "READY"
+            }
+        ],
+        "angles": [
+            "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80"
+        ]
+    },
+    {
+        "id": "hrv",
+        "name": "HR-V",
+        "trim": "e:HEV RS",
+        "price": 147900,
+        "booking": 1000,
+        "recommendedSalary": "RM 4,500 KE ATAS",
+        "image": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
+        "thumb": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=150&q=80",
+        "colors": [
+            {
+                "name": "Platinum White Pearl",
+                "colorHex": "#f8fafc",
+                "stock": "READY"
+            },
+            {
+                "name": "Crystal Black Pearl",
+                "colorHex": "#0f172a",
+                "stock": "READY"
+            },
+            {
+                "name": "Meteoroid Gray Metallic",
+                "colorHex": "#475569",
+                "stock": "READY"
+            },
+            {
+                "name": "Premium Crystal Red Metallic",
+                "colorHex": "#b91c1c",
+                "stock": "READY"
+            },
+            {
+                "name": "Sand Khaki Pearl",
+                "colorHex": "#a8a29e",
+                "stock": "READY"
+            }
+        ],
+        "angles": [
+            "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80"
+        ]
+    },
+    {
+        "id": "civic",
+        "name": "CIVIC",
+        "trim": "1.5 TC-P VTEC",
+        "price": 143900,
+        "booking": 1000,
+        "recommendedSalary": "RM 4,500 KE ATAS",
+        "image": "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80",
+        "thumb": "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=150&q=80",
+        "colors": [
+            {
+                "name": "Platinum White Pearl",
+                "colorHex": "#f8fafc",
+                "stock": "READY"
+            },
+            {
+                "name": "Crystal Black Pearl",
+                "colorHex": "#0f172a",
+                "stock": "READY"
+            },
+            {
+                "name": "Lunar Silver Metallic",
+                "colorHex": "#cbd5e1",
+                "stock": "READY"
+            },
+            {
+                "name": "Meteoroid Gray Metallic",
+                "colorHex": "#475569",
+                "stock": "READY"
+            },
+            {
+                "name": "Ignite Red Metallic",
+                "colorHex": "#dc2626",
+                "stock": "READY"
+            }
+        ],
+        "angles": [
+            "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80"
+        ]
+    },
+    {
+        "id": "crv",
+        "name": "CR-V",
+        "trim": "1.5 TC-P AWD",
+        "price": 195900,
+        "booking": 1000,
+        "recommendedSalary": "RM 5,500 KE ATAS",
+        "image": "https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=800&q=80",
+        "thumb": "https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=150&q=80",
+        "colors": [
+            {
+                "name": "Platinum White Pearl",
+                "colorHex": "#f8fafc",
+                "stock": "READY"
+            },
+            {
+                "name": "Crystal Black Pearl",
+                "colorHex": "#0f172a",
+                "stock": "READY"
+            },
+            {
+                "name": "Lunar Silver Metallic",
+                "colorHex": "#cbd5e1",
+                "stock": "READY"
+            },
+            {
+                "name": "Obsidian Blue Pearl",
+                "colorHex": "#1e3a8a",
+                "stock": "READY"
+            }
+        ],
+        "angles": [
+            "https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80"
+        ]
+    },
+    {
+        "id": "accord",
+        "name": "ACCORD",
+        "trim": "e:HEV RS",
+        "price": 199900,
+        "booking": 1000,
+        "recommendedSalary": "RM 6,000 KE ATAS",
+        "image": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80",
+        "thumb": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=150&q=80",
+        "colors": [
+            {
+                "name": "Platinum White Pearl",
+                "colorHex": "#f8fafc",
+                "stock": "READY"
+            },
+            {
+                "name": "Crystal Black Pearl",
+                "colorHex": "#0f172a",
+                "stock": "READY"
+            },
+            {
+                "name": "Obsidian Blue Pearl",
+                "colorHex": "#1e3a8a",
+                "stock": "READY"
+            },
+            {
+                "name": "Premium Crystal Red Metallic",
+                "colorHex": "#b91c1c",
+                "stock": "READY"
+            }
+        ],
+        "angles": [
+            "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=800&q=80"
+        ]
+    },
+    {
+        "id": "en1",
+        "name": "e:N1",
+        "trim": "ELECTRIC EV",
+        "price": 149900,
+        "booking": 1000,
+        "recommendedSalary": "RM 4,500 KE ATAS",
+        "image": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+        "thumb": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=150&q=80",
+        "colors": [
+            {
+                "name": "Premium Crystal Red Metallic",
+                "colorHex": "#b91c1c",
+                "stock": "READY"
+            },
+            {
+                "name": "Platinum White Pearl",
+                "colorHex": "#f8fafc",
+                "stock": "READY"
+            },
+            {
+                "name": "Crystal Black Pearl",
+                "colorHex": "#0f172a",
+                "stock": "READY"
+            },
+            {
+                "name": "Charge Yellow",
+                "colorHex": "#eab308",
+                "stock": "READY"
+            }
+        ],
+        "angles": [
+            "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1541348263662-e082662d82da?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80"
+        ]
+    }
+];
+
+        let selectedModelId = 'hrv';
+        let currentAngleIndex = 0;
+        let selectedColorName = 'Platinum White Pearl';
+
+        const modelListContainer = document.getElementById('model-list');
+        const currentModelTitle = document.getElementById('current-model-title');
+        const currentTrimTag = document.getElementById('current-trim-tag');
+        const mainCarImage = document.getElementById('main-car-image');
+        const angleGallery = document.getElementById('angle-gallery');
+        const colorSwatchesContainer = document.getElementById('color-swatches-container');
+        const dispOtrPrice = document.getElementById('disp-otr-price');
+        const dispBookingFee = document.getElementById('disp-booking-fee');
+        const dispSalary = document.getElementById('disp-salary');
+        const calcOtrDisplay = document.getElementById('calc-otr-display');
+        const depositInput = document.getElementById('deposit-input');
+        const loanPercentSelect = document.getElementById('loan-percent-select');
+        const loanTenureSelect = document.getElementById('loan-tenure-select');
+        const calcMonthlyResult = document.getElementById('calc-monthly-result');
+        const tradeinValueInput = document.getElementById('tradein-value-input');
+        const tradeinSettlementInput = document.getElementById('tradein-settlement-input');
+        const tradeinBalanceResult = document.getElementById('tradein-balance-result');
+        const topWhatsappLink = document.getElementById('top-whatsapp-link');
+        const mainWhatsappBtn = document.getElementById('main-whatsapp-btn');
+
+        function formatMYR(amount) { return 'RM ' + Math.max(0, amount).toLocaleString('en-US'); }
+
+        function renderModelList() {
+            modelListContainer.innerHTML = '';
+            hondaModels.forEach(model => {
+                const isSelected = model.id === selectedModelId;
+                const button = document.createElement('button');
+                button.className = `w-full flex items-center justify-between p-2 rounded-xl transition-all duration-200 border ${isSelected ? 'bg-red-500/20 border-red-500 text-white font-extrabold shadow-md shadow-red-950/50' : 'bg-slate-900/60 border-slate-800/80 text-slate-300 hover:bg-slate-800/80 hover:border-slate-700'}`;
+                button.onclick = () => selectModel(model.id);
+                button.innerHTML = `<div class="flex items-center space-x-2.5"><div class="w-10 h-7 rounded overflow-hidden bg-slate-950 flex items-center justify-center p-0.5 border border-slate-800"><img src="${model.thumb}" alt="${model.name}" class="no-theme w-full h-full object-cover rounded-sm"></div><span class="text-xs tracking-wider uppercase font-bold">${model.name}</span></div><i class="fa-solid fa-chevron-right text-[10px] ${isSelected ? 'text-red-400' : 'text-slate-600'}"></i>`;
+                modelListContainer.appendChild(button);
+            });
+        }
+
+        function selectModel(id) {
+            selectedModelId = id; currentAngleIndex = 0;
+            const model = hondaModels.find(m => m.id === id);
+            if (model && model.colors.length > 0) selectedColorName = model.colors[0].name;
+            updateShowroom();
+        }
+
+        // Is a hex colour light? (for contrast-aware text)
+        function isLightColor(hex) {
+            const c = hex.replace('#', '');
+            const r = parseInt(c.substr(0, 2), 16), g = parseInt(c.substr(2, 2), 16), b = parseInt(c.substr(4, 2), 16);
+            return (0.299 * r + 0.587 * g + 0.114 * b) > 165;
+        }
+
+        function chipGradient(hex) {
+            return `linear-gradient(135deg, color-mix(in srgb, ${hex} 68%, white), ${hex} 55%, color-mix(in srgb, ${hex} 72%, black))`;
+        }
+
+        // Update the big preview panel + live car tint
+        function updateColorPreview(col) {
+            const light = isLightColor(col.colorHex);
+            const preview = document.getElementById('color-preview');
+            preview.style.background = chipGradient(col.colorHex);
+            const nameEl = document.getElementById('color-preview-name');
+            const hexEl = document.getElementById('color-preview-hex');
+            nameEl.textContent = col.name;
+            hexEl.textContent = col.colorHex.toUpperCase();
+            nameEl.style.color = light ? '#0f172a' : '#ffffff';
+            hexEl.style.color = light ? 'rgba(15,23,42,.7)' : 'rgba(255,255,255,.8)';
+
+            // Live car recolour (masked to the silhouette)
+            const tint = document.getElementById('car-color-tint');
+            tint.style.background = col.colorHex;
+            tint.style.opacity = light ? '0.22' : '0.6';
+        }
+
+        function renderColorSwatches(model) {
+            colorSwatchesContainer.innerHTML = '';
+            model.colors.forEach(col => {
+                const isSelected = col.name === selectedColorName;
+                const row = document.createElement('div');
+                row.className = `flex items-center justify-between p-1.5 rounded-lg border cursor-pointer transition-all ${isSelected ? 'bg-red-950/60 border-red-500/80 ring-1 ring-red-500/50' : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'}`;
+                row.onclick = () => { selectedColorName = col.name; renderColorSwatches(model); updateColorPreview(col); updateWhatsAppLinks(); };
+                row.innerHTML = `<div class="flex items-center space-x-2.5"><span class="no-theme swatch-chip w-6 h-6 ${isSelected ? 'ring-2 ring-white/70' : ''}" style="background:${chipGradient(col.colorHex)};"></span><span class="text-xs ${isSelected ? 'font-black text-white' : 'font-medium text-slate-300'}">${col.name}</span></div><span class="text-[10px] font-bold ${col.stock === 'READY' ? 'text-red-400' : 'text-amber-400'}">${isSelected ? '✓ ' : ''}${col.stock}</span>`;
+                colorSwatchesContainer.appendChild(row);
+            });
+            // Keep preview + tint in sync with the current selection
+            const sel = model.colors.find(c => c.name === selectedColorName) || model.colors[0];
+            if (sel) updateColorPreview(sel);
+        }
+
+        function renderAngleGallery(model) {
+            angleGallery.innerHTML = '';
+            model.angles.forEach((imgUrl, idx) => {
+                const isActive = idx === currentAngleIndex;
+                const btn = document.createElement('button');
+                btn.className = `h-10 md:h-12 rounded-lg overflow-hidden border-2 transition-all ${isActive ? 'border-red-400 scale-105 shadow-md shadow-red-950' : 'border-slate-800 opacity-60 hover:opacity-100 hover:border-slate-600'}`;
+                btn.onclick = () => { currentAngleIndex = idx; updateShowroomImage(); };
+                btn.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
+                angleGallery.appendChild(btn);
+            });
+        }
+
+        function updateShowroomImage() {
+            const model = hondaModels.find(m => m.id === selectedModelId);
+            if (!model) return;
+            const imgUrl = model.angles[currentAngleIndex] || model.image;
+            mainCarImage.style.opacity = '0.3'; mainCarImage.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                mainCarImage.src = imgUrl; mainCarImage.style.opacity = '1'; mainCarImage.style.transform = 'scale(1)';
+                // Clip the colour tint to the car silhouette of the current photo
+                const tint = document.getElementById('car-color-tint');
+                tint.style.webkitMaskImage = `url("${imgUrl}")`;
+                tint.style.maskImage = `url("${imgUrl}")`;
+            }, 150);
+            renderAngleGallery(model);
+        }
+
+        function calculateLoan() {
+            const model = hondaModels.find(m => m.id === selectedModelId);
+            if (!model) return;
+            const otr = model.price;
+            let deposit = parseFloat(depositInput.value) || 0;
+            const loanPercent = parseFloat(loanPercentSelect.value) / 100;
+            const years = parseInt(loanTenureSelect.value) || 9;
+            const maxLoan = otr * loanPercent;
+            let loanAmount = otr - deposit;
+            if (loanAmount > maxLoan) loanAmount = maxLoan;
+            if (loanAmount <= 0) { calcMonthlyResult.innerText = 'RM 0'; return; }
+            const interestRatePerYear = 0.032;
+            const totalPayable = loanAmount + (loanAmount * interestRatePerYear * years);
+            calcMonthlyResult.innerText = formatMYR(Math.round(totalPayable / (years * 12)));
+            updateWhatsAppLinks();
+        }
+
+        function calculateTradeIn() {
+            const balance = (parseFloat(tradeinValueInput.value) || 0) - (parseFloat(tradeinSettlementInput.value) || 0);
+            tradeinBalanceResult.innerText = formatMYR(balance);
+            tradeinBalanceResult.className = balance < 0 ? "text-sm font-black text-red-400" : "text-sm font-black text-red-400";
+            updateWhatsAppLinks();
+        }
+
+        function updateWhatsAppLinks() {
+            const model = hondaModels.find(m => m.id === selectedModelId);
+            if (!model) return;
+            const textMsg = `Salam Olive, saya berminat dengan Honda Live Showroom:%0A%0A` +
+                `🚗 *Model:* Honda ${model.name} (${model.trim})%0A` +
+                `💰 *Harga OTR:* ${formatMYR(model.price)}%0A` +
+                `🎨 *Warna Pilihan:* ${selectedColorName}%0A` +
+                `📊 *Anggaran Ansuran:* ${calcMonthlyResult.innerText} / sebulan (${loanTenureSelect.value} Tahun)%0A` +
+                `🔄 *Nilai Trade-In Baki:* ${tradeinBalanceResult.innerText}%0A%0A` +
+                `Boleh bantu saya untuk urusan tempahan / semakan kelayakan pinjaman?`;
+            const waUrl = `https://wa.me/60139383476?text=${textMsg}`;
+            topWhatsappLink.href = waUrl; mainWhatsappBtn.href = waUrl;
+        }
+
+        function updateShowroom() {
+            const model = hondaModels.find(m => m.id === selectedModelId);
+            if (!model) return;
+            currentModelTitle.innerText = `HONDA ${model.name}`;
+            currentTrimTag.innerText = model.trim;
+            dispOtrPrice.innerText = formatMYR(model.price);
+            dispBookingFee.innerText = formatMYR(model.booking);
+            dispSalary.innerText = model.recommendedSalary;
+            calcOtrDisplay.innerText = formatMYR(model.price);
+            renderModelList(); renderColorSwatches(model); updateShowroomImage();
+            calculateLoan(); calculateTradeIn();
+        }
+
+        document.getElementById('btn-prev-angle').onclick = () => { const m = hondaModels.find(x => x.id === selectedModelId); if (!m) return; currentAngleIndex = (currentAngleIndex - 1 + m.angles.length) % m.angles.length; updateShowroomImage(); };
+        document.getElementById('btn-next-angle').onclick = () => { const m = hondaModels.find(x => x.id === selectedModelId); if (!m) return; currentAngleIndex = (currentAngleIndex + 1) % m.angles.length; updateShowroomImage(); };
+
+        depositInput.oninput = calculateLoan;
+        loanPercentSelect.onchange = calculateLoan;
+        loanTenureSelect.onchange = calculateLoan;
+        tradeinValueInput.oninput = calculateTradeIn;
+        tradeinSettlementInput.oninput = calculateTradeIn;
+
+        setInterval(() => { document.getElementById('viewer-count').innerText = `${(1.1 + Math.random() * 0.3).toFixed(1)}K`; }, 8000);
+
+        // ===== Theme / template colour picker =====
+        const THEMES = [
+            { name: 'Honda Red', hue: 0,   grad: 'linear-gradient(135deg,#f87171,#dc2626,#7f1d1d)' },
+            { name: 'Sunset',    hue: 35,  grad: 'linear-gradient(135deg,#fbbf24,#ea580c)' },
+            { name: 'Emerald',   hue: 150, grad: 'linear-gradient(135deg,#34d399,#059669)' },
+            { name: 'Ocean',     hue: 210, grad: 'linear-gradient(135deg,#38bdf8,#2563eb)' },
+            { name: 'Purple',    hue: 270, grad: 'linear-gradient(135deg,#a78bfa,#7c3aed)' },
+            { name: 'Rose',      hue: 325, grad: 'linear-gradient(135deg,#fb7185,#e11d48)' },
+        ];
+
+        function setHue(deg) {
+            document.documentElement.style.setProperty('--hue', deg + 'deg');
+            try { localStorage.setItem('sfd_hue', deg); } catch (e) {}
+        }
+
+        // Hue (0-360) from a hex colour — base accent is red (~0deg), so rotation = target hue.
+        function hexToHue(hex) {
+            const c = hex.replace('#', '');
+            let r = parseInt(c.substr(0, 2), 16) / 255, g = parseInt(c.substr(2, 2), 16) / 255, b = parseInt(c.substr(4, 2), 16) / 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+            if (d === 0) return 0;
+            let h;
+            if (max === r) h = ((g - b) / d) % 6;
+            else if (max === g) h = (b - r) / d + 2;
+            else h = (r - g) / d + 4;
+            h = Math.round(h * 60);
+            return h < 0 ? h + 360 : h;
+        }
+
+        function renderThemeChips() {
+            const wrap = document.getElementById('theme-chips');
+            const active = parseInt(localStorage.getItem('sfd_hue') || '0', 10);
+            wrap.innerHTML = '';
+            THEMES.forEach(t => {
+                const b = document.createElement('button');
+                b.title = t.name;
+                b.className = 'w-6 h-6 rounded-full ring-1 ring-white/25 hover:scale-110 transition-transform' + (t.hue === active ? ' ring-2 ring-white scale-110' : '');
+                b.style.background = t.grad;
+                b.onclick = () => { setHue(t.hue); renderThemeChips(); };
+                wrap.appendChild(b);
+            });
+        }
+
+        document.getElementById('theme-custom').addEventListener('input', e => {
+            setHue(hexToHue(e.target.value));
+            renderThemeChips();
+        });
+
+        // Restore saved theme
+        setHue(parseInt(localStorage.getItem('sfd_hue') || '0', 10));
+        renderThemeChips();
+
+        window.onload = function() { selectModel('hrv'); };
+    </script>
+</body>
+</html>
