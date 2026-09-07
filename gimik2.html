@@ -100,9 +100,11 @@
     <!-- Top Event Header -->
     <header class="relative z-10 w-full pt-6 px-8 flex justify-between items-center bg-gradient-to-b from-slate-950/90 to-transparent">
         <div class="flex items-center space-x-4">
-            <div class="w-12 h-12 rounded-lg bg-blue-900/60 border border-cyan-400/50 flex items-center justify-center font-orbitron font-bold text-cyan-400 text-xl shadow-[0_0_15px_rgba(6,182,212,0.4)]">
-                RELA
-            </div>
+            <img
+                src="Logo-RELA.png"
+                alt="Logo rasmi Jabatan Sukarelawan Malaysia (RELA)"
+                class="w-16 h-16 object-contain drop-shadow-[0_0_12px_rgba(6,182,212,0.35)]"
+            >
             <div>
                 <h2 class="text-sm tracking-widest text-cyan-400 font-semibold uppercase">JABATAN SUKARELAWAN MALAYSIA</h2>
                 <p class="text-xs text-slate-400 tracking-wider">SISTEM KESELAMATAN SIBER & INTEGRITI DIGITAL</p>
@@ -269,6 +271,14 @@
             constructor() {
                 this.ctx = null;
                 this.audioEnabled = true;
+                this.voiceTracks = {
+                    before: new Audio('sebelum.mp3'),
+                    after: new Audio('selepas.mp3')
+                };
+
+                Object.values(this.voiceTracks).forEach((track) => {
+                    track.preload = 'auto';
+                });
             }
 
             init() {
@@ -382,6 +392,23 @@
                 });
             }
 
+            stopVoice() {
+                Object.values(this.voiceTracks).forEach((track) => {
+                    track.pause();
+                    track.currentTime = 0;
+                });
+            }
+
+            playVoice(name) {
+                if (!this.audioEnabled || !this.voiceTracks[name]) return;
+
+                this.stopVoice();
+                window.speechSynthesis?.cancel();
+                this.voiceTracks[name].play().catch((error) => {
+                    console.warn('Rakaman suara tidak dapat dimainkan:', error);
+                });
+            }
+
             speakBM(text) {
                 if (!this.audioEnabled || !('speechSynthesis' in window)) return;
                 window.speechSynthesis.cancel(); // Stop current speech
@@ -401,6 +428,7 @@
 
         function setStage(stageNum) {
             currentStage = stageNum;
+            audio.stopVoice();
 
             // Hide all stages
             document.getElementById('stage-1').classList.add('hidden');
@@ -438,7 +466,7 @@
                 document.getElementById('status-badge').innerText = 'MENUNGGU PENGESAHAN VVIP';
 
                 audio.playScanBeep();
-                audio.speakBM("Sila sentuh skrin untuk pengesahan biometrik.");
+                audio.playVoice('before');
                 update3DShieldColor(0xf59e0b); // Gold
             } 
             else if (stageNum === 4) {
@@ -448,7 +476,7 @@
 
                 audio.playFanfare();
                 triggerConfetti();
-                audio.speakBM("Dengan Bismillah, Bengkel Keselamatan ICT RELA 2026 secara rasminya dilancarkan!");
+                audio.playVoice('after');
                 update3DShieldColor(0x10b981, true); // Emerald green & high glow
             }
         }
@@ -458,6 +486,7 @@
             if (currentStage === 4) return; // Already launched
 
             audio.init();
+            audio.stopVoice();
             audio.playScanBeep();
 
             // Hide Stage 3, Show Countdown
@@ -525,6 +554,10 @@
         // Audio Toggle
         function toggleAudio() {
             audio.audioEnabled = !audio.audioEnabled;
+            if (!audio.audioEnabled) {
+                audio.stopVoice();
+                window.speechSynthesis?.cancel();
+            }
             const btn = document.getElementById('audio-btn');
             btn.innerText = audio.audioEnabled ? "🔊 Audio: AKTIF" : "🔇 Audio: BISU";
             btn.className = audio.audioEnabled 
